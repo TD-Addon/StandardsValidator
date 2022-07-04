@@ -10,5 +10,6 @@ This project requires [Node.js](https://nodejs.org/en/) to run and expects input
 1. Convert a section file (or Tamriel Data) to JSON using tes3conv:<br />
 `tes3conv file.esp file.json`
 2. Run the validator:<br />
-`node path/to/validator.js path/to/file.json`
+`node path/to/validator.js path/to/file.json [mode]`<br />
+Where [mode] is optionally one of PT/TR/TD depending on which specific validation rules you need.
 3. Determine if any of the reported issues need to be fixed and fix them
