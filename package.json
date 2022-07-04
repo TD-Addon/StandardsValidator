@@ -1,0 +1,17 @@
+{
+  "name": "validator",
+  "version": "1.0.0",
+  "description": "",
+  "main": "validator.js",
+  "directories": {
+    "lib": "lib"
+  },
+  "scripts": {
+    "lint": "eslint ."
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "eslint": "^8.19.0"
+  }
+}

@@ -1,0 +1,6 @@
+[
+	{ "name": "Tamriel Data", "prefix": "T_" },
+	{ "name": "Province Cyrodiil", "prefix": "PC_", "local": "PC_County" },
+	{ "name": "Skyrim: Home of the Nords", "prefix": "Sky_", "local": "Sky_Hold" },
+	{ "name": "Tamriel Rebuilt", "prefix": "TR_", "local": "TR_Map" }
+]
