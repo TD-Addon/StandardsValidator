@@ -1,0 +1,54 @@
+{
+	"head": [
+		{ "model": "B_N_Dark Elf_F_Barenziah", "rules": [
+			{ "id": "barenziah" }
+		] },
+		{ "model": "B_N_Dark Elf_M_Helseth", "rules": [
+			{ "id": "King Hlaalu Helseth" }
+		] }
+	],
+	"hair": [
+		{ "model": "B_N_Dark Elf_F_BarenziahH", "rules": [
+			{ "id": "barenziah" }
+		] },
+		{ "model": "B_N_Dark Elf_M_HelsethHair", "rules": [
+			{ "id": "King Hlaalu Helseth" }
+		] },
+		{ "model": "b_n_dark elf_f_hair_06", "rules": [
+			{ "class": "Wise Woman" },
+			{ "class": "Mabrigash" },
+			{ "faction": "Ashlanders" }
+		] },
+		{ "model": "b_n_dark elf_f_hair_08", "rules": [
+			{ "class": "Wise Woman" },
+			{ "class": "Mabrigash" },
+			{ "faction": "Ashlanders" }
+		] },
+		{ "model": "b_n_dark elf_f_hair_09", "rules": [
+			{ "class": "Wise Woman" },
+			{ "class": "Mabrigash" },
+			{ "faction": "Ashlanders" }
+		] },
+		{ "model": "b_n_dark elf_f_hair_10", "rules": [
+			{ "class": "Wise Woman" },
+			{ "class": "Mabrigash" },
+			{ "faction": "Ashlanders" }
+		] },
+		{ "model": "b_n_dark elf_m_hair_07", "rules": [
+			{ "class": "Champion" },
+			{ "faction": "Ashlanders" }
+		] },
+		{ "model": "b_n_dark elf_m_hair_08", "rules": [
+			{ "class": "Champion" },
+			{ "faction": "Ashlanders" }
+		] },
+		{ "model": "b_n_dark elf_m_hair_09", "rules": [
+			{ "class": "Champion" },
+			{ "faction": "Ashlanders" }
+		] },
+		{ "model": "b_n_dark elf_m_hair_20", "rules": [
+			{ "class": "Champion" },
+			{ "faction": "Ashlanders" }
+		] }
+	]
+}
