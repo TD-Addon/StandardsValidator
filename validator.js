@@ -10,6 +10,7 @@ const validators = [
 	require('./lib/npcscripts'),
 	require('./lib/persistent'),
 	require('./lib/travel'),
+	require('./lib/unicode'),
 	require('./lib/uniques')
 ];
 

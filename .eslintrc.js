@@ -36,6 +36,7 @@ module.exports = {
 		'no-multi-spaces': 'error',
 		'no-multiple-empty-lines': 'error',
 		'no-trailing-spaces': 'error',
+		'no-control-regex': 'off',
 		quotes: ['error', 'single'],
 		semi: 'error'
 	}
