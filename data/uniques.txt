@@ -214,7 +214,6 @@ bk_clientlist
 bk_dbcontract
 bk_falljournal_unique
 bk_fryssajournal
-bk_galur_rithari's_papers
 bk_leggejournal
 bk_letterfromgadayn
 bk_letterfromjzhirr
@@ -372,7 +371,7 @@ chest_clawfang_unique
 chest_gatekeeper
 chest_goris
 chest_small_01_dumbuk
-chest_small_01_hasphat 
+chest_small_01_hasphat
 chest_small_01_maren
 chest_small_01_miliehas
 chest_small_01_tgbb
@@ -614,7 +613,7 @@ de_p_desk_01_galbedir
 de_p_desk_01_gilyn seda
 de_p_desk_01_huleen
 de_p_desk_01_llethan
-de_p_desk_01_masalinie 
+de_p_desk_01_masalinie
 de_p_desk_01_nachael
 de_p_desk_01_nads
 de_p_desk_01_nevrila
@@ -669,7 +668,7 @@ de_r_closet_bagarn
 de_r_drawers_01_hlaalo
 de_r_drawers_01_malpen1
 de_r_drawers_01_mevure
-de_r_drawers_01_ondres 
+de_r_drawers_01_ondres
 dead de male_berandas
 dead de ship capt11-12
 dead ordinator_key

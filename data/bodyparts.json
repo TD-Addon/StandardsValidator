@@ -24,11 +24,6 @@
 			{ "class": "Mabrigash" },
 			{ "faction": "Ashlanders" }
 		] },
-		{ "model": "b_n_dark elf_f_hair_09", "rules": [
-			{ "class": "Wise Woman" },
-			{ "class": "Mabrigash" },
-			{ "faction": "Ashlanders" }
-		] },
 		{ "model": "b_n_dark elf_f_hair_10", "rules": [
 			{ "class": "Wise Woman" },
 			{ "class": "Mabrigash" },
@@ -49,6 +44,43 @@
 		{ "model": "b_n_dark elf_m_hair_20", "rules": [
 			{ "class": "Champion" },
 			{ "faction": "Ashlanders" }
+		] },
+		{ "model": "T_B_De_HeadFemTR_09", "rules": [
+			{ "faction": { "not": "Ashlanders" } }
+		] },
+		{ "model": "T_B_De_HeadFemTR_14", "rules": [
+			{ "faction": "Hlaalu" }
+		] },
+		{ "model": "T_B_De_HeadFemTR_20", "rules": [
+			{ "faction": "Hlaalu" }
+		] },
+		{ "model": "T_B_De_HeadFemTR_25", "rules": [
+			{ "faction": "Hlaalu" }
+		] },
+		{ "model": "T_B_De_HeadFemTR_31", "rules": [
+			{ "faction": "Hlaalu" }
+		] },
+		{ "model": "T_B_De_HeadFemTR_32", "rules": [
+			{ "faction": "Hlaalu" }
+		] },
+		{ "model": "T_B_De_HeadFemTR_34", "rules": [
+			{ "faction": "Hlaalu" }
+		] },
+		{ "model": "T_B_De_HeadFemTR_36", "rules": [
+			{ "faction": "Hlaalu" }
+		] },
+		{ "model": "T_B_De_HeadFemTR_37", "rules": [
+			{ "faction": "Hlaalu" }
+		] },
+		{ "model": "T_B_De_HeadFemTR_38", "rules": [
+			{ "faction": "Hlaalu" }
+		] },
+		{ "model": "T_B_De_HeadFemTR_42", "rules": [
+			{ "faction": "Hlaalu" }
+		] },
+		{ "model": "T_B_De_HeadFemTR_50", "rules": [
+			{ "faction": "Temple" },
+			{ "faction": "T_Mw_HouseIndoril" }
 		] }
 	]
 }
