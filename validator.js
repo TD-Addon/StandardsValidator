@@ -5,6 +5,7 @@ const fs = require('fs');
 const validators = [
 	require('./lib/autocalc'),
 	require('./lib/corpse'),
+	require('./lib/dialogue'),
 	require('./lib/ids'),
 	require('./lib/npc'),
 	require('./lib/npcscripts'),

@@ -922,7 +922,6 @@ in_moldboulder00_uni
 in_moldboulder01_uni
 in_moldrock05_uni
 in_moldrock06_uni
-in_sotha_mon_mach
 in_sotha_sil00
 in_strong_vaultdoor_tela_unique
 in_thirsk_archpiece01
