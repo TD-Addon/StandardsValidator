@@ -10,6 +10,7 @@ const validators = [
 	require('./lib/npc'),
 	require('./lib/npcscripts'),
 	require('./lib/persistent'),
+	require('./lib/soundgen'),
 	require('./lib/travel'),
 	require('./lib/unicode'),
 	require('./lib/uniques')
@@ -36,3 +37,4 @@ records.forEach(record => {
 	}
 	validators.forEach(validator => validator.onRecord(record, currentTopic, mode));
 });
+validators.forEach(validator => validator.onEnd?.());
