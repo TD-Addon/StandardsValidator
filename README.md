@@ -20,7 +20,7 @@ There is no easy way to determine what's a dungeon and what's a town, so this ch
 Such as a chest owned by a friendly NPC standing by the side of the road. Or a container plant in a public square.
 It will also report cases where ownership has been applied overzealously.
 Some of these, like unnamed activators, don't matter or only matter in unlikely circumstances.
-It would be best to fix these anyway, of only to reduce file size.
+It would be best to fix these anyway, if only to reduce file size.
 
 ### Usage
 Because the check requires knowledge of object types, it needs more data to work with than just the file that needs checking.
