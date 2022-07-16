@@ -10,6 +10,9 @@
 			{ "class": "Champion" },
 			{ "faction": "Ashlanders" }
 		],
+		"Dres": [
+			{ "faction": "T_Mw_HouseDres" }
+		],
 		"Hlaalu": [
 			{ "faction": "Hlaalu" }
 		],
@@ -49,7 +52,7 @@
 			{ "id": "TR_m1_Walks-Thru-Shadow" }
 		] },
 		{ "model": "T_B_Bre_UNI_HeadArnieTR", "rules": [
-			{ "id": "TR_TBD" }
+			{ "id": "TR_m4_alomon_juspethe" }
 		] },
 		{ "model": "T_B_De_HeadMaleTR_49", "ruleSet": "Temple" },
 		{ "model": "T_B_De_HeadMaleTR_51", "ruleSet": "Temple" },
@@ -190,7 +193,10 @@
 				"Morag Tong", "Hands of Almalexia"
 			] } }
 		] },
-		{ "model": "T_B_De_HairMaleTR_08", "ruleSet": "Ashlander M" },
+		{ "model": "T_B_De_HairMaleTR_06", "ruleSet": "Dres" },
+		{ "model": "T_B_De_HairMaleTR_07", "ruleSet": "Dres" },
+		{ "model": "T_B_De_HairMaleTR_08", "ruleSet": "Dres" },
+		{ "model": "T_B_De_HairMaleTR_09", "ruleSet": "Indoril" },
 		{ "model": "T_B_De_HairMaleTR_31", "rules": [
 			{ "class": "Noble" }
 		] },
@@ -201,6 +207,9 @@
 		{ "model": "T_B_De_HairMaleTR_39", "ruleSet": "Ashlander M" },
 		{ "model": "T_B_De_HairMaleTR_40", "ruleSet": "Ashlander M" },
 		{ "model": "T_B_De_HairMaleTR_41", "ruleSet": "Ashlander M" },
+		{ "model": "T_B_Bre_UNI_HairArnieTR", "rules": [
+			{ "id": "TR_m4_alomon_juspethe" }
+		] },
 		{ "model": "T_B_De_UNI_HairAlandroSulTR", "rules": [
 			{ "id": "TR_TBD" }
 		] },
