@@ -727,6 +727,7 @@ ebony_shield_auriel_x
 ebony_staff_tges
 ebony_staff_trebonius
 ember hand
+ember_hand
 equity_ring_en_unique
 erur_dan_cuirass_unique
 erur_dan_spear_unique

@@ -94,7 +94,7 @@
 			{ "id": "TR_m3_Dels Sur-Enaren" }
 		] },
 		{ "model": "T_B_De_UNI_HeadOEGovernorSonTR", "rules": [
-			{ "id": "TR_m3_Lloras Nelvel" }
+			{ "id": "TR_m3_Potemus Marolus" }
 		] },
 		{ "model": "T_B_De_UNI_HeadOEGovernorWifeTR", "rules": [
 			{ "id": "TR_m3_Llethe Marolus" }
@@ -217,13 +217,13 @@
 			{ "id": "TR_m2_Alvu Sareleth" }
 		] },
 		{ "model": "T_B_De_UNI_HairOEGovernorSonTR", "rules": [
-			{ "id": "TR_m3_Lloras Nelvel" }
+			{ "id": "TR_m3_Potemus Marolus" }
 		] },
 		{ "model": "T_B_De_UNI_HairOrlukhTR", "rules": [
 			{ "id": "TR_m4_varos" }
 		] },
 		{ "model": "T_B_Imp_UNI_HairOEGovernorTR", "rules": [
-			{ "id": "TR_m3_Casik" }
+			{ "id": "TR_m3_Aramius Marolus" }
 		] },
 		{ "model": "T_B_Imp_UNI_HairCountessAnvilPC", "rules": [
 			{ "id": "PC_i2-Anv_CountessAnv" }
