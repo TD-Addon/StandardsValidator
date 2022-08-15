@@ -1158,7 +1158,6 @@ sarandas_ring_2
 sarandas_shirt_2
 sarandas_shoes_2
 sc_chappy_sniper_test
-sc_chridittepanacea
 sc_fiercelyroastthyenemy_unique
 sc_hiddenkiller
 sc_jeleen
