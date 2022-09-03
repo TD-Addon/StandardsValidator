@@ -22,8 +22,10 @@
 		"Temple": [
 			{ "faction": "Temple" },
 			{ "faction": "T_Mw_HouseIndoril" },
+			{ "faction": "Redoran" },
 			{ "faction": "Hands of Almalexia" },
-			{ "class": "Pilgrim", "faction": { "not": ["Ashlanders", "Imperial Cult"] } }
+			{ "class": "Pilgrim", "faction": { "not": ["Ashlanders", "Imperial Cult"] } },
+			{ "class": "Monk", "faction": { "not": ["Ashlanders", "Imperial Cult"] } }
 		]
 	},
 	"head": [
