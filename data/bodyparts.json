@@ -102,7 +102,7 @@
 			{ "id": "TR_m3_Llethe Marolus" }
 		] },
 		{ "model": "T_B_De_UNI_HeadOrlukhTR", "rules": [
-			{ "id": "TR_m4_varos" }
+			{ "id": "UNUSED TR_m4_varos" }
 		] },
 		{ "model": "T_B_De_UNI_HeadRathraTR", "rules": [
 			{ "id": "TR_m1_T_Rathra" }
