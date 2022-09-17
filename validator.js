@@ -11,6 +11,7 @@ const validators = [
 	require('./lib/ids'),
 	require('./lib/npc'),
 	require('./lib/npcscripts'),
+	require('./lib/orphans'),
 	require('./lib/persistent'),
 	require('./lib/soundgen'),
 	require('./lib/travel'),
