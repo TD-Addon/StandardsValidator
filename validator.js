@@ -27,6 +27,7 @@ const validators = [
 }, {
 	onRecord: [],
 	onCellRef: [],
+	onLevelled: [],
 	onEnd: []
 });
 
@@ -43,6 +44,13 @@ function getJson() {
 	throw new Error('Usage: node validator.js [input.json] ([mode])');
 }
 
+function handleLevelled(record, key, mode) {
+	record[key]?.forEach((entry, i) => {
+		const id = entry[0].toLowerCase();
+		validators.onLevelled.forEach(validator => validator.onLevelled(record, entry, id, i, mode));
+	});
+}
+
 const [records, mode] = getJson();
 let currentTopic = null;
 records.forEach(record => {
@@ -55,6 +63,10 @@ records.forEach(record => {
 			const id = reference.id.toLowerCase();
 			validators.onCellRef.forEach(validator => validator.onCellRef(record, reference, id, i, mode));
 		});
+	} else if(record.type === 'LevelledItem') {
+		handleLevelled(record, 'items', mode);
+	} else if(record.type === 'LevelledCreature') {
+		handleLevelled(record, 'creatures', mode);
 	}
 });
 validators.onEnd.forEach(validator => validator.onEnd());
