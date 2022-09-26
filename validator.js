@@ -29,6 +29,7 @@ const validators = [
 	onCellRef: [],
 	onLevelled: [],
 	onInventory: [],
+	onInfo: [],
 	onEnd: []
 });
 
@@ -55,10 +56,7 @@ function handleLevelled(record, key, mode) {
 const [records, mode] = getJson();
 let currentTopic = null;
 records.forEach(record => {
-	if(record.type === 'Dialogue') {
-		currentTopic = record;
-	}
-	validators.onRecord.forEach(validator => validator.onRecord(record, currentTopic, mode));
+	validators.onRecord.forEach(validator => validator.onRecord(record, mode));
 	if(record.type === 'Cell') {
 		record.references?.forEach((reference, i) => {
 			const id = reference.id.toLowerCase();
@@ -73,6 +71,10 @@ records.forEach(record => {
 			const id = entry[1].toLowerCase();
 			validators.onInventory.forEach(validator => validator.onInventory(record, entry, id, i, mode));
 		});
+	} else if(record.type === 'Dialogue') {
+		currentTopic = record;
+	} else if(record.type === 'Info') {
+		validators.onInfo.forEach(validator => validator.onInfo(record, currentTopic, mode));
 	}
 });
 validators.onEnd.forEach(validator => validator.onEnd());
