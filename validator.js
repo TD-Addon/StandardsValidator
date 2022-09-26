@@ -28,6 +28,7 @@ const validators = [
 	onRecord: [],
 	onCellRef: [],
 	onLevelled: [],
+	onInventory: [],
 	onEnd: []
 });
 
@@ -67,6 +68,11 @@ records.forEach(record => {
 		handleLevelled(record, 'items', mode);
 	} else if(record.type === 'LevelledCreature') {
 		handleLevelled(record, 'creatures', mode);
+	} else if(['Container', 'Creature', 'Npc'].includes(record.type)) {
+		record.inventory?.forEach((entry, i) => {
+			const id = entry[1].toLowerCase();
+			validators.onInventory.forEach(validator => validator.onInventory(record, entry, id, i, mode));
+		});
 	}
 });
 validators.onEnd.forEach(validator => validator.onEnd());
