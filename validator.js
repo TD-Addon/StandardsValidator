@@ -17,7 +17,18 @@ const validators = [
 	require('./lib/travel'),
 	require('./lib/unicode'),
 	require('./lib/uniques')
-];
+].reduce((all, validator) => {
+	for(const key in all) {
+		if(key in validator) {
+			all[key].push(validator);
+		}
+	}
+	return all;
+}, {
+	onRecord: [],
+	onCellRef: [],
+	onEnd: []
+});
 
 const MODES = ['PT', 'TR', 'TD'];
 
@@ -38,6 +49,12 @@ records.forEach(record => {
 	if(record.type === 'Dialogue') {
 		currentTopic = record;
 	}
-	validators.forEach(validator => validator.onRecord(record, currentTopic, mode));
+	validators.onRecord.forEach(validator => validator.onRecord(record, currentTopic, mode));
+	if(record.type === 'Cell') {
+		record.references?.forEach((reference, i) => {
+			const id = reference.id.toLowerCase();
+			validators.onCellRef.forEach(validator => validator.onCellRef(record, reference, id, i, mode));
+		});
+	}
 });
-validators.forEach(validator => validator.onEnd?.());
+validators.onEnd.forEach(validator => validator.onEnd());
