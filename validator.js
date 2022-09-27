@@ -30,6 +30,7 @@ const validators = [
 	onLevelled: [],
 	onInventory: [],
 	onInfo: [],
+	onScriptLine: [],
 	onEnd: []
 });
 
@@ -51,6 +52,28 @@ function handleLevelled(record, key, mode) {
 		const id = entry[0].toLowerCase();
 		validators.onLevelled.forEach(validator => validator.onLevelled(record, entry, id, i, mode));
 	});
+}
+
+function handleScript(record, key, mode, topic) {
+	const script = record[key];
+	if(script) {
+		const lines = script.trim().split('\n');
+		lines.forEach(line => {
+			const commentStart = line.indexOf(';');
+			let text, comment;
+			if(commentStart >= 0) {
+				text = line.slice(0, commentStart);
+				comment = line.slice(commentStart + 1).trim();
+			} else {
+				text = line;
+				comment = '';
+			}
+			text = text.trim().toLowerCase();
+			if(text || comment) {
+				validators.onScriptLine.forEach(validator => validator.onScriptLine(record, text, comment, topic, mode));
+			}
+		});
+	}
 }
 
 const [records, mode] = getJson();
@@ -75,6 +98,9 @@ records.forEach(record => {
 		currentTopic = record;
 	} else if(record.type === 'Info') {
 		validators.onInfo.forEach(validator => validator.onInfo(record, currentTopic, mode));
+		handleScript(record, 'result', mode, currentTopic);
+	} else if(record.type === 'Script') {
+		handleScript(record, 'text', mode);
 	}
 });
 validators.onEnd.forEach(validator => validator.onEnd());
