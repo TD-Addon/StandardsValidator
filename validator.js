@@ -9,6 +9,7 @@ const validators = [
 	require('./lib/dialogue'),
 	require('./lib/duplicates'),
 	require('./lib/ids'),
+	require('./lib/keys'),
 	require('./lib/npc'),
 	require('./lib/npcscripts'),
 	require('./lib/orphans'),
