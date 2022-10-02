@@ -15,6 +15,7 @@ const validators = [
 	require('./lib/orphans'),
 	require('./lib/persistent'),
 	require('./lib/soundgen'),
+	require('./lib/supplies'),
 	require('./lib/todo'),
 	require('./lib/travel'),
 	require('./lib/unicode'),
