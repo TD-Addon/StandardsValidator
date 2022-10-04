@@ -219,6 +219,7 @@ bk_letterfromgadayn
 bk_letterfromjzhirr
 bk_letterfromllaalam
 bk_letterfromllaalam2
+bk_lustyargonianmaid
 bk_necrojournal
 bk_notefrombashuk
 bk_notefrombugrol
