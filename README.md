@@ -27,3 +27,6 @@ Because the check requires knowledge of object types, it needs more data to work
 As such, every dependency of the checked file must be passed as an argument. The last file in the list will be checked.
 
 `node ownership.js Morrowind.json Tribunal.json Bloodmoon.json Tamriel_Data.json TD_Addon.json file.json`
+
+## Warnings
+And explanation of the various messages reported by the validators can be found in [WARNINGS](./WARNINGS.md).
