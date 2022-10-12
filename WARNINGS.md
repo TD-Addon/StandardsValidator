@@ -31,6 +31,9 @@ See [this bug](https://github.com/TD-Addon/TD_Addon/issues/110).
 This object contains or creates an object that is supposed to be unique to the vanilla game.
 This includes things like quest rewards and vendor chests.
 
+## Has a fog density of 0
+This can cause [graphical issues](https://en.uesp.net/wiki/Morrowind_Mod:Fogbug).
+
 # References
 
 ## Persistent object used multiple times
@@ -132,7 +135,7 @@ Common in certain languages, but not in English.
 
 # Dialogue
 
-## Has an unnecessary (Not) class/faction/race/sex filter
+## Has an unnecessary (Not) class/faction/race/sex/id filter
 This line that is assigned to a specific actor has a filter that checks something about that actor that cannot ever change.
 
 ## Has a NoLore/T_Local_NoLore/T_Local_Khajiit/T_Local_NPC filter

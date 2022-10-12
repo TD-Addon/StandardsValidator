@@ -4,6 +4,7 @@ const process = require('process');
 const fs = require('fs');
 const validators = [
 	require('./lib/autocalc'),
+	require('./lib/cells'),
 	require('./lib/classes'),
 	require('./lib/corpse'),
 	require('./lib/dialogue'),
@@ -83,7 +84,8 @@ function handleScript(record, key, mode, topic) {
 const [records, mode] = getJson();
 let currentTopic = null;
 records.forEach(record => {
-	validators.onRecord.forEach(validator => validator.onRecord(record, mode));
+	const recordId = record.id?.toLowerCase();
+	validators.onRecord.forEach(validator => validator.onRecord(record, mode, recordId));
 	if(record.type === 'Cell') {
 		record.references?.forEach((reference, i) => {
 			const id = reference.id.toLowerCase();
