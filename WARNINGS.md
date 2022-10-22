@@ -34,6 +34,12 @@ This includes things like quest rewards and vendor chests.
 ## Has a fog density of 0
 This can cause [graphical issues](https://en.uesp.net/wiki/Morrowind_Mod:Fogbug).
 
+## Is not calculated for all levels
+This levelled list does not have `Calculate from all levels <= PC's level` checked, despite containing entries of different levels.
+Any entries in this list set to spawn at levels below the entries with the highest level smaller than or equal to the player's level will not appear.
+For example, if a list contains `1 Rat` and `2 Cliff Racer`, it will never spawn any rats when the player's level is higher than 1.
+(It will still spawn cliff racers at levels higher than 2.)
+
 # References
 
 ## Persistent object used multiple times
