@@ -40,6 +40,9 @@ Any entries in this list set to spawn at levels below the entries with the highe
 For example, if a list contains `1 Rat` and `2 Cliff Racer`, it will never spawn any rats when the player's level is higher than 1.
 (It will still spawn cliff racers at levels higher than 2.)
 
+## Which will not resolve to anything at that level
+Levelled list resolution is recursive. If one list contains another, the conditions for both lists must be met before anything is spawned.
+
 # References
 
 ## Persistent object used multiple times
