@@ -30,3 +30,8 @@ As such, every dependency of the checked file must be passed as an argument. The
 
 ## Warnings
 And explanation of the various messages reported by the validators can be found in [WARNINGS](./WARNINGS.md).
+
+## Out of bounds fixer
+To automatically send cell references to the correct exterior cell:
+
+`node oobfixer.js inputfile.json outputfile.json`
