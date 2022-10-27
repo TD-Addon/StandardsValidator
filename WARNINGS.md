@@ -52,6 +52,9 @@ There should only ever be one instance of these objects. If an object is persist
 ## Duplicate references
 Having two of the same object occupying the same position is redundant. The warning contains the position of both references in case the distance threshold is raised.
 
+## Contains out of bounds reference
+This exterior cell contains a reference that, by its position, should be part of another cell.
+
 # Supply chests
 
 ## Not available to all ranks
