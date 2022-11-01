@@ -112,6 +112,15 @@ This NPC barters but does not have any gold to buy items with.
 Certain classes have voice lines and greetings that imply they can transport the player.
 If an NPC with such a class does not offer travel services, they should be assigned another class.
 
+## Does not have a reply to the destination topic
+Travel NPCs should be able to tell you about where they can take you.
+
+## Offers travel to X but there is no return travel there
+This travel connection is a one-way trip.
+
+## Offers X travel to Y but there is no corresponding return travel
+One of these NPCs likely has the wrong class. A guild guide and shipmaster should not be on the same network even if they share a cell, for example.
+
 # Orphaned objects
 These are probably leftovers from previous releases. Of course, they might also be intended for an unfinished or unmerged quest.
 
