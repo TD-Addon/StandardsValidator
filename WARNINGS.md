@@ -121,6 +121,9 @@ This travel connection is a one-way trip.
 ## Offers X travel to Y but there is no corresponding return travel
 One of these NPCs likely has the wrong class. A guild guide and shipmaster should not be on the same network even if they share a cell, for example.
 
+## Does not mention in their destination response
+This NPC has a response to the destination topic that doesn't mention every cell name they offer travel to.
+
 # Orphaned objects
 These are probably leftovers from previous releases. Of course, they might also be intended for an unfinished or unmerged quest.
 
