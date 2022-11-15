@@ -43,6 +43,12 @@ For example, if a list contains `1 Rat` and `2 Cliff Racer`, it will never spawn
 ## Which will not resolve to anything at that level
 Levelled list resolution is recursive. If one list contains another, the conditions for both lists must be met before anything is spawned.
 
+## Has a missing icon/mesh/name
+This field should exist.
+
+## Has invalid icon/mesh
+The path is missing a `.` and is therefore probably not correct.
+
 # References
 
 ## Persistent object used multiple times
