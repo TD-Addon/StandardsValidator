@@ -1,5 +1,6 @@
 'use strict';
 
+const process = require('process');
 const fs = require('fs');
 const { getCellGrid, getCellName, isInterior } = require('./lib/util');
 
@@ -8,7 +9,8 @@ function getJson() {
 	if(inputFile && outputFile) {
 		return [JSON.parse(fs.readFileSync(inputFile, 'utf-8')), outputFile];
 	}
-	throw new Error('Usage: node oobfixer.js [input.json] [output.json]');
+	console.error('Usage: node oobfixer.js [input.json] [output.json]');
+	process.exit(1);
 }
 
 const cells = {};

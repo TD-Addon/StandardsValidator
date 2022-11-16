@@ -44,14 +44,19 @@ const validators = [
 const MODES = ['PT', 'TR', 'TD'];
 
 function getJson() {
-	const [,, inputFile, mode] = process.argv;
-	if(inputFile) {
-		if(mode && !MODES.includes(mode)) {
-			throw new Error(`Unknown mode ${mode} expected one of ${MODES.join(', ')}`);
+	try {
+		const [,, inputFile, mode] = process.argv;
+		if(inputFile) {
+			if(mode && !MODES.includes(mode)) {
+				throw new Error(`Unknown mode ${mode} expected one of ${MODES.join(', ')}`);
+			}
+			return [JSON.parse(fs.readFileSync(inputFile, 'utf-8')), mode];
 		}
-		return [JSON.parse(fs.readFileSync(inputFile, 'utf-8')), mode];
+		throw new Error('Usage: node validator.js [input.json] ([mode])');
+	} catch(err) {
+		console.error(err.message);
+		process.exit(1);
 	}
-	throw new Error('Usage: node validator.js [input.json] ([mode])');
 }
 
 function handleLevelled(record, key, mode) {

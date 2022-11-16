@@ -14,24 +14,22 @@ This project requires [Node.js](https://nodejs.org/en/) to run and expects input
 Where [mode] is optionally one of PT/TR/TD depending on which specific validation rules you need.
 3. Determine if any of the reported issues need to be fixed and fix them
 
-## Ownership checking
-Items in dungeons should not have owners. Items in towns should.
-There is no easy way to determine what's a dungeon and what's a town, so this check is liable to produce a number of false positives.
-Such as a chest owned by a friendly NPC standing by the side of the road. Or a container plant in a public square.
-It will also report cases where ownership has been applied overzealously.
-Some of these, like unnamed activators, don't matter or only matter in unlikely circumstances.
-It would be best to fix these anyway, if only to reduce file size.
-
-### Usage
-Because the check requires knowledge of object types, it needs more data to work with than just the file that needs checking.
+# Extended Validator
+Some issues require more context to detect. More specifically, they require knowledge of your plugin's master files.
 As such, every dependency of the checked file must be passed as an argument. The last file in the list will be checked.
 
-`node ownership.js Morrowind.json Tribunal.json Bloodmoon.json Tamriel_Data.json TD_Addon.json file.json`
+`node extendedvalidator.js Morrowind.json Tribunal.json Bloodmoon.json Tamriel_Data.json TD_Addon.json file.json`
 
-## Warnings
-And explanation of the various messages reported by the validators can be found in [WARNINGS](./WARNINGS.md).
+# Warnings
+An explanation of the various messages reported by the validators can be found in [WARNINGS](./WARNINGS.md).
 
-## Out of bounds fixer
+# Out of bounds fixer
 To automatically send cell references to the correct exterior cell:
 
 `node oobfixer.js inputfile.json outputfile.json`
+
+# Name similarity
+This check computes the Levenshtein distance between NPC names.
+It requires a dependency so `npm ci` must be used to install it before use.
+
+`node names.js Morrowind.json Tribunal.json Bloodmoon.json Tamriel_Data.json TD_Addon.json file.json`
