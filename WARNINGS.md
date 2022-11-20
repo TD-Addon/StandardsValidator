@@ -194,6 +194,8 @@ If this line is meant to override a vanilla line that does not have a NoLore fil
 ### Has no text
 So why does it exist?
 
+If this line was intentionally left blank for result scripting purposes, add `SV: intentionally left blank` to the result script.
+
 # The extended validator (extendedvalidator.js)
 
 ## Ownership checks
