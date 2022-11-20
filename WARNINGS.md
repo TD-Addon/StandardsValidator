@@ -194,7 +194,13 @@ If this line is meant to override a vanilla line that does not have a NoLore fil
 ### Has no text
 So why does it exist?
 
-If this line was intentionally left blank for result scripting purposes, add `SV: intentionally left blank` to the result script.
+If this line was intentionally left blank for result scripting purposes, add `;SV: intentionally left blank` to the result script.
+
+## Scripts
+
+### Contains line short/long/float X
+This line declares a local variable that shares its name with a built-in function, most commonly `OnActivate`.
+This can break other scripts attempting to use that function if they were compiled later.
 
 # The extended validator (extendedvalidator.js)
 
