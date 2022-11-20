@@ -116,4 +116,4 @@ records.forEach(record => {
 		handleScript(record, 'text', mode);
 	}
 });
-validators.onEnd.forEach(validator => validator.onEnd());
+validators.onEnd.forEach(validator => validator.onEnd(mode));

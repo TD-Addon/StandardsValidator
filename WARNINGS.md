@@ -83,6 +83,9 @@ The script this NPC uses is not defined in this file and does not start with `T_
 ### Uses script which does not define
 The script this NPC uses is missing one or more required local variables.
 
+### Defines T_Local_Khajiit but is not used by any khajiit
+The script is only applied to non-khajiit NPCs and therefore does not require this local variable.
+
 ### Has class X, which should be Y
 This NPC has a class that is not suitable for use in this province.
 
