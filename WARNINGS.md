@@ -63,6 +63,9 @@ Having two of the same object occupying the same position is redundant. The warn
 ### Contains out of bounds reference
 This exterior cell contains a reference that, by its position, should be part of another cell.
 
+### Contains broken reference
+There is something wrong with this object and it should not be used.
+
 ## Supply chests
 
 ### Not available to all ranks
