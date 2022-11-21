@@ -102,6 +102,9 @@ This NPC should be using the asset designed for it.
 ### Is using head/hair
 This head or hair is inappropriate for use by this NPC; usually for cultural reasons.
 
+### Reports crimes despite having >= 70 fight
+This NPC is likely to be hostile, but has an alarm of >= 100, meaning the player can get a bounty fighting them.
+
 ## Keys
 A misc item is a key if it has the key flag. This is a property of the record and determines if it can be sold to merchants and detected by Detect Key.
 
