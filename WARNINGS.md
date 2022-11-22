@@ -114,6 +114,14 @@ If the key record is not defined in this file, it might not have been flagged as
 ### Is not a key
 This misc item has `key` in its ID, but is not flagged as a key.
 
+## Books
+
+### Contains invalid HTML opening/closing tag
+Morrowind only supports &lt;div&gt; &lt;font&gt; &lt;br&gt; &lt;p&gt; &lt;img&gt; &lt;b&gt; any other tags should just be removed.
+
+### Contains invalid IMG SRC
+Book art paths need to use `\` not `/` to work from BSAs in Morrowind.exe.
+
 ## Services
 
 ### Buys magic items but does not have a barter menu

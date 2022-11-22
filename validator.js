@@ -4,6 +4,7 @@ const process = require('process');
 const fs = require('fs');
 const validators = [
 	require('./lib/autocalc'),
+	require('./lib/books'),
 	require('./lib/cells'),
 	require('./lib/classes'),
 	require('./lib/corpse'),
