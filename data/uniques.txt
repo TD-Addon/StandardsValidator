@@ -540,6 +540,7 @@ daedric dagger_mtas
 daedric wakizashi_hhst
 daedric warhammer_ttgd
 daedric warhammer_ttgd_x
+daedric_crescent_unique
 daedric_cuirass_htab
 daedric_greaves_htab
 daedric_scourge_unique
