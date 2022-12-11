@@ -158,7 +158,10 @@ akula door a
 akula door b
 akula_door00
 akula_door01
+alit_blighted
 alma talker
+almalexia
+almalexia_warrior
 amulet of ashamanu (unique)
 amulet of infectious charm
 amulet of shadows
@@ -173,7 +176,12 @@ amulet_salandas
 amulet_skink_unique
 amulet_unity_uniq
 amuletfleshmadewhole_uniq
+ancestor_ghost_summon
+ancestor_ghost_vabdas
 ancestor_ghost_variner
+ancestor_guardian_fgdd
+ancestor_guardian_heler
+ancestor_mg_wisewoman
 ancestral_wisdom_en_uniq
 ane_teria_mace_unique
 arkn_door00
@@ -183,7 +191,20 @@ aryongloveleft
 aryongloveleft_en_unique
 aryongloveright
 aryongloveright_en_unique
+ash_ghoul_fgr
+ash_ghoul_ganel
+ash_ghoul_mulyn
+ash_zombie_fgaz
+atronach_flame_az
+atronach_flame_summon
+atronach_flame_ttmk
+atronach_frost_bm
 atronach_frost_gwai_uni
+atronach_frost_summon
+atronach_frost_ttmk
+atronach_shock_summon
+atronach_storm_az
+atronach_storm_ttmk
 augustusamulet_en_unique
 axe_queen_of_bats_unique
 azura
@@ -245,6 +266,7 @@ bm nordic silver axe_spurius
 bm nordic silver longsword_cft
 bm nordic_longsword_tracker
 bm silver dagger wolfender
+bm skeleton champion gr
 bm wolf helmet_heartfang
 bm_aesliipforcefield
 bm_amulspd1
@@ -253,6 +275,8 @@ bm_arrow_riekling_uni
 bm_axe_heartfang_unique
 bm_bear_be_unique
 bm_bear_black_claw_uniq
+bm_bear_black_fat
+bm_bear_black_summon
 bm_bear_snow_unique
 bm_bear_spr_unique
 bm_bearheart_unique
@@ -266,6 +290,7 @@ bm_chest_mirisa
 bm_chest_piratetreasure
 bm_chest_skaal_potions
 bm_dagger_wolfgiver
+bm_draugr_bloodskal
 bm_ebony_staff_necro
 bm_ebonyarrow_s
 bm_ebonylongsword_s
@@ -274,12 +299,20 @@ bm_ex_iceberg_collapsed
 bm_ex_karstaag_doorclosed
 bm_ex_karstaag_dooropen
 bm_firepit_uni
+bm_frost_giant
 bm_greedyman
 bm_griss_skull
+bm_hircine
+bm_hircine2
+bm_hircine_huntaspect
+bm_hircine_spdaspect
+bm_hircine_straspect
+bm_horker_dead
 bm_horker_swim_unique
 bm_hunter_battleaxe_unique
 bm_hunterspear_unique
 bm_ic_door_pelt_wolf
+bm_ice_troll_sun
 bm_ice_wall
 bm_icetroll_fg_uni
 bm_ka_door_dark_sg
@@ -303,6 +336,7 @@ bm_riekling_be_unique2
 bm_riekling_be_unique3
 bm_riekling_be_unique4
 bm_riekling_be_unique5
+bm_riekling_boarmaster
 bm_riekling_dulk_unique
 bm_riekling_krish_uniqu
 bm_riekling_st_unique
@@ -313,6 +347,13 @@ bm_ring_view
 bm_saber_seasplitter
 bm_scroll_chest
 bm_seeds_unique
+bm_sk_champ_bloodskal01
+bm_sk_champ_bloodskal02
+bm_skeleton_pirate_capt
+bm_spriggan_co1
+bm_spriggan_co2
+bm_spriggan_co3
+bm_spriggan_co4
 bm_spriggan_st_unique
 bm_udyrfrykte
 bm_udyrfrykte_heart
@@ -320,12 +361,23 @@ bm_waterlife_unique1
 bm_wereeffect
 bm_wereeffect2
 bm_wereeffect3
+bm_werewolf_default
+bm_werewolf_ritual
 bm_windbag
+bm_wolf_bone_summon
+bm_wolf_caenlorn1
+bm_wolf_caenlorn2
+bm_wolf_caenlorn3
+bm_wolf_grey_summon
+bm_wolf_hroldar
 bm_wolf_snow_unique
 bonebiter_bow_unique
+bonelord_summon
 bonemold_founders_helm
 bonemold_gah-julan_hhda
 bonemold_tshield_hrlb
+bonewalker_greater_summ
+bonewalker_summon
 boots of blinding speed[unique]
 boots of blinding speed_x
 boots_apostle_unique
@@ -336,6 +388,26 @@ caius_ring
 caius_shirt
 caryarel_barrel
 centurion_mudan_unique
+centurion_shock_baladas
+centurion_sphere_bbot1
+centurion_sphere_bbot5
+centurion_sphere_bbot6
+centurion_sphere_hts2
+centurion_sphere_nchur
+centurion_sphere_summon
+centurion_spider_bbot1
+centurion_spider_bbot3
+centurion_spider_bbot7
+centurion_spider_nchur
+centurion_spider_tga1
+centurion_spider_tga2
+centurion_steam_bbot2
+centurion_steam_bbot4
+centurion_steam_bbot8
+centurion_steam_c_l
+centurion_steam_exhibit
+centurion_steam_hts
+centurion_steam_nchur
 cephalopod_helm_htnk
 chargen barrel fatigue
 chargen boat
@@ -405,11 +477,13 @@ chimney_smoke_small_velas4
 chimney_smoke_small_velas5
 chimney_smoke_small_velas6
 cl_ringofregeneration
+clannfear_summon
 claymore_agustas
 claymore_chrysamere_unique
 claymore_chrysamere_unique_x
 claymore_iceblade_unique
 claymore_iceblade_unique_x
+cliff racer_blighted
 cloudcleaver_unique
 colony_torch_1
 colony_torch_2
@@ -502,6 +576,18 @@ contain_corpse_teran
 contain_dead_mehrunes00
 contain_linus_iulus
 contain_releth_corpse00
+corprus_lame_fyr01
+corprus_lame_fyr02
+corprus_lame_fyr03
+corprus_lame_fyr04
+corprus_lame_morvayn
+corprus_stalker_berwen
+corprus_stalker_danar
+corprus_stalker_fgcs
+corprus_stalker_fyr01
+corprus_stalker_fyr02
+corprus_stalker_fyr03
+corprus_stalker_morvayn
 crate_01_anis seloth
 crate_01_anruin
 crate_01_arrille
@@ -546,12 +632,60 @@ daedric_greaves_htab
 daedric_scourge_unique
 daedric_special
 daedric_special01
+daedroth_az
+daedroth_baladas
+daedroth_fg_nchur
 daedroth_menta_unique
+daedroth_summon
 dagger_fang_unique
 dagger_fang_unique_x
+dagoth aladus
+dagoth araynys
+dagoth baler
+dagoth daynil
+dagoth delnus
+dagoth drals
+dagoth draven
+dagoth elam
+dagoth endus
+dagoth fals
+dagoth fandril
+dagoth felmis
+dagoth fervas
+dagoth fovon
+dagoth galmis
+dagoth garel
+dagoth gares
+dagoth gilvoth
+dagoth girer
+dagoth goral
+dagoth ienas
+dagoth irvyn
+dagoth malan
+dagoth mendras
+dagoth molos
+dagoth mulis
+dagoth muthes
+dagoth nilor
+dagoth odros
+dagoth ralas
+dagoth rather
+dagoth reler
+dagoth soler
+dagoth tanis
+dagoth tureynul
+dagoth ulen
 dagoth ur death sparkles
+dagoth uthol
+dagoth uvil
+dagoth vaner
+dagoth velos
+dagoth vemyn
 dagoth_door00
 dagoth_door01
+dagoth_hlevul
+dagoth_ur_1
+dagoth_ur_2
 dahrk mezalf
 dahrk_mezalf_en_unique
 darksun_shield_unique
@@ -683,9 +817,21 @@ door_sotha_imp_door
 dragonbone_cuirass_unique
 dragonbone_cuirass_unique_x
 drakespride_en_uniq
+draugr_aesliip
+draugr_co_3
+draugr_co_3_dead
+draugr_valbrandr
+dremora_gothren_guard1
+dremora_gothren_guard2
 dremora_lord_khash_uni
 dremora_special_fyr
+dremora_summon
+dremora_ttmg
+dremora_ttpc
 dreugh_cuirass_ttrm
+dreugh_koal
+dwarven ghost_jeanne_u
+dwarven ghost_radac
 dwarven halberd_soultrap
 dwarven mace_salandas
 dwarven war axe_redas
@@ -783,6 +929,10 @@ ex_gg_particles_01_bbot1
 ex_gg_particles_01_bbot2
 ex_gg_portcullis_01
 ex_gg_portcullis_02
+ex_grazelands_lev+0
+ex_grazelands_lev+2
+ex_grazelands_lev-1
+ex_grazelands_sleep
 ex_h_pcfort_exdoor_ 01
 ex_h_pcfort_exdoor_ 02
 ex_h_pcfort_exdoor_ 03
@@ -792,12 +942,20 @@ ex_mh_door_02_sadri
 ex_mh_pav_ladder_01
 ex_mh_sewer_trapdoor_sadri
 ex_mh_swr_trapdr_blkd
+ex_molagmar_lev+0
+ex_molagmar_lev+2
+ex_molagmar_lev-1
+ex_molagmar_sleep
 ex_nord_door_lair
 ex_nord_door_wolf
 ex_r_pcfort_d_01
 ex_r_pcfort_d_01-2
 ex_r_pcfort_d_01-3
 ex_r_pcfort_d_02
+ex_redmtn_all_lev+0
+ex_redmtn_all_lev+2
+ex_redmtn_all_lev-2
+ex_redmtn_all_sleep
 ex_redwall_post_unique
 ex_s_door_double_fixed
 ex_s_door_double_fixing
@@ -805,10 +963,23 @@ ex_s_door_double_gh
 ex_s_door_rigmor
 ex_s_door_rigmor2
 ex_s_fence_gate_uni
+ex_sheogorad_lev+0
+ex_sheogorad_lev+2
+ex_sheogorad_lev-1
+ex_sheogorad_sleep
+ex_shore_cliffracer_lev+0
+ex_shore_cliffracer_lev+2
 ex_t_door_01_pc_hold_a
 ex_t_door_01_pc_hold_b
 ex_t_door_02_pc_hold_a
 ex_t_door_02_pc_hold_b
+ex_westgash_lev+0
+ex_westgash_lev+2
+ex_westgash_lev-1
+ex_westgash_sleep
+ex_wild_rat_lev+0
+ex_wild_rat_lev+2
+ex_wild_rat_lev-2
 expensive_amulet_aeta
 expensive_amulet_delyna
 expensive_amulet_methas
@@ -831,6 +1002,14 @@ extravagant_robe_01_red
 extravagant_robe_02_elanande
 extravagant_rt_art_wild
 fab_cent_fight_watcher
+fabricant_hulkin_attack
+fabricant_hulking_attac
+fabricant_hulking_c
+fabricant_hulking_c_l
+fabricant_machine_1
+fabricant_summon
+fabricant_verm_attack
+fabricant_verminous_c
 fabricant_verminousdead
 fallguy_collision_unique
 fevela_dralor_chest
@@ -866,6 +1045,7 @@ furn_shrinedead_01
 furn_table_thirsk_over
 furn_table_thirsk_up
 fury
+gateway_haunt
 gauntlet_fists_l_unique
 gauntlet_fists_r_unique
 gauntlet_of_glory_left
@@ -875,7 +1055,15 @@ glass dagger_symmachus_unique
 glass dagger_symmachus_unique_x
 glass_dagger_enamor
 glenmoril_raven
+glenmoril_raven_cave
+goblin_officeruni
 goblin_shield_durgok_uni
+goblin_warchief1
+goblin_warchief2
+golden saint_staada
+golden saint_summon
+golden saint_velas1
+golden saint_velas2
 gravedigger
 greed
 guar_hrmudcrabnest
@@ -901,13 +1089,40 @@ hortatorring
 hortatorring_uniq
 hortatorrobe
 hortatorrobe_uniq
+hunger_audenian
+hunger_az_01
+hunger_az_02
+hunger_fghl
+hunger_summon
 icecap_unique
+imperfect
 imperial shortsword severio
 imperial_helm_frald_uniq
 in_akulakhan00
+in_cave_alit_lev+0
+in_cave_alit_lev+2
+in_cave_alit_lev-1
+in_cave_all_lev+0
+in_cave_all_lev+2
+in_cave_all_lev-1
+in_cave_kagouti_lev+0
+in_cave_kagouti_lev+2
+in_cave_kagouti_lev-1
+in_cave_nix_lev+0
+in_cave_nix_lev+2
+in_cave_nix_lev-1
 in_dagoth_bridge00
 in_db_door_oval_relvel
 in_dwrv_wall_nchuleftingth1
+in_egg_all_lev+0
+in_egg_all_lev+2
+in_egg_all_lev-1
+in_egg_kwama_blight_lev+0
+in_egg_kwama_blight_lev+2
+in_egg_kwama_blight_lev-1
+in_egg_scrib_lev+0
+in_egg_scrib_lev+2
+in_egg_scrib_lev-1
 in_hlaalu_door_uni
 in_m_sewer_drain_uni
 in_m_sewer_trapdoor_01_blkd
@@ -969,6 +1184,8 @@ iron dagger_telasero_unique
 iron_arrow_uniq_judgement
 jobasha_book_chest
 julielle_aumines_amulet
+kagouti_blighted
+kagouti_hrk
 karpal's friend
 katana_bluebrand_unique
 katana_goldbrand_unique
@@ -979,8 +1196,34 @@ key_nuncius
 key_nuncius2
 key_private quarters
 king's_oath_pc
+kwama forager blighted
+kwama forager_tb
+kwama queen_abaesen
+kwama queen_ahanibi
+kwama queen_akimaes
+kwama queen_eluba
+kwama queen_eretammus
+kwama queen_gnisis
+kwama queen_hairat
+kwama queen_hhem
+kwama queen_madas
+kwama queen_maesa
+kwama queen_matus
+kwama queen_mudan
+kwama queen_mudan_c
+kwama queen_panabanit
+kwama queen_sarimisun
+kwama queen_shuridan
+kwama queen_shuridan_c
+kwama queen_sinamusa
+kwama queen_zalkin
+kwama warrior blighted
+kwama warrior shurdan
+kwama worker blighted
 left_hand_of_zenithar
+lich_barilzar
 lich_profane_unique
+lich_relvel
 light_bar1_out_unique
 light_bar1_unique
 light_bar2_out_unique
@@ -1018,6 +1261,7 @@ lords_cuirass_unique_x
 lucan_scriptholder
 lucky_break
 lugrub's axe
+lustidrike
 mace of molag bal_unique
 mace of molag bal_unique_x
 mace of slurring_x
@@ -1075,15 +1319,21 @@ misc_uniq_egg_of_gold
 misc_wraithguard_no_equip
 mountain spirit
 mudan_door00
+mudcrab_hrmudcrabnest
 mudcrab_unique
 necromancers_amulet_uniq
 nerevarblade_01
 nerevarblade_01_flame
+netch_betty_ilgn
 netch_bull_dead
 netch_bull_dead_2
+netch_bull_ilgn
 netch_giant_unique
+nix-hound blighted
 nordic claymore_stormfang
 nuccius_ring
+ogrim titan_velas
+ogrim_az
 ordinator_mh_th_uni
 othril_ring
 p_cure_common_unique
@@ -1101,6 +1351,16 @@ puzzle canal force field
 puzzle canal glow
 pyroil_tar_unique
 racerbeak
+rat_blighted
+rat_cave_fgrh
+rat_cave_fgt
+rat_cave_hhte1
+rat_cave_hhte2
+rat_plague
+rat_plague_hall1
+rat_plague_hall1a
+rat_plague_hall2
+rat_rerlas
 rat_telvanni_unique
 rat_telvanni_unique_2
 redoran guard sarethi1
@@ -1167,8 +1427,16 @@ sc_lycanthropycure
 sc_rumornote_bm
 sc_summondaedroth_hto
 sc_witchnote
+scamp_creeper
+scamp_mg_apprentice
+scamp_summon
+scrib blighted
+scrib_rerlas
+scrib_vaba-amus
 septim ring
 shadow_shield
+shalk_blighted
+shalk_diseased_hram
 sheogorath's signet ring
 shield of the undaunted
 shoes_of_conviction
@@ -1196,7 +1464,10 @@ silver_staff_dawn_uniq
 silverdawn_en_uniq
 skeleton champ_sandas00
 skeleton champ_sandas10
+skeleton_aldredaynia
 skeleton_stahl_uni
+skeleton_vemynal
+slaughterfish_hr_sfavd
 sm_gateway chest
 smora_fara_door
 solvistapp
@@ -1265,6 +1536,7 @@ urn_ash_lyngas00_unique
 urn_ash_nan00_unique
 variner's ring
 veloth's judgement_unique
+vivec_god
 war_axe_airan_ammu
 warhammer_crusher_unique
 warhammer_crusher_unique_x
@@ -1278,7 +1550,12 @@ we_temreki
 widow vabdas chest
 widowmaker_unique
 wind of ahaz
+winged twilight_grunda_
+winged twilight_summon
 wolfwalkers
+worm lord
+wraith_sul_senipul
+yagrum bagarn
 zenithar's_warning
 zenithar's_wiles
 zenithar_frock
