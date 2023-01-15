@@ -29,7 +29,7 @@ To automatically send cell references to the correct exterior cell:
 `node oobfixer.js inputfile.json outputfile.json`
 
 # Name similarity
-This check computes the Levenshtein distance between NPC names.
+This check computes the Levenshtein distance between NPC names. It also checks if quest names are reused across different files.
 It requires a dependency so `npm ci` must be used to install it before use.
 
 `node names.js Morrowind.json Tribunal.json Bloodmoon.json Tamriel_Data.json TD_Addon.json file.json`

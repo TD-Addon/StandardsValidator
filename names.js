@@ -1,6 +1,14 @@
 'use strict';
 
-const validator = require('./lib/extended/names');
+const validators = [
+	require('./lib/extended/names'),
+	require('./lib/extended/quests')
+];
+
 const { runValidator } = require('./lib/extended/program');
 
-runValidator('names.js', validator);
+runValidator('names.js', {
+	onRecord(...args) {
+		validators.forEach(validator => validator.onRecord(...args));
+	}
+});
