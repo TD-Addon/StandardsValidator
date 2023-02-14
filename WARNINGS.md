@@ -219,6 +219,9 @@ If this line was intentionally left blank for result scripting purposes, add `;S
 This line declares a local variable that shares its name with a built-in function, most commonly `OnActivate`.
 This can break other scripts attempting to use that function if they were compiled later.
 
+### Uses Position instead of PositionCell
+This script uses the `Position` function which can cause issues in Morrowind.exe. `PositionCell` should be used instead.
+
 # The extended validator (extendedvalidator.js)
 
 ## Ownership checks
