@@ -122,6 +122,9 @@ Morrowind only supports &lt;div&gt; &lt;font&gt; &lt;br&gt; &lt;p&gt; &lt;img&gt
 ### Contains invalid IMG SRC
 Book art paths need to use `\` not `/` to work from BSAs in Morrowind.exe.
 
+### Contains invisible text
+Text not followed by a tag is not displayed in game. Every book should end in &lt;br&gt; to prevent this.
+
 ## Services
 
 ### Buys magic items but does not have a barter menu
