@@ -1,0 +1,18 @@
+{
+	"extended": {
+		"inhabitants": [
+			"T_ScriptHolder",
+			"T_Test_PC",
+			"T_Test_SHOTN",
+			"T_Test_TR",
+			"T_Test_Wolli"
+		],
+		"pathgrids": [
+			"T_ScriptHolder",
+			"T_Test_PC",
+			"T_Test_SHOTN",
+			"T_Test_TR",
+			"T_Test_Wolli"
+		]
+	}
+}
