@@ -185,6 +185,10 @@ A typo that should be fixed.
 ### Contains punctuation preceded by whitespace
 Common in certain languages, but not in English.
 
+### Contains an indefinite article followed by a PC variable
+`%PCName`, `%PCRace`, `%PCRank`, and `%PCClass` can be anything (although the latter two require 3rd party mods to be wholly unknowable)
+which means it's impossible to determine which indefinite article (a/an) to use. It is possible to do the latter two correctly (mods aside) but mistakes are common.
+
 ## Dialogue
 
 ### Has an unnecessary (Not) class/faction/race/sex/id filter
