@@ -1,6 +1,7 @@
 {
 	"cavern_spore00": "T_Mw_Flora_Bloatspore01",
+	"Ex_MH_Palace_Tower": "",
 	"in_velothismall_ramplong_01": "T_De_SetVeloth_I_RampLong_01",
-	"Gold_Dae_cursed_001": "",
+	"Gold_Dae_cursed_001": "T_Com_GoldCoinDae_01",
 	"Gold_Dae_cursed_005": "T_Com_GoldCoinDae_05"
 }
