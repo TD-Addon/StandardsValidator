@@ -229,6 +229,17 @@ This can break other scripts attempting to use that function if they were compil
 ### Uses Position instead of PositionCell
 This script uses the `Position` function which can cause issues in Morrowind.exe. `PositionCell` should be used instead.
 
+## Magic
+
+### Uses effect
+This magic effect should not be used. Either because it's Corprus related or for reasons of mod compatibility.
+
+### Uses effect without a magnitude
+This magic effect needs a magnitude to be useful. Might be fine if the spell is used for its visual effect.
+
+### Uses effect with duration 1
+This magic effect needs a duration to be useful. Might be fine if the spell is only meant to be detected by a script.
+
 # The extended validator (extendedvalidator.js)
 
 ## Ownership checks
