@@ -66,6 +66,11 @@ This exterior cell contains a reference that, by its position, should be part of
 ### Contains broken reference
 There is something wrong with this object and it should not be used.
 
+### Contains black square despite having water
+Black squares are used to hide things on the minimap (as black blends in with the fog of war's color as well as the there-is-nothing-here-background's color.)
+This doesn't work very well in cells with water as those get a water texture for a background instead of the usual black.
+Which makes the black squares stand out like a sore thumb.
+
 ## Supply chests
 
 ### Not available to all ranks
