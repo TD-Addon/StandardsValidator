@@ -14,6 +14,7 @@ const validators = [
 	require('./lib/keys'),
 	require('./lib/levelled'),
 	require('./lib/magic'),
+	require('./lib/markers'),
 	require('./lib/missing'),
 	require('./lib/npc'),
 	require('./lib/orphans'),

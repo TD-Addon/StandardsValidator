@@ -71,6 +71,9 @@ Black squares are used to hide things on the minimap (as black blends in with th
 This doesn't work very well in cells with water as those get a water texture for a background instead of the usual black.
 Which makes the black squares stand out like a sore thumb.
 
+### Contains an unlinked PrisonMarker
+This cell contains a `PrisonMarker` that doesn't link to an interior cell. `PrisonMarker`s need to link to interiors containing `stolen_goods` to prevent crashes.
+
 ## Supply chests
 
 ### Not available to all ranks
