@@ -65,7 +65,7 @@
 			{ "id": "TR_m3_Ulvo Telvor" }
 		] },
 		{ "model": "T_B_De_UNI_HeadAlandroSulTR", "rules": [
-			{ "id": "TR_TBD" }
+			{ "id": "TR_NecMQ_Alandro Sul" }
 		] },
 		{ "model": "T_B_De_UNI_HeadArchmatronTR", "rules": [
 			{ "id": "TR_m2_Alvu Sareleth" }
@@ -213,7 +213,7 @@
 			{ "id": "TR_m4_alomon_juspethe" }
 		] },
 		{ "model": "T_B_De_UNI_HairAlandroSulTR", "rules": [
-			{ "id": "TR_TBD" }
+			{ "id": "TR_NecMQ_Alandro Sul" }
 		] },
 		{ "model": "T_B_De_UNI_HairArchmatronTR", "rules": [
 			{ "id": "TR_m2_Alvu Sareleth" }
