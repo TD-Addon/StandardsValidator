@@ -237,6 +237,18 @@ This can break other scripts attempting to use that function if they were compil
 ### Uses Position instead of PositionCell
 This script uses the `Position` function which can cause issues in Morrowind.exe. `PositionCell` should be used instead.
 
+### Contains non-standard khajiit check
+NPC scripts can be divided into three categories: scripts that are only applied to Khajiit, scripts that are never applied to Khajiit,
+and scripts that are sometimes applied to Khajiit. Scripts that are only ever applied to Khajiit should set `T_Local_Khajiit` to 1
+without doing a race check. Scripts that are never applied to Khajiit should not contain the `T_Local_Khajiit` variable at all. And
+scripts that are applied to both Khajiit and non-Khajiit should contain the standardized script snipped that checks for each Khajiit race.
+
+### Sets T_Local_Khajiit multiple times
+This script doesn't implement the standardized Khajiit script, but does set the variable multiple times.
+
+### Contains unexpected line set T_Local_Khajiit to X
+This script sets the variable to an unexpected value.
+
 ## Magic
 
 ### Uses effect
