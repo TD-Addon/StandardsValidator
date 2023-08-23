@@ -562,6 +562,7 @@ conoon_chodala_boots_unique
 contain_bm_fakerock
 contain_bm_fakerock_2
 contain_bm_hollowstump
+contain_corpse10_silent
 contain_corpse_angria
 contain_corpse_arenim00
 contain_corpse_fjalding
