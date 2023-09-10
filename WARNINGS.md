@@ -223,6 +223,9 @@ Filter the line to a local variable that starts with your province's ID prefix o
 
 If this line is meant to override a vanilla line that does not have a NoLore filter, add `;SV: overrides vanilla` to the result script.
 
+### Checks for Dead = X
+This line only fires if the death count is exactly X. Which means it can break if players use `resurrect` or the NPC gets cloned.
+
 ### Has no text
 So why does it exist?
 
