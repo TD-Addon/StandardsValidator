@@ -3,7 +3,7 @@
 const { runValidator } = require('./lib/extended/program');
 const validators = [
 	require('./lib/extended/cells'),
-	require('./lib/extended/ownership'),
+	require('./lib/extended/items'),
 	require('./lib/extended/weapons')
 ];
 
