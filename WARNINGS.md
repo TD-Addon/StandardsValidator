@@ -113,6 +113,12 @@ This head or hair is inappropriate for use by this NPC; usually for cultural rea
 ### Reports crimes despite having >= 70 fight
 This NPC is likely to be hostile, but has an alarm of >= 100, meaning the player can get a bounty fighting them.
 
+### Is not using animation epos_kha_upr_anim_X.nif
+This NPC is not using upright Khajiit animations.
+
+### Has animation epos_kha_upr_anim_X.nif
+This NPC is using upright Khajiit animations despite not being one of the Khajiit races that requires them.
+
 ## Keys
 A misc item is a key if it has the key flag. This is a property of the record and determines if it can be sold to merchants and detected by Detect Key.
 
