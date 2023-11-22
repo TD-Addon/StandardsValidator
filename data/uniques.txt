@@ -845,6 +845,7 @@ dwrv_chest00_arenara2
 dwrv_chest00_germia
 dwrv_chest00_kjeld
 dwrv_chest00_kjeld2
+dwrv_chest10
 dwrv_chest10_germia2
 dwrv_chest10_kjeld
 dwrv_chest_divayth00
