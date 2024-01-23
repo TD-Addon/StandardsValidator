@@ -119,6 +119,9 @@ This NPC is not using upright Khajiit animations.
 ### Has animation epos_kha_upr_anim_X.nif
 This NPC is using upright Khajiit animations despite not being one of the Khajiit races that requires them.
 
+### Has multiple slave bracers
+Slaves should generally only wear a single slave bracer.
+
 ## Keys
 A misc item is a key if it has the key flag. This is a property of the record and determines if it can be sold to merchants and detected by Detect Key.
 
