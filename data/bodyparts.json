@@ -192,8 +192,6 @@
 				"Morag Tong", "Hands of Almalexia"
 			] } }
 		] },
-		{ "model": "T_B_De_HairMaleTR_06", "ruleSet": "Dres" },
-		{ "model": "T_B_De_HairMaleTR_07", "ruleSet": "Dres" },
 		{ "model": "T_B_De_HairMaleTR_08", "ruleSet": "Dres" },
 		{ "model": "T_B_De_HairMaleTR_09", "ruleSet": "Indoril" },
 		{ "model": "T_B_De_HairMaleTR_31", "rules": [
