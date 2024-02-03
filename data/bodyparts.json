@@ -113,9 +113,6 @@
 		{ "model": "T_B_De_UNI_HeadVaerinTR", "rules": [
 			{ "id": "TR_m2_Master_Vaerin" }
 		] },
-		{ "model": "T_B_He_UNI_HeadEldaleTR", "rules": [
-			{ "id": "TR_m1_T_Eldale" }
-		] },
 		{ "model": "T_B_Imp_UNI_HeadDFlaviusTR", "rules": [
 			{ "id": "TR_m2_Darran Flavius" }
 		] },
