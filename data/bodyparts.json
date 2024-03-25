@@ -36,7 +36,7 @@
 			{ "id": "King Hlaalu Helseth" }
 		] },
 		{ "model": "T_B_De_HeadFemTR_09", "rules": [
-			{ "faction": { "not": ["Ashlanders", "Imperial Cult"] }, "class": { "not": "Mabrigash" }, "class": { "not": "Wise Woman" } }
+			{ "faction": { "not": ["Ashlanders", "Imperial Cult"] }, "class": { "not": ["Mabrigash", "Wise Woman"] } }
 		] },
 		{ "model": "T_B_De_HeadFemTR_14", "ruleSet": "Hlaalu" },
 		{ "model": "T_B_De_HeadFemTR_20", "ruleSet": "Hlaalu" },
@@ -71,7 +71,8 @@
 			{ "id": "TR_m2_Alvu Sareleth" }
 		] },
 		{ "model": "T_B_De_UNI_HeadDralTR", "rules": [
-			{ "id": "TR_m1_T_Rilvin_Dral" }
+			{ "id": "TR_m1_T_Rilvin_Dral" },
+			{ "id": "TR_m1_T_Rilvin_Dral2" }
 		] },
 		{ "model": "T_B_De_UNI_HeadFacelessTR", "rules": [
 			{ "id": "TR_m3_TT_FS_body" },
@@ -87,7 +88,8 @@
 			{ "id": "TR_m2_Nisa Darythi" }
 		] },
 		{ "model": "T_B_De_UNI_HeadMithrasTR", "rules": [
-			{ "id": "TR_m1_T_Mithras" }
+			{ "id": "TR_m1_T_Mithras" },
+			{ "id": "TR_m1_q_Mithras_Double" }
 		] },
 		{ "model": "T_B_De_UNI_HeadMothrivaGuyTR", "rules": [
 			{ "id": "TR_m2_DralothasOmothran" }
