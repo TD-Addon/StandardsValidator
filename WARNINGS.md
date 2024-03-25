@@ -113,6 +113,9 @@ This head or hair is inappropriate for use by this NPC; usually for cultural rea
 ### Reports crimes despite having >= 70 fight
 This NPC is likely to be hostile, but has an alarm of >= 100, meaning the player can get a bounty fighting them.
 
+### Does not report crimes despite being a guard
+This NPC has the guard class but does not quite function as a guard.
+
 ### Is not using animation epos_kha_upr_anim_X.nif
 This NPC is not using upright Khajiit animations.
 
