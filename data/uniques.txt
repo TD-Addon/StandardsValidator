@@ -247,6 +247,7 @@ bk_notefrombugrol
 bk_notefromsondaale
 bk_notetoamaya
 bk_pillowinvoice
+bk_redorancookingsecrets
 bk_sovngarde
 bk_suicidenote
 black_blindfold_glove
