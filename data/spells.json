@@ -1,0 +1,142 @@
+{
+	"alternatives": [
+		{
+			"de": "ulms juicedaw's feather",
+			"imp": "T_Imp_Alt_UlmsJuicedawsFeather",
+			"nor": "T_Nor_Alt_UlmsJuicedawsFeather",
+			"rea": "T_Rea_Alt_UlmsJuicedawsFeather",
+			"rga": "T_Rga_Alt_UlmsJuicedawsFeather"
+		},
+		{
+			"de": "vivec's kiss",
+			"imp": "T_Imp_Alt_VivecsKiss",
+			"nor": "T_Nor_Alt_VivecsKiss",
+			"rea": "T_Rea_Alt_VivecsKiss",
+			"rga": "T_Rga_Alt_VivecsKiss"
+		},
+		{
+			"de": "ordeal of st. olms",
+			"imp": "T_Imp_Des_OrdealStOlms",
+			"nor": "T_Nor_Des_OrdealStOlms",
+			"rea": "T_Rea_Des_OrdealStOlms",
+			"rga": "T_Rga_Des_OrdealStOlms"
+		},
+		{
+			"de": "vivec's_wrath",
+			"imp": "T_Imp_Des_VivecsWrath",
+			"nor": "T_Nor_Des_VivecsWrath",
+			"rea": "T_Rea_Des_VivecsWrath",
+			"rga": "T_Rga_Des_VivecsWrath"
+		},
+		{
+			"de": "sotha's grace",
+			"imp": "T_Imp_Ilu_SothasGrace",
+			"nor": "T_Nor_Ilu_SothasGrace",
+			"rea": "T_Rea_Ilu_SothasGrace",
+			"rga": "T_Rga_Ilu_SothasGrace"
+		},
+		{
+			"de": "almalexia's grace",
+			"imp": "T_Imp_Mys_AlmalexiasGrace",
+			"nor": "T_Nor_Mys_AlmalexiasGrace",
+			"rea": "T_Rea_Mys_AlmalexiasGrace",
+			"rga": "T_Rga_Mys_AlmalexiasGrace"
+		},
+		{
+			"de": "sotha's mirror",
+			"imp": "T_Imp_Res_SothasMirror",
+			"nor": "T_Nor_Mys_SothasMirror",
+			"rea": "T_Rea_Mys_SothasMirror",
+			"rga": "T_Rga_Mys_SothasMirror"
+		},
+		{
+			"de": "vivec's feast",
+			"imp": "T_Imp_Mys_VivecsFeast",
+			"nor": "T_Nor_Mys_VivecsFeast",
+			"rea": "T_Rea_Mys_VivecsFeast",
+			"rga": "T_Rga_Mys_VivecsFeast"
+		},
+		{
+			"de": "rest of st. merris",
+			"imp": "T_Imp_Res_RestStMerris",
+			"nor": "T_Nor_Res_RestStMerris",
+			"rea": "T_Rea_Res_RestStMerris",
+			"rga": "T_Rga_Res_RestStMerris"
+		},
+		{
+			"de": "rilm's cure",
+			"imp": "T_Imp_Res_RilmsCure",
+			"nor": "T_Nor_Res_RilmsCure",
+			"rea": "T_Rea_Res_RilmsCure",
+			"rga": "T_Rga_Res_RilmsCure"
+		},
+		{
+			"de": "seryn's blessing",
+			"imp": "T_Imp_Res_SerynsBlessing",
+			"nor": "T_Nor_Res_SerynsBlessing",
+			"rea": "T_Rea_Res_SerynsBlessing",
+			"rga": "T_Rga_Res_SerynsBlessing"
+		},
+		{
+			"de": "seryn's gift",
+			"imp": "T_Imp_Res_SerynsGift",
+			"nor": "T_Nor_Res_SerynsGift",
+			"rea": "T_Rea_Res_SerynsGift",
+			"rga": "T_Rga_Res_SerynsGift"
+		},
+		{
+			"de": "veloth's benison",
+			"imp": "T_Imp_Res_VelothsBenison",
+			"nor": "T_Nor_Res_VelothsBenison",
+			"rea": "T_Rea_Res_VelothsBenison",
+			"rga": "T_Rga_Res_VelothsBenison"
+		},
+		{
+			"de": "veloth's gift",
+			"imp": "T_Imp_Res_VelothsGift",
+			"nor": "T_Nor_Res_VelothsGift",
+			"rea": "T_Rea_Res_VelothsGift",
+			"rga": "T_Rga_Res_VelothsGift"
+		},
+		{
+			"de": "veloth's grace",
+			"imp": "T_Imp_Res_VelothsGrace",
+			"nor": "T_Nor_Res_VelothsGrace",
+			"rea": "T_Rea_Res_VelothsGrace",
+			"rga": "T_Rga_Res_VelothsGrace"
+		},
+		{
+			"TR": "almsivi intervention"
+		},
+		{
+			"TR": "weakness to blight disease"
+		},
+		{
+			"TR": "blightguard"
+		},
+		{
+			"TR": "poet's whim"
+		},
+		{
+			"TR": "vivec's mercy"
+		}
+	],
+	"races": {
+		"TR": { "prefix": "TR_" },
+		"de": { "prefix": "TR_", "race": "dark elf" },
+		"imp": { "prefix": "PC_", "race": "imperial" },
+		"nor": { "prefix": "Sky_", "race": "nord" },
+		"rea": { "race": "T_Sky_Reachman" },
+		"rga": { "prefix": "PH_", "race": "redguard" }
+	},
+	"blacklist": [
+		"almalexia's blessing",
+		"Almsivi Restore Fighter",
+		"Almsivi Restore Mage",
+		"Almsivi Restore Stealth",
+		"Almsivi Restore Other",
+		"vivec's humility",
+		"weakness to corpus disease",
+		"weakness to corprus disease"
+	]
+}
