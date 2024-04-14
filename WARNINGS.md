@@ -156,6 +156,9 @@ A class or NPC that implies barter services does not offer them.
 ### Does not have any barter gold
 This NPC barters but does not have any gold to buy items with.
 
+### Has barter gold but does not barter
+This NPC might have been intended to barter, but doesn't.
+
 ### Does not offer travel services
 Certain classes have voice lines and greetings that imply they can transport the player.
 If an NPC with such a class does not offer travel services, they should be assigned another class.
