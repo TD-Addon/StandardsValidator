@@ -1059,8 +1059,10 @@ glass dagger_symmachus_unique_x
 glass_dagger_enamor
 glenmoril_raven
 glenmoril_raven_cave
+goblin_club
 goblin_officeruni
 goblin_shield_durgok_uni
+goblin_sword
 goblin_warchief1
 goblin_warchief2
 golden saint_staada
@@ -1456,12 +1458,15 @@ silver arrow_thirsk_6
 silver arrow_thirsk_7
 silver arrow_thirsk_8
 silver arrow_thirsk_9
+silver axe of paralysis
 silver dagger_droth_unique
 silver dagger_droth_unique_a
 silver dagger_iryon_unique
 silver dagger_othril_unique
 silver dagger_rathalas_unique
 silver spear_uvenim
+silver staff of paralysis
+silver sword of paralysis
 silver_helm_uvenim
 silver_staff_dawn_uniq
 silverdawn_en_uniq
