@@ -1,0 +1,11 @@
+[package]
+name = "StandardsValidator"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+
+[dependencies.tes3]
+git = "https://github.com/Greatness7/tes3"
+default-features = false
+features = ["esp"]
