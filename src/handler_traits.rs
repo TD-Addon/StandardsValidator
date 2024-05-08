@@ -2,8 +2,8 @@ use crate::validators::Context;
 use tes3::esp::{Cell, Dialogue, FixedString, Info, Reference, TES3Object};
 
 #[allow(unused_variables)]
-pub trait Handler {
-    fn on_record(&mut self, context: &Context, record: &TES3Object, id: &String) {}
+pub trait Handler<'a> {
+    fn on_record(&mut self, context: &Context, record: &'a TES3Object, id: &String) {}
 
     fn on_cellref(&mut self, context: &Context, record: &Cell, reference: &Reference, id: &String) {
     }
@@ -37,4 +37,6 @@ pub trait Handler {
         topic: &Dialogue,
     ) {
     }
+
+    fn on_end(&mut self, context: &Context) {}
 }

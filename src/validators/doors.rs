@@ -4,17 +4,14 @@ use tes3::esp::{Cell, Reference, TES3Object};
 
 pub struct DoorValidator {}
 
-impl Handler for DoorValidator {
+impl Handler<'_> for DoorValidator {
     fn on_record(&mut self, _: &Context, record: &TES3Object, _: &String) {
-        match record {
-            TES3Object::Door(door) => {
-                if let Some(mesh) = &door.mesh {
-                    if mesh.eq_ignore_ascii_case("i\\in_lava_blacksquare.nif") {
-                        println!("Door {} uses mesh {}", door.id, mesh);
-                    }
+        if let TES3Object::Door(door) = record {
+            if let Some(mesh) = &door.mesh {
+                if mesh.eq_ignore_ascii_case("i\\in_lava_blacksquare.nif") {
+                    println!("Door {} uses mesh {}", door.id, mesh);
                 }
             }
-            _ => {}
         }
     }
 

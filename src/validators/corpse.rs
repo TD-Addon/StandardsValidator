@@ -7,7 +7,7 @@ use tes3::esp::TES3Object;
 
 pub struct CorpseValidator {}
 
-impl Handler for CorpseValidator {
+impl Handler<'_> for CorpseValidator {
     fn on_record(&mut self, _: &Context, record: &TES3Object, _: &String) {
         if is_dead(record) && !is_persistent(record) {
             match record {

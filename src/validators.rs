@@ -2,11 +2,14 @@ pub mod autocalc;
 pub mod books;
 pub mod corpse;
 pub mod doors;
+pub mod keys;
+pub mod leveled;
 pub mod test;
 
 use crate::handler_traits::Handler;
 use tes3::esp::{Cell, Dialogue, FixedString, Info, ObjectFlags, Reference, TES3Object};
 
+#[derive(PartialEq)]
 pub enum Mode {
     TR,
     PT,
@@ -17,12 +20,12 @@ pub struct Context {
     pub mode: Mode,
 }
 
-pub struct Handlers {
-    handlers: Vec<Box<dyn Handler>>,
+pub struct Handlers<'a> {
+    handlers: Vec<Box<dyn Handler<'a> + 'a>>,
 }
 
-impl Handlers {
-    fn new() -> Handlers {
+impl<'a> Handlers<'a> {
+    fn new<'b>() -> Handlers<'b> {
         return Handlers {
             handlers: vec![
                 Box::new(test::TestValidator {}),
@@ -30,11 +33,13 @@ impl Handlers {
                 Box::new(books::BookValidator {}),
                 Box::new(corpse::CorpseValidator {}),
                 Box::new(doors::DoorValidator {}),
+                Box::new(keys::KeyValidator::new()),
+                Box::new(leveled::LeveledValidator::new()),
             ],
         };
     }
 
-    fn on_record(&mut self, context: &Context, record: &TES3Object, id: String) {
+    fn on_record(&mut self, context: &Context, record: &'a TES3Object, id: String) {
         for handler in self.handlers.iter_mut() {
             handler.on_record(context, record, &id);
         }
@@ -88,22 +93,28 @@ impl Handlers {
             handler.on_scriptline(context, record, code, comment, topic);
         }
     }
+
+    fn on_end(&mut self, context: &Context) {
+        for handler in self.handlers.iter_mut() {
+            handler.on_end(context);
+        }
+    }
 }
 
-pub struct Validator {
-    handlers: Handlers,
+pub struct Validator<'a> {
+    handlers: Handlers<'a>,
     context: Context,
 }
 
-impl Validator {
-    pub fn new(context: Context) -> Validator {
+impl<'a> Validator<'a> {
+    pub fn new<'b>(context: Context) -> Validator<'b> {
         return Validator {
             handlers: Handlers::new(),
             context,
         };
     }
 
-    pub fn validate(&mut self, records: &Vec<TES3Object>) {
+    pub fn validate(&mut self, records: &'a Vec<TES3Object>) {
         let dummy = Dialogue {
             flags: ObjectFlags::empty(),
             id: String::new(),
@@ -285,6 +296,7 @@ impl Validator {
                 }
             }
         }
+        self.handlers.on_end(&self.context);
     }
 
     fn on_leveled(&mut self, record: &TES3Object, entries: &Option<Vec<(String, u16)>>) {

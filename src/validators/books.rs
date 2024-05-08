@@ -13,29 +13,26 @@ fn is_marker(book: &Book) -> bool {
     return false;
 }
 
-impl Handler for BookValidator {
+impl Handler<'_> for BookValidator {
     fn on_record(&mut self, _: &Context, record: &TES3Object, _: &String) {
-        match record {
-            TES3Object::Book(book) => {
-                if is_marker(book) {
-                    return;
-                }
-                if let Some(text) = &book.text {
-                    let mut parser = Parser::new(book);
-                    if let Err(e) = parser.parse(text) {
-                        println!(
-                            "Failed to parse HTML in {} {} at index {}",
-                            book.id, e.message, e.index
-                        );
-                    } else if !parser.invisible.is_empty() {
-                        println!(
-                            "Book {} contains invisible text {}",
-                            book.id, parser.invisible
-                        );
-                    }
+        if let TES3Object::Book(book) = record {
+            if is_marker(book) {
+                return;
+            }
+            if let Some(text) = &book.text {
+                let mut parser = Parser::new(book);
+                if let Err(e) = parser.parse(text) {
+                    println!(
+                        "Failed to parse HTML in {} {} at index {}",
+                        book.id, e.message, e.index
+                    );
+                } else if !parser.invisible.is_empty() {
+                    println!(
+                        "Book {} contains invisible text {}",
+                        book.id, parser.invisible
+                    );
                 }
             }
-            _ => {}
         }
     }
 }
