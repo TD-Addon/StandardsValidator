@@ -1,13 +1,13 @@
-use super::{Context, Handlers};
-use crate::handler_traits::RecordHandler;
+use super::Context;
+use crate::handler_traits::Handler;
 use tes3::esp::TES3Object;
 
 const FLAG_SPELL_AUTO_CALC: u32 = 1;
 
 pub struct AutoCalcValidator {}
 
-impl RecordHandler for AutoCalcValidator {
-    fn on_record(&mut self, _: &Context, record: &TES3Object, _id: &String) {
+impl Handler for AutoCalcValidator {
+    fn on_record(&mut self, _: &Context, record: &TES3Object, _: &String) {
         match record {
             TES3Object::Spell(spell) => {
                 if let Some(data) = &spell.data {
@@ -18,11 +18,5 @@ impl RecordHandler for AutoCalcValidator {
             }
             _ => {}
         }
-    }
-}
-
-impl AutoCalcValidator {
-    pub fn register(handlers: &mut Handlers) {
-        handlers.register_record_handler(Box::new(AutoCalcValidator {}));
     }
 }

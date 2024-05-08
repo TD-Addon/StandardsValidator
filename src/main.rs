@@ -2,6 +2,7 @@ use tes3::esp::Plugin;
 use validators::{Context, Mode, Validator};
 
 mod handler_traits;
+mod util;
 mod validators;
 
 fn main() -> std::io::Result<()> {

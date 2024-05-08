@@ -1,11 +1,10 @@
 pub mod autocalc;
 pub mod books;
+pub mod corpse;
+pub mod doors;
 pub mod test;
 
-use crate::handler_traits::{
-    CellHandler, DialogueHandler, InventoryHandler, LeveledListHandler, RecordHandler,
-    ScriptHandler,
-};
+use crate::handler_traits::Handler;
 use tes3::esp::{Cell, Dialogue, FixedString, Info, ObjectFlags, Reference, TES3Object};
 
 pub enum Mode {
@@ -18,70 +17,37 @@ pub struct Context {
     pub mode: Mode,
 }
 
-//TODO use Rc<dyn X> instead of Box?
 pub struct Handlers {
-    record_handlers: Vec<Box<dyn RecordHandler>>,
-    cell_handlers: Vec<Box<dyn CellHandler>>,
-    leveledlist_handlers: Vec<Box<dyn LeveledListHandler>>,
-    inventory_handlers: Vec<Box<dyn InventoryHandler>>,
-    dialogue_handlers: Vec<Box<dyn DialogueHandler>>,
-    script_handlers: Vec<Box<dyn ScriptHandler>>,
+    handlers: Vec<Box<dyn Handler>>,
 }
 
 impl Handlers {
     fn new() -> Handlers {
-        let mut out = Handlers {
-            record_handlers: Vec::new(),
-            cell_handlers: Vec::new(),
-            leveledlist_handlers: Vec::new(),
-            inventory_handlers: Vec::new(),
-            dialogue_handlers: Vec::new(),
-            script_handlers: Vec::new(),
+        return Handlers {
+            handlers: vec![
+                Box::new(test::TestValidator {}),
+                Box::new(autocalc::AutoCalcValidator {}),
+                Box::new(books::BookValidator {}),
+                Box::new(corpse::CorpseValidator {}),
+                Box::new(doors::DoorValidator {}),
+            ],
         };
-        test::TestValidator::register(&mut out);
-        autocalc::AutoCalcValidator::register(&mut out);
-        books::BookValidator::register(&mut out);
-        return out;
-    }
-
-    pub fn register_record_handler(&mut self, handler: Box<dyn RecordHandler>) {
-        self.record_handlers.push(handler);
-    }
-
-    pub fn register_cell_handler(&mut self, handler: Box<dyn CellHandler>) {
-        self.cell_handlers.push(handler);
-    }
-
-    pub fn register_leveledlist_handler(&mut self, handler: Box<dyn LeveledListHandler>) {
-        self.leveledlist_handlers.push(handler);
-    }
-
-    pub fn register_inventory_handler(&mut self, handler: Box<dyn InventoryHandler>) {
-        self.inventory_handlers.push(handler);
-    }
-
-    pub fn register_dialogue_handler(&mut self, handler: Box<dyn DialogueHandler>) {
-        self.dialogue_handlers.push(handler);
-    }
-
-    pub fn register_script_handler(&mut self, handler: Box<dyn ScriptHandler>) {
-        self.script_handlers.push(handler);
     }
 
     fn on_record(&mut self, context: &Context, record: &TES3Object, id: String) {
-        for handler in self.record_handlers.iter_mut() {
+        for handler in self.handlers.iter_mut() {
             handler.on_record(context, record, &id);
         }
     }
 
     fn on_cellref(&mut self, context: &Context, record: &Cell, reference: &Reference, id: String) {
-        for handler in self.cell_handlers.iter_mut() {
+        for handler in self.handlers.iter_mut() {
             handler.on_cellref(context, record, reference, &id);
         }
     }
 
     fn on_info(&mut self, context: &Context, record: &Info, topic: &Dialogue) {
-        for handler in self.dialogue_handlers.iter_mut() {
+        for handler in self.handlers.iter_mut() {
             handler.on_info(context, record, topic);
         }
     }
@@ -93,7 +59,7 @@ impl Handlers {
         entry: &(String, u16),
         id: &String,
     ) {
-        for handler in self.leveledlist_handlers.iter_mut() {
+        for handler in self.handlers.iter_mut() {
             handler.on_leveled(context, record, entry, id);
         }
     }
@@ -105,7 +71,7 @@ impl Handlers {
         entry: &(i32, FixedString<32>),
         id: &String,
     ) {
-        for handler in self.inventory_handlers.iter_mut() {
+        for handler in self.handlers.iter_mut() {
             handler.on_inventory(context, record, entry, id);
         }
     }
@@ -118,7 +84,7 @@ impl Handlers {
         comment: &str,
         topic: &Dialogue,
     ) {
-        for handler in self.script_handlers.iter_mut() {
+        for handler in self.handlers.iter_mut() {
             handler.on_scriptline(context, record, code, comment, topic);
         }
     }

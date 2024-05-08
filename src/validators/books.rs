@@ -1,15 +1,25 @@
-use super::{Context, Handlers};
-use crate::handler_traits::RecordHandler;
-use std::error::Error;
-use std::fmt;
+use super::Context;
+use crate::handler_traits::Handler;
+use std::{error::Error, fmt};
 use tes3::esp::{Book, TES3Object};
 
 pub struct BookValidator {}
 
-impl RecordHandler for BookValidator {
-    fn on_record(&mut self, _: &Context, record: &TES3Object, _id: &String) {
+fn is_marker(book: &Book) -> bool {
+    if let Some(mesh) = &book.mesh {
+        return mesh.eq_ignore_ascii_case("tr\\tr_note_pin.nif")
+            || mesh.eq_ignore_ascii_case("tr\\tr_editormarker_npc.nif");
+    }
+    return false;
+}
+
+impl Handler for BookValidator {
+    fn on_record(&mut self, _: &Context, record: &TES3Object, _: &String) {
         match record {
             TES3Object::Book(book) => {
+                if is_marker(book) {
+                    return;
+                }
                 if let Some(text) = &book.text {
                     let mut parser = Parser::new(book);
                     if let Err(e) = parser.parse(text) {
@@ -324,11 +334,5 @@ impl<'a> Parser<'a> {
             );
         }
         self.img = false;
-    }
-}
-
-impl BookValidator {
-    pub fn register(handlers: &mut Handlers) {
-        handlers.register_record_handler(Box::new(BookValidator {}));
     }
 }
