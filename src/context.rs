@@ -39,6 +39,10 @@ impl Project {
     pub fn matches(&self, id: &str) -> bool {
         return ci_starts_with(id, &self.prefix);
     }
+
+    pub fn has_local(&self, id: &str) -> bool {
+        return self.local.iter().any(|l| id.eq_ignore_ascii_case(l));
+    }
 }
 
 pub struct Context {

@@ -3,6 +3,7 @@ pub mod books;
 pub mod cells;
 pub mod classes;
 pub mod corpse;
+pub mod dialogue;
 pub mod doors;
 pub mod ids;
 pub mod keys;
