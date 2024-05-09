@@ -190,22 +190,24 @@ impl Handler<'_> for DialogueValidator {
                     }
                 }
             }
-            let project = record.filters.iter().flat_map(|f| f.iter()).any(|filter| {
-                if filter.kind == FilterType::Local && !filter.id.is_empty() {
-                    return filter.id.eq_ignore_ascii_case("t_local_npc")
-                        || filter.id.eq_ignore_ascii_case("t_local_khajiit")
-                        || context
-                            .projects
-                            .iter()
-                            .any(|p| p.has_local(&filter.id) || p.matches(&filter.id));
+            if context.mode != Mode::Vanilla {
+                let project = record.filters.iter().flat_map(|f| f.iter()).any(|filter| {
+                    if filter.kind == FilterType::Local && !filter.id.is_empty() {
+                        return filter.id.eq_ignore_ascii_case("t_local_npc")
+                            || filter.id.eq_ignore_ascii_case("t_local_khajiit")
+                            || context
+                                .projects
+                                .iter()
+                                .any(|p| p.has_local(&filter.id) || p.matches(&filter.id));
+                    }
+                    return false;
+                });
+                if !project {
+                    println!(
+                        "Info {} in topic {} does not have a known project specific local filter",
+                        record.id, topic.id
+                    );
                 }
-                return false;
-            });
-            if !project {
-                println!(
-                    "Info {} in topic {} does not have a known project specific local filter",
-                    record.id, topic.id
-                );
             }
         } else if record.data.iter().any(|d| {
             d.kind == DialogueType::Greeting
@@ -307,6 +309,12 @@ impl Handler<'_> for DialogueValidator {
                 } else {
                     return;
                 }
+            } else if context.mode == Mode::Vanilla {
+                println!(
+                    "Info {} in topic {} does not have a NoLore filter",
+                    record.id, topic.id
+                );
+                return;
             }
             if !project
                 && !(is_service_refusal && context.mode == Mode::TD)

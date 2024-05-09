@@ -121,7 +121,7 @@ impl Handler<'_> for CellValidator {
         }
     }
 
-    fn on_cellref(&mut self, _: &Context, record: &Cell, reference: &Reference) {
+    fn on_cellref(&mut self, _: &Context, record: &Cell, reference: &Reference, _: &Vec<&Reference>, _: usize) {
         if !reference.deleted.unwrap_or(false) && !record.is_interior() {
             let (x, y) = record.data.grid;
             let x_bound = CELL_SIZE * x;

@@ -18,7 +18,7 @@ fn main() -> Result<(), Box<dyn Error>> {
             Arg::new("mode")
                 .hide_default_value(true)
                 .required(false)
-                .value_parser(["PT", "TD", "TR"]),
+                .value_parser(["PT", "TD", "TR", "Vanilla"]),
         ])
         .get_matches();
     let mode: Mode = args

@@ -15,7 +15,7 @@ impl Handler<'_> for DoorValidator {
         }
     }
 
-    fn on_cellref(&mut self, _: &Context, record: &Cell, reference: &Reference) {
+    fn on_cellref(&mut self, _: &Context, record: &Cell, reference: &Reference, _: &Vec<&Reference>, _: usize) {
         if reference.id.eq_ignore_ascii_case("prisonmarker")
             && reference.door_destination_cell.is_none()
         {

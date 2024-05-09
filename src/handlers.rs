@@ -1,4 +1,4 @@
-use crate::context::Context;
+use crate::context::{Context, Mode};
 use std::error::Error;
 use tes3::esp::{Cell, Dialogue, FixedString, Info, Reference, TES3Object};
 
@@ -13,7 +13,15 @@ pub trait Handler<'a> {
     ) {
     }
 
-    fn on_cellref(&mut self, context: &Context, record: &Cell, reference: &Reference) {}
+    fn on_cellref(
+        &mut self,
+        context: &Context,
+        record: &Cell,
+        reference: &Reference,
+        refs: &Vec<&Reference>,
+        i: usize,
+    ) {
+    }
 
     fn on_leveled(&mut self, context: &Context, record: &TES3Object, entry: &(String, u16)) {}
 
@@ -45,22 +53,28 @@ pub struct Handlers<'a> {
 }
 
 impl Handlers<'_> {
-    pub fn new<'a>() -> Result<Handlers<'a>, Box<dyn Error>> {
-        return Ok(Handlers {
-            handlers: vec![
-                Box::new(crate::validators::test::TestValidator {}),
-                Box::new(crate::validators::autocalc::AutoCalcValidator {}),
-                Box::new(crate::validators::books::BookValidator {}),
-                Box::new(crate::validators::cells::CellValidator::new()?),
-                Box::new(crate::validators::classes::ClassValidator::new()?),
-                Box::new(crate::validators::corpse::CorpseValidator {}),
-                Box::new(crate::validators::dialogue::DialogueValidator::new()?),
-                Box::new(crate::validators::doors::DoorValidator {}),
-                Box::new(crate::validators::ids::IdValidator::new()),
-                Box::new(crate::validators::keys::KeyValidator::new()),
-                Box::new(crate::validators::leveled::LeveledValidator::new()),
-            ],
-        });
+    pub fn new<'a>(context: &Context) -> Result<Handlers<'a>, Box<dyn Error>> {
+        let mut handlers: Vec<Box<dyn Handler<'a> + 'a>> = vec![
+            Box::new(crate::validators::test::TestValidator {}),
+            Box::new(crate::validators::books::BookValidator {}),
+            Box::new(crate::validators::cells::CellValidator::new()?),
+            Box::new(crate::validators::corpse::CorpseValidator {}),
+            Box::new(crate::validators::duplicates::DuplicateRefValidator::new(
+                0.,
+            )),
+            Box::new(crate::validators::doors::DoorValidator {}),
+            Box::new(crate::validators::keys::KeyValidator::new()),
+            Box::new(crate::validators::leveled::LeveledValidator::new()),
+            Box::new(crate::validators::dialogue::DialogueValidator::new()?),
+        ];
+        if context.mode == Mode::PT || context.mode == Mode::TR {
+            handlers.push(Box::new(crate::validators::classes::ClassValidator::new()?));
+        }
+        if context.mode != Mode::Vanilla {
+            handlers.push(Box::new(crate::validators::autocalc::AutoCalcValidator {}));
+            handlers.push(Box::new(crate::validators::ids::IdValidator::new()));
+        }
+        return Ok(Handlers { handlers });
     }
 }
 
@@ -77,9 +91,16 @@ impl<'a> Handler<'a> for Handlers<'a> {
         }
     }
 
-    fn on_cellref(&mut self, context: &Context, record: &Cell, reference: &Reference) {
+    fn on_cellref(
+        &mut self,
+        context: &Context,
+        record: &Cell,
+        reference: &Reference,
+        refs: &Vec<&Reference>,
+        i: usize,
+    ) {
         for handler in self.handlers.iter_mut() {
-            handler.on_cellref(context, record, reference);
+            handler.on_cellref(context, record, reference, refs, i);
         }
     }
 

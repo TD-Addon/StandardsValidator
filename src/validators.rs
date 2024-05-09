@@ -4,6 +4,7 @@ pub mod cells;
 pub mod classes;
 pub mod corpse;
 pub mod dialogue;
+pub mod duplicates;
 pub mod doors;
 pub mod ids;
 pub mod keys;
@@ -25,7 +26,7 @@ pub struct Validator<'a> {
 impl<'a> Validator<'a> {
     pub fn new<'b>(context: Context) -> Result<Validator<'b>, Box<dyn Error>> {
         return Ok(Validator {
-            handlers: Handlers::new()?,
+            handlers: Handlers::new(&context)?,
             context,
         });
     }
@@ -70,8 +71,9 @@ impl<'a> Validator<'a> {
                 TES3Object::Cell(r) => {
                     self.handlers
                         .on_record(&self.context, record, r.type_name(), &r.id);
-                    for reference in r.references.values() {
-                        self.handlers.on_cellref(&self.context, r, reference);
+                    let refs: Vec<_> = r.references.values().collect();
+                    for (i, reference) in refs.iter().enumerate() {
+                        self.handlers.on_cellref(&self.context, r, reference, &refs, i);
                     }
                 }
                 TES3Object::Class(r) => {

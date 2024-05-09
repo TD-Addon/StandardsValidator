@@ -1,6 +1,6 @@
 use crate::{context::Context, context::Mode, handlers::Handler, util::get_cell_name};
 use std::collections::HashSet;
-use tes3::esp::{MiscItem, TES3Object};
+use tes3::esp::{Cell, MiscItem, Reference, TES3Object};
 
 pub struct KeyValidator {
     miscs: HashSet<String>,
@@ -29,8 +29,10 @@ impl Handler<'_> for KeyValidator {
     fn on_cellref(
         &mut self,
         _: &Context,
-        record: &tes3::esp::Cell,
-        reference: &tes3::esp::Reference,
+        record: &Cell,
+        reference: &Reference, _: &Vec<&Reference>,
+
+        _: usize
     ) {
         if let Some(key) = &reference.key {
             if !self.miscs.contains(&key.to_ascii_lowercase()) {

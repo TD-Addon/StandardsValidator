@@ -6,6 +6,7 @@ pub enum Mode {
     PT,
     TD,
     TR,
+    Vanilla
 }
 
 impl From<&String> for Mode {
@@ -16,6 +17,8 @@ impl From<&String> for Mode {
             return Mode::TD;
         } else if value == "TR" {
             return Mode::TR;
+        } else if value == "Vanilla" {
+            return Mode::Vanilla;
         }
         return Mode::None;
     }
