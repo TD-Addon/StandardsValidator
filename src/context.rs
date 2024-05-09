@@ -1,12 +1,14 @@
 use serde::Deserialize;
 
+use crate::util::ci_starts_with;
+
 #[derive(Clone, PartialEq)]
 pub enum Mode {
     None,
     PT,
     TD,
     TR,
-    Vanilla
+    Vanilla,
 }
 
 impl From<&String> for Mode {
@@ -29,13 +31,6 @@ pub struct Project {
     pub name: String,
     pub prefix: String,
     pub local: Option<String>,
-}
-
-fn ci_starts_with(s: &str, prefix: &str) -> bool {
-    if s.len() >= prefix.len() {
-        return s.as_bytes()[..prefix.len()].eq_ignore_ascii_case(prefix.as_bytes());
-    }
-    return false;
 }
 
 impl Project {

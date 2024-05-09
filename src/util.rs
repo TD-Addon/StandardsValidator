@@ -65,3 +65,10 @@ pub fn get_cell_grid(x: f64, y: f64) -> (i32, i32) {
         f64::floor(y / CELL_SIZE as f64) as i32,
     );
 }
+
+pub fn ci_starts_with(s: &str, prefix: &str) -> bool {
+    if s.len() >= prefix.len() {
+        return s.as_bytes()[..prefix.len()].eq_ignore_ascii_case(prefix.as_bytes());
+    }
+    return false;
+}

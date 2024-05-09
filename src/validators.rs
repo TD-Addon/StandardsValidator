@@ -4,11 +4,12 @@ pub mod cells;
 pub mod classes;
 pub mod corpse;
 pub mod dialogue;
-pub mod duplicates;
 pub mod doors;
+pub mod duplicates;
 pub mod ids;
 pub mod keys;
 pub mod leveled;
+pub mod magic;
 pub mod test;
 
 use crate::{
@@ -73,7 +74,8 @@ impl<'a> Validator<'a> {
                         .on_record(&self.context, record, r.type_name(), &r.id);
                     let refs: Vec<_> = r.references.values().collect();
                     for (i, reference) in refs.iter().enumerate() {
-                        self.handlers.on_cellref(&self.context, r, reference, &refs, i);
+                        self.handlers
+                            .on_cellref(&self.context, r, reference, &refs, i);
                     }
                 }
                 TES3Object::Class(r) => {

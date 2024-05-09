@@ -30,9 +30,10 @@ impl Handler<'_> for KeyValidator {
         &mut self,
         _: &Context,
         record: &Cell,
-        reference: &Reference, _: &Vec<&Reference>,
+        reference: &Reference,
+        _: &Vec<&Reference>,
 
-        _: usize
+        _: usize,
     ) {
         if let Some(key) = &reference.key {
             if !self.miscs.contains(&key.to_ascii_lowercase()) {
