@@ -1,0 +1,50 @@
+[
+	{
+		"vanilla": "Bookseller",
+		"data": "T_Glb_Bookseller"
+	},
+	{
+		"vanilla": "Commoner",
+		"data": "T_Glb_Commoner"
+	},
+	{
+		"vanilla": "Miner",
+		"data": "T_Glb_Miner"
+	},
+	{
+		"vanilla": "Pauper",
+		"data": "T_Glb_Pauper"
+	},
+	{
+		"vanilla": "Priest",
+		"data": "T_Glb_Priest"
+	},
+	{
+		"vanilla": "Publican",
+		"data": "T_Glb_Publican"
+	},
+	{
+		"vanilla": "Savant",
+		"data": "T_Glb_Savant"
+	},
+	{
+		"vanilla": "Trader",
+		"data": "T_Glb_Trader"
+	},
+	{
+		"vanilla": "Healer",
+		"data": "T_Glb_Healer"
+	},
+	{
+		"vanilla": "Apothecary Service",
+		"data": "T_Glb_ApothecaryService"
+	},
+	{
+		"vanilla": "Scout",
+		"data": "T_Glb_Scout"
+	},
+	{
+		"vanilla": "Trader Service",
+		"data": "T_Glb_TraderService"
+	}
+]

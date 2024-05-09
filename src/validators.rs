@@ -1,6 +1,7 @@
 pub mod autocalc;
 pub mod books;
 pub mod cells;
+pub mod classes;
 pub mod corpse;
 pub mod doors;
 pub mod ids;

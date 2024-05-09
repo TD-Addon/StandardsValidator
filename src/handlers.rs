@@ -52,6 +52,7 @@ impl Handlers<'_> {
                 Box::new(crate::validators::autocalc::AutoCalcValidator {}),
                 Box::new(crate::validators::books::BookValidator {}),
                 Box::new(crate::validators::cells::CellValidator::new()?),
+                Box::new(crate::validators::classes::ClassValidator::new()?),
                 Box::new(crate::validators::corpse::CorpseValidator {}),
                 Box::new(crate::validators::doors::DoorValidator {}),
                 Box::new(crate::validators::ids::IdValidator::new()),
