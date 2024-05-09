@@ -11,6 +11,7 @@ pub mod keys;
 pub mod leveled;
 pub mod magic;
 pub mod missing;
+pub mod npc;
 pub mod test;
 
 use crate::{

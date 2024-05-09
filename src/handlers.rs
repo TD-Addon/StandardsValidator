@@ -68,6 +68,7 @@ impl Handlers<'_> {
             Box::new(crate::validators::dialogue::DialogueValidator::new()?),
             Box::new(crate::validators::magic::MagicValidator::new()?),
             Box::new(crate::validators::missing::FieldValidator {}),
+            Box::new(crate::validators::npc::NpcValidator::new()?),
         ];
         if context.mode == Mode::PT || context.mode == Mode::TR {
             handlers.push(Box::new(crate::validators::classes::ClassValidator::new()?));
