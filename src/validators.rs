@@ -1,5 +1,6 @@
 pub mod autocalc;
 pub mod books;
+pub mod cells;
 pub mod corpse;
 pub mod doors;
 pub mod ids;
@@ -11,6 +12,7 @@ use crate::{
     context::Context,
     handlers::{Handler, Handlers},
 };
+use std::error::Error;
 use tes3::esp::{Dialogue, FixedString, ObjectFlags, TES3Object};
 
 pub struct Validator<'a> {
@@ -19,11 +21,11 @@ pub struct Validator<'a> {
 }
 
 impl<'a> Validator<'a> {
-    pub fn new<'b>(context: Context) -> Validator<'b> {
-        return Validator {
-            handlers: Handlers::new(),
+    pub fn new<'b>(context: Context) -> Result<Validator<'b>, Box<dyn Error>> {
+        return Ok(Validator {
+            handlers: Handlers::new()?,
             context,
-        };
+        });
     }
 
     pub fn validate(&mut self, records: &'a Vec<TES3Object>) {

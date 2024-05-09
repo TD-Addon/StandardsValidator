@@ -1,4 +1,5 @@
 use crate::context::Context;
+use std::error::Error;
 use tes3::esp::{Cell, Dialogue, FixedString, Info, Reference, TES3Object};
 
 #[allow(unused_variables)]
@@ -44,19 +45,20 @@ pub struct Handlers<'a> {
 }
 
 impl Handlers<'_> {
-    pub fn new<'a>() -> Handlers<'a> {
-        return Handlers {
+    pub fn new<'a>() -> Result<Handlers<'a>, Box<dyn Error>> {
+        return Ok(Handlers {
             handlers: vec![
                 Box::new(crate::validators::test::TestValidator {}),
                 Box::new(crate::validators::autocalc::AutoCalcValidator {}),
                 Box::new(crate::validators::books::BookValidator {}),
+                Box::new(crate::validators::cells::CellValidator::new()?),
                 Box::new(crate::validators::corpse::CorpseValidator {}),
                 Box::new(crate::validators::doors::DoorValidator {}),
                 Box::new(crate::validators::ids::IdValidator::new()),
                 Box::new(crate::validators::keys::KeyValidator::new()),
                 Box::new(crate::validators::leveled::LeveledValidator::new()),
             ],
-        };
+        });
     }
 }
 

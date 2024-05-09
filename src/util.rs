@@ -1,5 +1,7 @@
 use tes3::esp::{Cell, ObjectFlags, TES3Object};
 
+pub const CELL_SIZE: i32 = 8192;
+
 pub fn is_dead(record: &TES3Object) -> bool {
     match record {
         TES3Object::Creature(creature) => {
@@ -55,4 +57,11 @@ pub fn get_cell_name(cell: &Cell) -> String {
         return format!("{},{}", cell.data.grid.0, cell.data.grid.1);
     }
     return format!("{} {},{}", name, cell.data.grid.0, cell.data.grid.1);
+}
+
+pub fn get_cell_grid(x: f64, y: f64) -> (i32, i32) {
+    return (
+        f64::floor(x / CELL_SIZE as f64) as i32,
+        f64::floor(y / CELL_SIZE as f64) as i32,
+    );
 }

@@ -28,6 +28,19 @@ pub struct Project {
     pub local: Option<String>,
 }
 
+fn ci_starts_with(s: &str, prefix: &str) -> bool {
+    if s.len() >= prefix.len() {
+        return s.as_bytes()[..prefix.len()].eq_ignore_ascii_case(prefix.as_bytes());
+    }
+    return false;
+}
+
+impl Project {
+    pub fn matches(&self, id: &str) -> bool {
+        return ci_starts_with(id, &self.prefix);
+    }
+}
+
 pub struct Context {
     pub mode: Mode,
     pub projects: Vec<Project>,
