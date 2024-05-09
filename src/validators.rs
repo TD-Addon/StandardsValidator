@@ -10,6 +10,7 @@ pub mod ids;
 pub mod keys;
 pub mod leveled;
 pub mod magic;
+pub mod missing;
 pub mod test;
 
 use crate::{

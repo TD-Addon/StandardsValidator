@@ -2,6 +2,7 @@ use std::{collections::HashMap, rc::Rc};
 
 use super::Context;
 use crate::{
+    context::Mode,
     handlers::Handler,
     util::{ci_starts_with, is_dead},
 };
@@ -203,7 +204,13 @@ fn check_effects(
 }
 
 impl Handler<'_> for MagicValidator {
-    fn on_record(&mut self, _: &Context, record: &TES3Object, typename: &'static str, id: &String) {
+    fn on_record(
+        &mut self,
+        context: &Context,
+        record: &TES3Object,
+        typename: &'static str,
+        id: &String,
+    ) {
         match record {
             TES3Object::Npc(npc) => {
                 if !is_dead(record) {
@@ -212,6 +219,12 @@ impl Handler<'_> for MagicValidator {
                             self.spells.get(&id.to_ascii_lowercase())
                         {
                             if !rule.matches(npc) {
+                                if context.mode == Mode::Vanilla {
+                                    if alternatives.is_empty() {
+                                        println!("Npc {} knows spell {}", npc.id, id);
+                                    }
+                                    return;
+                                }
                                 let valid_alternatives: Vec<String> = alternatives
                                     .iter()
                                     .filter(|a| {
