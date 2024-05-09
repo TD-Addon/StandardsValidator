@@ -2,104 +2,16 @@ pub mod autocalc;
 pub mod books;
 pub mod corpse;
 pub mod doors;
+pub mod ids;
 pub mod keys;
 pub mod leveled;
 pub mod test;
 
-use crate::handler_traits::Handler;
-use tes3::esp::{Cell, Dialogue, FixedString, Info, ObjectFlags, Reference, TES3Object};
-
-#[derive(PartialEq)]
-pub enum Mode {
-    TR,
-    PT,
-    TD,
-}
-
-pub struct Context {
-    pub mode: Mode,
-}
-
-pub struct Handlers<'a> {
-    handlers: Vec<Box<dyn Handler<'a> + 'a>>,
-}
-
-impl<'a> Handlers<'a> {
-    fn new<'b>() -> Handlers<'b> {
-        return Handlers {
-            handlers: vec![
-                Box::new(test::TestValidator {}),
-                Box::new(autocalc::AutoCalcValidator {}),
-                Box::new(books::BookValidator {}),
-                Box::new(corpse::CorpseValidator {}),
-                Box::new(doors::DoorValidator {}),
-                Box::new(keys::KeyValidator::new()),
-                Box::new(leveled::LeveledValidator::new()),
-            ],
-        };
-    }
-
-    fn on_record(&mut self, context: &Context, record: &'a TES3Object, id: String) {
-        for handler in self.handlers.iter_mut() {
-            handler.on_record(context, record, &id);
-        }
-    }
-
-    fn on_cellref(&mut self, context: &Context, record: &Cell, reference: &Reference, id: String) {
-        for handler in self.handlers.iter_mut() {
-            handler.on_cellref(context, record, reference, &id);
-        }
-    }
-
-    fn on_info(&mut self, context: &Context, record: &Info, topic: &Dialogue) {
-        for handler in self.handlers.iter_mut() {
-            handler.on_info(context, record, topic);
-        }
-    }
-
-    fn on_leveled(
-        &mut self,
-        context: &Context,
-        record: &TES3Object,
-        entry: &(String, u16),
-        id: &String,
-    ) {
-        for handler in self.handlers.iter_mut() {
-            handler.on_leveled(context, record, entry, id);
-        }
-    }
-
-    fn on_inventory(
-        &mut self,
-        context: &Context,
-        record: &TES3Object,
-        entry: &(i32, FixedString<32>),
-        id: &String,
-    ) {
-        for handler in self.handlers.iter_mut() {
-            handler.on_inventory(context, record, entry, id);
-        }
-    }
-
-    fn on_script(
-        &mut self,
-        context: &Context,
-        record: &TES3Object,
-        code: &str,
-        comment: &str,
-        topic: &Dialogue,
-    ) {
-        for handler in self.handlers.iter_mut() {
-            handler.on_scriptline(context, record, code, comment, topic);
-        }
-    }
-
-    fn on_end(&mut self, context: &Context) {
-        for handler in self.handlers.iter_mut() {
-            handler.on_end(context);
-        }
-    }
-}
+use crate::{
+    context::Context,
+    handlers::{Handler, Handlers},
+};
+use tes3::esp::{Dialogue, FixedString, ObjectFlags, TES3Object};
 
 pub struct Validator<'a> {
     handlers: Handlers<'a>,
@@ -125,174 +37,169 @@ impl<'a> Validator<'a> {
             match record {
                 TES3Object::Activator(r) => {
                     self.handlers
-                        .on_record(&self.context, record, r.id.to_ascii_lowercase())
+                        .on_record(&self.context, record, r.type_name(), &r.id)
                 }
                 TES3Object::Alchemy(r) => {
                     self.handlers
-                        .on_record(&self.context, record, r.id.to_ascii_lowercase())
+                        .on_record(&self.context, record, r.type_name(), &r.id)
                 }
                 TES3Object::Apparatus(r) => {
                     self.handlers
-                        .on_record(&self.context, record, r.id.to_ascii_lowercase())
+                        .on_record(&self.context, record, r.type_name(), &r.id)
                 }
                 TES3Object::Armor(r) => {
                     self.handlers
-                        .on_record(&self.context, record, r.id.to_ascii_lowercase())
+                        .on_record(&self.context, record, r.type_name(), &r.id)
                 }
                 TES3Object::Birthsign(r) => {
                     self.handlers
-                        .on_record(&self.context, record, r.id.to_ascii_lowercase())
+                        .on_record(&self.context, record, r.type_name(), &r.id)
                 }
                 TES3Object::Bodypart(r) => {
                     self.handlers
-                        .on_record(&self.context, record, r.id.to_ascii_lowercase())
+                        .on_record(&self.context, record, r.type_name(), &r.id)
                 }
                 TES3Object::Book(r) => {
                     self.handlers
-                        .on_record(&self.context, record, r.id.to_ascii_lowercase())
+                        .on_record(&self.context, record, r.type_name(), &r.id)
                 }
                 TES3Object::Cell(r) => {
                     self.handlers
-                        .on_record(&self.context, record, r.id.to_ascii_lowercase());
+                        .on_record(&self.context, record, r.type_name(), &r.id);
                     for reference in r.references.values() {
-                        self.handlers.on_cellref(
-                            &self.context,
-                            r,
-                            reference,
-                            reference.id.to_ascii_lowercase(),
-                        );
+                        self.handlers.on_cellref(&self.context, r, reference);
                     }
                 }
                 TES3Object::Class(r) => {
                     self.handlers
-                        .on_record(&self.context, record, r.id.to_ascii_lowercase())
+                        .on_record(&self.context, record, r.type_name(), &r.id)
                 }
                 TES3Object::Clothing(r) => {
                     self.handlers
-                        .on_record(&self.context, record, r.id.to_ascii_lowercase())
+                        .on_record(&self.context, record, r.type_name(), &r.id)
                 }
                 TES3Object::Container(r) => {
                     self.handlers
-                        .on_record(&self.context, record, r.id.to_ascii_lowercase());
+                        .on_record(&self.context, record, r.type_name(), &r.id);
                     self.on_inventory(record, &r.inventory);
                 }
                 TES3Object::Creature(r) => {
                     self.handlers
-                        .on_record(&self.context, record, r.id.to_ascii_lowercase());
+                        .on_record(&self.context, record, r.type_name(), &r.id);
                     self.on_inventory(record, &r.inventory);
                 }
                 TES3Object::Dialogue(r) => {
                     self.handlers
-                        .on_record(&self.context, record, r.id.to_ascii_lowercase());
+                        .on_record(&self.context, record, r.type_name(), &r.id);
                     current_topic = r;
                 }
                 TES3Object::Door(r) => {
                     self.handlers
-                        .on_record(&self.context, record, r.id.to_ascii_lowercase())
+                        .on_record(&self.context, record, r.type_name(), &r.id)
                 }
                 TES3Object::Enchanting(r) => {
                     self.handlers
-                        .on_record(&self.context, record, r.id.to_ascii_lowercase())
+                        .on_record(&self.context, record, r.type_name(), &r.id)
                 }
                 TES3Object::Faction(r) => {
                     self.handlers
-                        .on_record(&self.context, record, r.id.to_ascii_lowercase())
+                        .on_record(&self.context, record, r.type_name(), &r.id)
                 }
                 TES3Object::GameSetting(_) => {}
                 TES3Object::GlobalVariable(r) => {
                     self.handlers
-                        .on_record(&self.context, record, r.id.to_ascii_lowercase())
+                        .on_record(&self.context, record, r.type_name(), &r.id)
                 }
                 TES3Object::Header(_) => {}
                 TES3Object::Info(r) => {
                     self.handlers
-                        .on_record(&self.context, record, r.id.to_ascii_lowercase());
+                        .on_record(&self.context, record, r.type_name(), &r.id);
                     self.handlers.on_info(&self.context, r, current_topic);
                     self.on_script(record, &r.script_text, current_topic);
                 }
                 TES3Object::Ingredient(r) => {
                     self.handlers
-                        .on_record(&self.context, record, r.id.to_ascii_lowercase())
+                        .on_record(&self.context, record, r.type_name(), &r.id)
                 }
                 TES3Object::Landscape(_) => {}
                 TES3Object::LandscapeTexture(_) => {}
                 TES3Object::LeveledCreature(r) => {
                     self.handlers
-                        .on_record(&self.context, record, r.id.to_ascii_lowercase());
+                        .on_record(&self.context, record, r.type_name(), &r.id);
                     self.on_leveled(record, &r.creatures);
                 }
                 TES3Object::LeveledItem(r) => {
                     self.handlers
-                        .on_record(&self.context, record, r.id.to_ascii_lowercase());
+                        .on_record(&self.context, record, r.type_name(), &r.id);
                     self.on_leveled(record, &r.items);
                 }
                 TES3Object::Light(r) => {
                     self.handlers
-                        .on_record(&self.context, record, r.id.to_ascii_lowercase())
+                        .on_record(&self.context, record, r.type_name(), &r.id)
                 }
                 TES3Object::Lockpick(r) => {
                     self.handlers
-                        .on_record(&self.context, record, r.id.to_ascii_lowercase())
+                        .on_record(&self.context, record, r.type_name(), &r.id)
                 }
                 TES3Object::MagicEffect(_) => {}
                 TES3Object::MiscItem(r) => {
                     self.handlers
-                        .on_record(&self.context, record, r.id.to_ascii_lowercase())
+                        .on_record(&self.context, record, r.type_name(), &r.id)
                 }
                 TES3Object::Npc(r) => {
                     self.handlers
-                        .on_record(&self.context, record, r.id.to_ascii_lowercase());
+                        .on_record(&self.context, record, r.type_name(), &r.id);
                     self.on_inventory(record, &r.inventory);
                 }
-                TES3Object::PathGrid(_) => {
+                TES3Object::PathGrid(r) => {
                     self.handlers
-                        .on_record(&self.context, record, String::new())
+                        .on_record(&self.context, record, r.type_name(), &String::new())
                 }
                 TES3Object::Probe(r) => {
                     self.handlers
-                        .on_record(&self.context, record, r.id.to_ascii_lowercase())
+                        .on_record(&self.context, record, r.type_name(), &r.id)
                 }
                 TES3Object::Race(r) => {
                     self.handlers
-                        .on_record(&self.context, record, r.id.to_ascii_lowercase())
+                        .on_record(&self.context, record, r.type_name(), &r.id)
                 }
                 TES3Object::Region(r) => {
                     self.handlers
-                        .on_record(&self.context, record, r.id.to_ascii_lowercase())
+                        .on_record(&self.context, record, r.type_name(), &r.id)
                 }
                 TES3Object::RepairItem(r) => {
                     self.handlers
-                        .on_record(&self.context, record, r.id.to_ascii_lowercase())
+                        .on_record(&self.context, record, r.type_name(), &r.id)
                 }
                 TES3Object::Script(r) => {
                     self.handlers
-                        .on_record(&self.context, record, r.id.to_ascii_lowercase());
+                        .on_record(&self.context, record, r.type_name(), &r.id);
                     self.on_script(record, &r.script_text, &dummy);
                 }
                 TES3Object::Skill(_) => {}
                 TES3Object::Sound(r) => {
                     self.handlers
-                        .on_record(&self.context, record, r.id.to_ascii_lowercase())
+                        .on_record(&self.context, record, r.type_name(), &r.id)
                 }
                 TES3Object::SoundGen(r) => {
                     self.handlers
-                        .on_record(&self.context, record, r.id.to_ascii_lowercase())
+                        .on_record(&self.context, record, r.type_name(), &r.id)
                 }
                 TES3Object::Spell(r) => {
                     self.handlers
-                        .on_record(&self.context, record, r.id.to_ascii_lowercase())
+                        .on_record(&self.context, record, r.type_name(), &r.id)
                 }
                 TES3Object::StartScript(r) => {
                     self.handlers
-                        .on_record(&self.context, record, r.id.to_ascii_lowercase())
+                        .on_record(&self.context, record, r.type_name(), &r.id)
                 }
                 TES3Object::Static(r) => {
                     self.handlers
-                        .on_record(&self.context, record, r.id.to_ascii_lowercase())
+                        .on_record(&self.context, record, r.type_name(), &r.id)
                 }
                 TES3Object::Weapon(r) => {
                     self.handlers
-                        .on_record(&self.context, record, r.id.to_ascii_lowercase())
+                        .on_record(&self.context, record, r.type_name(), &r.id)
                 }
             }
         }
@@ -300,14 +207,10 @@ impl<'a> Validator<'a> {
     }
 
     fn on_leveled(&mut self, record: &TES3Object, entries: &Option<Vec<(String, u16)>>) {
-        match entries {
-            Some(list) => {
-                for entry in list {
-                    let id = entry.0.to_ascii_lowercase();
-                    self.handlers.on_leveled(&self.context, record, entry, &id);
-                }
+        if let Some(list) = entries {
+            for entry in list {
+                self.handlers.on_leveled(&self.context, record, entry);
             }
-            None => {}
         }
     }
 
@@ -316,42 +219,34 @@ impl<'a> Validator<'a> {
         record: &TES3Object,
         inventory: &Option<Vec<(i32, FixedString<32>)>>,
     ) {
-        match inventory {
-            Some(list) => {
-                for entry in list {
-                    let id = entry.1.to_ascii_lowercase();
-                    self.handlers
-                        .on_inventory(&self.context, record, entry, &id);
-                }
+        if let Some(list) = inventory {
+            for entry in list {
+                self.handlers.on_inventory(&self.context, record, entry);
             }
-            None => {}
         }
     }
 
     fn on_script(&mut self, record: &TES3Object, script: &Option<String>, topic: &Dialogue) {
-        match script {
-            Some(text) => {
-                let empty = "";
-                for line in text.trim().split('\n') {
-                    let code: &str;
-                    let comment: &str;
-                    match line.split_once(';') {
-                        Some(s) => {
-                            code = s.0;
-                            comment = s.1;
-                        }
-                        None => {
-                            code = line;
-                            comment = empty;
-                        }
+        if let Some(text) = script {
+            let empty = "";
+            for line in text.trim().split('\n') {
+                let code: &str;
+                let comment: &str;
+                match line.split_once(';') {
+                    Some(s) => {
+                        code = s.0;
+                        comment = s.1;
                     }
-                    if !code.is_empty() || !comment.is_empty() {
-                        self.handlers
-                            .on_script(&self.context, record, code, comment, topic);
+                    None => {
+                        code = line;
+                        comment = empty;
                     }
                 }
+                if !code.is_empty() || !comment.is_empty() {
+                    self.handlers
+                        .on_scriptline(&self.context, record, code, comment, topic);
+                }
             }
-            None => {}
         }
     }
 }

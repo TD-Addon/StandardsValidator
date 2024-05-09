@@ -1,5 +1,5 @@
 use super::Context;
-use crate::handler_traits::Handler;
+use crate::handlers::Handler;
 use std::{error::Error, fmt};
 use tes3::esp::{Book, TES3Object};
 
@@ -14,7 +14,7 @@ fn is_marker(book: &Book) -> bool {
 }
 
 impl Handler<'_> for BookValidator {
-    fn on_record(&mut self, _: &Context, record: &TES3Object, _: &String) {
+    fn on_record(&mut self, _: &Context, record: &TES3Object, _: &'static str, _: &String) {
         if let TES3Object::Book(book) = record {
             if is_marker(book) {
                 return;

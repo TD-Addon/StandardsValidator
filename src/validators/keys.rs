@@ -1,7 +1,5 @@
+use crate::{context::Context, context::Mode, handlers::Handler, util::get_cell_name};
 use std::collections::HashSet;
-
-use super::{Context, Mode};
-use crate::{handler_traits::Handler, util::get_cell_name};
 use tes3::esp::{MiscItem, TES3Object};
 
 pub struct KeyValidator {
@@ -18,12 +16,13 @@ fn is_key(misc: &MiscItem) -> bool {
 }
 
 impl Handler<'_> for KeyValidator {
-    fn on_record(&mut self, context: &Context, record: &TES3Object, id: &String) {
+    fn on_record(&mut self, context: &Context, record: &TES3Object, _: &'static str, id: &String) {
         if let TES3Object::MiscItem(misc) = record {
-            if context.mode != Mode::TD && !is_key(misc) && id.contains("key") {
+            let lower = id.to_ascii_lowercase();
+            if context.mode != Mode::TD && !is_key(misc) && lower.contains("key") {
                 println!("MiscItem {} is not a key", misc.id)
             }
-            self.miscs.insert(id.clone());
+            self.miscs.insert(lower);
         }
     }
 
@@ -32,7 +31,6 @@ impl Handler<'_> for KeyValidator {
         _: &Context,
         record: &tes3::esp::Cell,
         reference: &tes3::esp::Reference,
-        _: &String,
     ) {
         if let Some(key) = &reference.key {
             if !self.miscs.contains(&key.to_ascii_lowercase()) {

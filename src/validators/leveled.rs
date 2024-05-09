@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 
 use super::Context;
-use crate::handler_traits::Handler;
+use crate::handlers::Handler;
 use tes3::esp::TES3Object;
 
 pub struct LeveledValidator<'a> {
@@ -41,23 +41,23 @@ fn get_first(list: &Option<Vec<(String, u16)>>) -> Option<&(String, u16)> {
 }
 
 impl<'a> Handler<'a> for LeveledValidator<'a> {
-    fn on_record(&mut self, _: &Context, record: &'a TES3Object, id: &String) {
+    fn on_record(&mut self, _: &Context, record: &'a TES3Object, typename: &'static str, id: &String) {
         match record {
             TES3Object::LeveledCreature(r) => {
                 if !has_flag(&r.list_flags, FLAG_ALL_LEVELS_CREATURE) {
-                    check_all_levels("LeveledCreature", &r.id, &r.creatures);
+                    check_all_levels(typename, &r.id, &r.creatures);
                 }
                 if let Some(entry) = get_first(&r.creatures) {
-                    self.minimum_levels.insert(id.clone(), entry.1);
+                    self.minimum_levels.insert(id.to_ascii_lowercase(), entry.1);
                 }
                 self.to_check.push(record);
             }
             TES3Object::LeveledItem(r) => {
                 if !has_flag(&r.list_flags, FLAG_ALL_LEVELS_ITEM) {
-                    check_all_levels("LeveledItem", &r.id, &r.items);
+                    check_all_levels(typename, &r.id, &r.items);
                 }
                 if let Some(entry) = get_first(&r.items) {
-                    self.minimum_levels.insert(id.clone(), entry.1);
+                    self.minimum_levels.insert(id.to_ascii_lowercase(), entry.1);
                 }
                 self.to_check.push(record);
             }
@@ -69,10 +69,10 @@ impl<'a> Handler<'a> for LeveledValidator<'a> {
         for record in &self.to_check {
             match record {
                 TES3Object::LeveledCreature(r) => {
-                    self.check_min("LeveledCreature", &r.id, &r.creatures);
+                    self.check_min(r.type_name(), &r.id, &r.creatures);
                 }
                 TES3Object::LeveledItem(r) => {
-                    self.check_min("LeveledItem", &r.id, &r.items);
+                    self.check_min(r.type_name(), &r.id, &r.items);
                 }
                 _ => {}
             }
