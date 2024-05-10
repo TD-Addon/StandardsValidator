@@ -12,7 +12,14 @@ pub mod leveled;
 pub mod magic;
 pub mod missing;
 pub mod npc;
+pub mod orphans;
+pub mod persistent;
+pub mod scripts;
+pub mod services;
+pub mod soundgens;
+pub mod supplies;
 pub mod test;
+pub mod todo;
 
 use crate::{
     context::Context,
@@ -76,8 +83,14 @@ impl<'a> Validator<'a> {
                         .on_record(&self.context, record, r.type_name(), &r.id);
                     let refs: Vec<_> = r.references.values().collect();
                     for (i, reference) in refs.iter().enumerate() {
-                        self.handlers
-                            .on_cellref(&self.context, r, reference, &refs, i);
+                        self.handlers.on_cellref(
+                            &self.context,
+                            r,
+                            reference,
+                            &reference.id.to_ascii_lowercase(),
+                            &refs,
+                            i,
+                        );
                     }
                 }
                 TES3Object::Class(r) => {
@@ -244,17 +257,22 @@ impl<'a> Validator<'a> {
                 let comment: &str;
                 match line.split_once(';') {
                     Some(s) => {
-                        code = s.0;
+                        code = s.0.trim();
                         comment = s.1;
                     }
                     None => {
-                        code = line;
+                        code = line.trim();
                         comment = empty;
                     }
                 }
                 if !code.is_empty() || !comment.is_empty() {
-                    self.handlers
-                        .on_scriptline(&self.context, record, code, comment, topic);
+                    self.handlers.on_scriptline(
+                        &self.context,
+                        record,
+                        &code.to_ascii_lowercase(),
+                        comment,
+                        topic,
+                    );
                 }
             }
         }

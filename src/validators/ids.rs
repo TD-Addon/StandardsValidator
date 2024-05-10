@@ -118,7 +118,7 @@ impl Handler<'_> for IdValidator {
 
 impl IdValidator {
     pub fn new() -> Self {
-        return IdValidator {
+        return Self {
             known: HashMap::new(),
         };
     }

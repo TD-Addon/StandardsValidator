@@ -1,0 +1,24 @@
+{
+	"barter": [
+		"Alchemist Service",
+		"Apothecary Service",
+		"T_Glb_ApothecaryService",
+		"Assassin Service",
+		"T_Glb_Baker",
+		"Bookseller",
+		"T_Glb_Bookseller",
+		"Clothier",
+		"Enchanter Service",
+		"Healer Service",
+		"Pawnbroker",
+		"Priest Service",
+		"Publican",
+		"T_Glb_Publican",
+		"Savant Service",
+		"Smith",
+		"Thief Service",
+		"Trader Service",
+		"T_Glb_TraderService",
+		"Wise Woman Service"
+	]
+}

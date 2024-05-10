@@ -126,6 +126,7 @@ impl Handler<'_> for CellValidator {
         _: &Context,
         record: &Cell,
         reference: &Reference,
+        id: &String,
         _: &Vec<&Reference>,
         _: usize,
     ) {
@@ -160,7 +161,7 @@ impl Handler<'_> for CellValidator {
                 println!("Cell {} contains out of bounds reference {} at [{}, {}, {}] which should be in ({}, {})", crate::util::get_cell_name(record), reference.id, x_pos, y_pos, z_pos, actual_x, actual_y);
             }
         }
-        if let Some(replacement) = self.broken.get(&reference.id.to_ascii_lowercase()) {
+        if let Some(replacement) = self.broken.get(id) {
             if replacement.is_empty() {
                 println!(
                     "Cell {} contains broken reference {}",
@@ -185,7 +186,7 @@ impl Handler<'_> for CellValidator {
             let [x, y, _] = reference.rotation;
             if x == 0. && y == 0. {
                 let name = crate::util::get_cell_name(record);
-                let key = format!("{}_{}", name, reference.id);
+                let key = format!("{}_{}", name, id);
                 if self.seen.insert(key) {
                     println!(
                         "Cell {} contains black square {} despite having water",
@@ -199,7 +200,7 @@ impl Handler<'_> for CellValidator {
 
 impl CellValidator {
     pub fn new() -> serde_json::Result<Self> {
-        return Ok(CellValidator {
+        return Ok(Self {
             seen: HashSet::new(),
             broken: serde_json::from_str(include_str!("../../data/broken.json"))?,
         });

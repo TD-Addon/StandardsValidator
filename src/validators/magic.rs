@@ -230,7 +230,7 @@ impl Handler<'_> for MagicValidator {
                                     .filter(|a| {
                                         self.spells.get(*a).iter().any(|r| r.0.matches(npc))
                                     })
-                                    .map(&String::clone)
+                                    .cloned()
                                     .collect();
                                 if valid_alternatives.is_empty() {
                                     println!("Npc {} knows spell {}", npc.id, id);
@@ -328,6 +328,6 @@ impl MagicValidator {
         for id in &data.blacklist {
             spells.insert(id.to_ascii_lowercase(), (never.clone(), none.clone()));
         }
-        return Ok(MagicValidator { spells });
+        return Ok(Self { spells });
     }
 }

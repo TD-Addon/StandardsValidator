@@ -31,8 +31,8 @@ impl Handler<'_> for KeyValidator {
         _: &Context,
         record: &Cell,
         reference: &Reference,
+        _: &String,
         _: &Vec<&Reference>,
-
         _: usize,
     ) {
         if let Some(key) = &reference.key {
@@ -49,8 +49,8 @@ impl Handler<'_> for KeyValidator {
 }
 
 impl KeyValidator {
-    pub fn new() -> KeyValidator {
-        return KeyValidator {
+    pub fn new() -> Self {
+        return Self {
             miscs: HashSet::new(),
         };
     }

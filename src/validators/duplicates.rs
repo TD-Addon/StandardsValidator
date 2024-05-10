@@ -21,13 +21,14 @@ impl Handler<'_> for DuplicateRefValidator {
         _: &Context,
         record: &Cell,
         reference: &Reference,
+        _: &String,
         refs: &Vec<&Reference>,
         i: usize,
     ) {
         if reference.deleted.unwrap_or(false) {
             return;
         }
-        for other in refs[i + 1..].iter() {
+        for other in unsafe { refs.get_unchecked(i + 1..) }.iter() {
             if other.deleted.unwrap_or(false) {
                 continue;
             }

@@ -1,6 +1,32 @@
-use tes3::esp::{Cell, ObjectFlags, TES3Object};
+use core::fmt;
+use std::{collections::HashMap, error::Error};
+use tes3::esp::{Cell, Npc, ObjectFlags, TES3Object};
 
 pub const CELL_SIZE: i32 = 8192;
+const FLAG_NPC_AUTO_CALC: u32 = 0x10;
+
+#[derive(Debug)]
+pub struct StringError {
+    message: String,
+}
+
+impl fmt::Display for StringError {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        return write!(f, "{}", self.message);
+    }
+}
+
+impl Error for StringError {
+    fn description(&self) -> &str {
+        return self.message.as_str();
+    }
+}
+
+impl StringError {
+    pub fn new(message: String) -> Self {
+        return Self { message };
+    }
+}
 
 pub fn is_dead(record: &TES3Object) -> bool {
     match record {
@@ -69,6 +95,30 @@ pub fn get_cell_grid(x: f64, y: f64) -> (i32, i32) {
 pub fn ci_starts_with(s: &str, prefix: &str) -> bool {
     if s.len() >= prefix.len() {
         return s.as_bytes()[..prefix.len()].eq_ignore_ascii_case(prefix.as_bytes());
+    }
+    return false;
+}
+
+pub fn update_or_insert<V: Default, F>(map: &mut HashMap<String, V>, key: String, f: F)
+where
+    F: FnOnce(&mut V),
+{
+    if let Some(entry) = map.get_mut(&key) {
+        f(entry);
+    } else {
+        let mut v: V = Default::default();
+        f(&mut v);
+        map.insert(key, v);
+    }
+}
+
+pub fn is_empty(option: &Option<String>) -> bool {
+    return !option.iter().any(|v| !v.is_empty());
+}
+
+pub fn is_autocalc(npc: &Npc) -> bool {
+    if let Some(flags) = npc.npc_flags {
+        return (flags & FLAG_NPC_AUTO_CALC) != 0;
     }
     return false;
 }

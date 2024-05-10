@@ -58,7 +58,7 @@ impl ClassValidator {
     pub fn new() -> serde_json::Result<Self> {
         let classes: Vec<ClassData> =
             serde_json::from_str(include_str!("../../data/classes.json"))?;
-        let mut validator = ClassValidator {
+        let mut validator = Self {
             tr_classes: HashMap::new(),
             classes: HashMap::new(),
         };

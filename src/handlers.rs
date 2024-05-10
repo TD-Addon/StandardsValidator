@@ -18,6 +18,7 @@ pub trait Handler<'a> {
         context: &Context,
         record: &Cell,
         reference: &Reference,
+        id: &String,
         refs: &Vec<&Reference>,
         i: usize,
     ) {
@@ -69,6 +70,13 @@ impl Handlers<'_> {
             Box::new(crate::validators::magic::MagicValidator::new()?),
             Box::new(crate::validators::missing::FieldValidator {}),
             Box::new(crate::validators::npc::NpcValidator::new()?),
+            Box::new(crate::validators::orphans::OrphanValidator::new()?),
+            Box::new(crate::validators::persistent::PersistentValidator::new()),
+            Box::new(crate::validators::scripts::ScriptValidator::new(context)?),
+            Box::new(crate::validators::services::ServiceValidator::new()?),
+            Box::new(crate::validators::soundgens::SoundGenValidator::new()),
+            Box::new(crate::validators::supplies::SupplyChestValidator::new()?),
+            Box::new(crate::validators::todo::ToDoValidator::new()?),
         ];
         if context.mode == Mode::PT || context.mode == Mode::TR {
             handlers.push(Box::new(crate::validators::classes::ClassValidator::new()?));
@@ -99,11 +107,12 @@ impl<'a> Handler<'a> for Handlers<'a> {
         context: &Context,
         record: &Cell,
         reference: &Reference,
+        id: &String,
         refs: &Vec<&Reference>,
         i: usize,
     ) {
         for handler in self.handlers.iter_mut() {
-            handler.on_cellref(context, record, reference, refs, i);
+            handler.on_cellref(context, record, reference, id, refs, i);
         }
     }
 

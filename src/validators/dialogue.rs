@@ -1,5 +1,5 @@
 use super::Context;
-use crate::{context::Mode, handlers::Handler};
+use crate::{context::Mode, handlers::Handler, util::is_empty};
 use regex::{Error, Regex, RegexBuilder};
 use tes3::esp::{
     Dialogue, DialogueType, FilterComparison, FilterFunction, FilterType, FilterValue, Info, Sex,
@@ -15,10 +15,6 @@ pub struct DialogueValidator {
     punctuation_double: Regex,
     article_pc: Regex,
     overrides: Regex,
-}
-
-fn is_empty(option: &Option<String>) -> bool {
-    return !option.iter().any(|v| !v.is_empty());
 }
 
 fn get_int(value: &Option<FilterValue>) -> Option<i32> {
@@ -355,7 +351,7 @@ impl DialogueValidator {
         let overrides = RegexBuilder::new(r"(^|\n)\s*;\s*SV:\s*vanilla\s+override\s*($|\n)")
             .case_insensitive(true)
             .build()?;
-        return Ok(DialogueValidator {
+        return Ok(Self {
             blank,
             double_spaces,
             short_ellipsis,

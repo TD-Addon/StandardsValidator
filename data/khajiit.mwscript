@@ -1,0 +1,16 @@
+set T_Local_Khajiit to -1
+if ( GetRace "T_Els_Cathay" )
+	set T_Local_Khajiit to 1
+elseif ( GetRace "T_Els_Cathay-raht" )
+	set T_Local_Khajiit to 1
+elseif ( GetRace "T_Els_Dagi-raht" )
+	set T_Local_Khajiit to 1
+elseif ( GetRace "T_Els_Ohmes" )
+	set T_Local_Khajiit to 1
+elseif ( GetRace "T_Els_Ohmes-raht" )
+	set T_Local_Khajiit to 1
+elseif ( GetRace "T_Els_Suthay" )
+	set T_Local_Khajiit to 1
+elseif ( GetRace "Khajiit" )
+	set T_Local_Khajiit to 1
+endif

@@ -76,8 +76,8 @@ struct Slice {
 }
 
 impl Slice {
-    pub fn new() -> Slice {
-        return Slice { start: 1, end: 0 };
+    pub fn new() -> Self {
+        return Self { start: 1, end: 0 };
     }
 
     pub fn get<'a>(&self, string: &'a String) -> Option<&'a str> {

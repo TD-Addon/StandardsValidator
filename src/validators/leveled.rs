@@ -22,10 +22,7 @@ fn has_flag(flags: &Option<u32>, flag: u32) -> bool {
 fn check_all_levels(t: &str, id: &String, list: &Option<Vec<(String, u16)>>) {
     if let Some(entries) = list {
         if entries.len() > 1 {
-            let first;
-            unsafe {
-                first = entries.get_unchecked(0).1;
-            }
+            let first = unsafe { entries.get_unchecked(0).1 };
             for entry in &entries[1..] {
                 if entry.1 != first {
                     println!("{} {} is not calculated for all levels", t, id);
