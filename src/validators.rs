@@ -18,8 +18,10 @@ pub mod scripts;
 pub mod services;
 pub mod soundgens;
 pub mod supplies;
-pub mod test;
 pub mod todo;
+pub mod travel;
+
+pub mod test;
 
 use crate::{
     context::Context,

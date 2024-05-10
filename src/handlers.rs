@@ -16,7 +16,7 @@ pub trait Handler<'a> {
     fn on_cellref(
         &mut self,
         context: &Context,
-        record: &Cell,
+        record: &'a Cell,
         reference: &Reference,
         id: &String,
         refs: &Vec<&Reference>,
@@ -34,7 +34,7 @@ pub trait Handler<'a> {
     ) {
     }
 
-    fn on_info(&mut self, context: &Context, record: &Info, topic: &Dialogue) {}
+    fn on_info(&mut self, context: &Context, record: &'a Info, topic: &Dialogue) {}
 
     fn on_scriptline(
         &mut self,
@@ -77,6 +77,7 @@ impl Handlers<'_> {
             Box::new(crate::validators::soundgens::SoundGenValidator::new()),
             Box::new(crate::validators::supplies::SupplyChestValidator::new()?),
             Box::new(crate::validators::todo::ToDoValidator::new()?),
+            Box::new(crate::validators::travel::TravelValidator::new()?),
         ];
         if context.mode == Mode::PT || context.mode == Mode::TR {
             handlers.push(Box::new(crate::validators::classes::ClassValidator::new()?));
@@ -105,7 +106,7 @@ impl<'a> Handler<'a> for Handlers<'a> {
     fn on_cellref(
         &mut self,
         context: &Context,
-        record: &Cell,
+        record: &'a Cell,
         reference: &Reference,
         id: &String,
         refs: &Vec<&Reference>,
@@ -116,7 +117,7 @@ impl<'a> Handler<'a> for Handlers<'a> {
         }
     }
 
-    fn on_info(&mut self, context: &Context, record: &Info, topic: &Dialogue) {
+    fn on_info(&mut self, context: &Context, record: &'a Info, topic: &Dialogue) {
         for handler in self.handlers.iter_mut() {
             handler.on_info(context, record, topic);
         }
