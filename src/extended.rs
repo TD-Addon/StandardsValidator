@@ -10,7 +10,15 @@ pub struct ExtendedValidator {
 
 #[allow(unused_variables)]
 trait ExtendedHandler {
-    fn on_record(&mut self, record: &TES3Object, typename: &'static str, id: &String, file: &str, last: bool) {}
+    fn on_record(
+        &mut self,
+        record: &TES3Object,
+        typename: &'static str,
+        id: &String,
+        file: &str,
+        last: bool,
+    ) {
+    }
 
     fn on_info(&mut self, record: &Info, topic: &Dialogue, file: &str, last: bool) {}
 
@@ -37,11 +45,17 @@ impl ExtendedValidator {
         let mut current_topic = &dummy;
         for record in records {
             match record {
-                TES3Object::Activator(r) => self.on_record(record, r.type_name(), &r.id, file, last),
+                TES3Object::Activator(r) => {
+                    self.on_record(record, r.type_name(), &r.id, file, last)
+                }
                 TES3Object::Alchemy(r) => self.on_record(record, r.type_name(), &r.id, file, last),
-                TES3Object::Apparatus(r) => self.on_record(record, r.type_name(), &r.id, file, last),
+                TES3Object::Apparatus(r) => {
+                    self.on_record(record, r.type_name(), &r.id, file, last)
+                }
                 TES3Object::Armor(r) => self.on_record(record, r.type_name(), &r.id, file, last),
-                TES3Object::Birthsign(r) => self.on_record(record, r.type_name(), &r.id, file, last),
+                TES3Object::Birthsign(r) => {
+                    self.on_record(record, r.type_name(), &r.id, file, last)
+                }
                 TES3Object::Bodypart(r) => self.on_record(record, r.type_name(), &r.id, file, last),
                 TES3Object::Book(r) => self.on_record(record, r.type_name(), &r.id, file, last),
                 TES3Object::Cell(r) => {
@@ -60,16 +74,24 @@ impl ExtendedValidator {
                     current_topic = r;
                 }
                 TES3Object::Door(r) => self.on_record(record, r.type_name(), &r.id, file, last),
-                TES3Object::Enchanting(r) => self.on_record(record, r.type_name(), &r.id, file, last),
+                TES3Object::Enchanting(r) => {
+                    self.on_record(record, r.type_name(), &r.id, file, last)
+                }
                 TES3Object::Faction(r) => self.on_record(record, r.type_name(), &r.id, file, last),
-                TES3Object::GameSetting(r) => self.on_record(record, r.type_name(), &r.id, file, last),
-                TES3Object::GlobalVariable(r) => self.on_record(record, r.type_name(), &r.id, file, last),
+                TES3Object::GameSetting(r) => {
+                    self.on_record(record, r.type_name(), &r.id, file, last)
+                }
+                TES3Object::GlobalVariable(r) => {
+                    self.on_record(record, r.type_name(), &r.id, file, last)
+                }
                 TES3Object::Header(_) => {}
                 TES3Object::Info(r) => {
                     self.on_record(record, r.type_name(), &r.id, file, last);
                     self.on_info(r, current_topic, file, last);
                 }
-                TES3Object::Ingredient(r) => self.on_record(record, r.type_name(), &r.id, file, last),
+                TES3Object::Ingredient(r) => {
+                    self.on_record(record, r.type_name(), &r.id, file, last)
+                }
                 TES3Object::Landscape(_) => {}
                 TES3Object::LandscapeTexture(_) => {}
                 TES3Object::LeveledCreature(r) => {
@@ -93,7 +115,9 @@ impl ExtendedValidator {
                 TES3Object::Probe(r) => self.on_record(record, r.type_name(), &r.id, file, last),
                 TES3Object::Race(r) => self.on_record(record, r.type_name(), &r.id, file, last),
                 TES3Object::Region(r) => self.on_record(record, r.type_name(), &r.id, file, last),
-                TES3Object::RepairItem(r) => self.on_record(record, r.type_name(), &r.id, file, last),
+                TES3Object::RepairItem(r) => {
+                    self.on_record(record, r.type_name(), &r.id, file, last)
+                }
                 TES3Object::Script(r) => {
                     self.on_record(record, r.type_name(), &r.id, file, last);
                 }
@@ -101,7 +125,9 @@ impl ExtendedValidator {
                 TES3Object::Sound(r) => self.on_record(record, r.type_name(), &r.id, file, last),
                 TES3Object::SoundGen(r) => self.on_record(record, r.type_name(), &r.id, file, last),
                 TES3Object::Spell(r) => self.on_record(record, r.type_name(), &r.id, file, last),
-                TES3Object::StartScript(r) => self.on_record(record, r.type_name(), &r.id, file, last),
+                TES3Object::StartScript(r) => {
+                    self.on_record(record, r.type_name(), &r.id, file, last)
+                }
                 TES3Object::Static(r) => self.on_record(record, r.type_name(), &r.id, file, last),
                 TES3Object::Weapon(r) => self.on_record(record, r.type_name(), &r.id, file, last),
             }
@@ -113,7 +139,14 @@ impl ExtendedValidator {
         }
     }
 
-    fn on_record(&mut self, record: &TES3Object, typename: &'static str, id: &String, file: &str, last: bool) {
+    fn on_record(
+        &mut self,
+        record: &TES3Object,
+        typename: &'static str,
+        id: &String,
+        file: &str,
+        last: bool,
+    ) {
         for handler in &mut self.handlers {
             handler.on_record(record, typename, id, file, last);
         }

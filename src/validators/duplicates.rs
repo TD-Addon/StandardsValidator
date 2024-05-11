@@ -1,6 +1,7 @@
 use super::Context;
 use crate::{handlers::Handler, util::get_cell_name};
 use clap::ArgMatches;
+use rayon::prelude::*;
 use tes3::esp::{Cell, Reference};
 
 pub struct DuplicateRefValidator {
@@ -29,16 +30,18 @@ impl Handler<'_> for DuplicateRefValidator {
         if reference.deleted.unwrap_or(false) {
             return;
         }
-        for other in unsafe { refs.get_unchecked(i + 1..) }.iter() {
-            if other.deleted.unwrap_or(false) {
-                continue;
-            }
-            if other.id.eq_ignore_ascii_case(&reference.id)
-                && equals(&reference.rotation, &other.rotation)
-                && reference.scale.unwrap_or(1.) == other.scale.unwrap_or(1.)
-                && self.translation(&reference.translation, &other.translation)
-            {
-                println!(
+        unsafe { refs.get_unchecked(i + 1..) }
+            .par_iter()
+            .for_each(|other| {
+                if other.deleted.unwrap_or(false) {
+                    return;
+                }
+                if other.id.eq_ignore_ascii_case(&reference.id)
+                    && equals(&reference.rotation, &other.rotation)
+                    && reference.scale.unwrap_or(1.) == other.scale.unwrap_or(1.)
+                    && self.translation(&reference.translation, &other.translation)
+                {
+                    println!(
                     "Cell {} contains duplicate reference {} at position [{}, {}, {}] [{}, {}, {}]",
                     get_cell_name(record),
                     reference.id,
@@ -48,9 +51,9 @@ impl Handler<'_> for DuplicateRefValidator {
                     other.translation[0],
                     other.translation[1],
                     other.translation[2]
-                )
-            }
-        }
+                );
+                }
+            });
     }
 }
 
