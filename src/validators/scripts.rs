@@ -4,7 +4,7 @@ use super::Context;
 use crate::{
     context::Mode,
     handlers::Handler,
-    util::{ci_starts_with, is_dead},
+    util::{ci_starts_with, Actor},
 };
 use regex::{Regex, RegexBuilder};
 use tes3::esp::{Dialogue, Npc, Script, TES3Object};
@@ -77,7 +77,7 @@ impl Handler<'_> for ScriptValidator {
                 }
             }
         } else if let TES3Object::Npc(npc) = record {
-            if !is_dead(record) {
+            if !npc.is_dead() {
                 if let Some(script) = &npc.script {
                     if !script.is_empty() {
                         let id = script.to_ascii_lowercase();

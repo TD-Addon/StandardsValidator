@@ -3,7 +3,7 @@ use std::collections::{HashMap, HashSet};
 use super::Context;
 use crate::{
     handlers::Handler,
-    util::{get_cell_grid, get_cell_name, is_dead},
+    util::{get_cell_grid, get_cell_name, is_dead, Actor},
 };
 use tes3::esp::{Cell, Dialogue, Info, Reference, TES3Object, TravelDestination};
 
@@ -14,16 +14,9 @@ pub struct TravelValidator<'a> {
 }
 
 struct Caravaner<'a> {
-    record: &'a TES3Object,
+    record: &'a dyn Actor,
     cells: Vec<Location<'a>>,
     destination: Vec<&'a Info>,
-}
-
-fn matches_location(option: &Option<Vec<TravelDestination>>, location: &Location) -> bool {
-    if let Some(destinations) = &option {
-        return destinations.iter().any(|d| location.matches(d));
-    }
-    return false;
 }
 
 fn get_town_name(id: &String) -> &str {
@@ -34,7 +27,7 @@ fn get_town_name(id: &String) -> &str {
 }
 
 impl<'a> Caravaner<'a> {
-    pub fn new(record: &'a TES3Object) -> Self {
+    pub fn new(record: &'a dyn Actor) -> Self {
         return Self {
             record,
             cells: Vec::new(),
@@ -43,21 +36,15 @@ impl<'a> Caravaner<'a> {
     }
 
     fn is_counterpart(&self, location: &Location) -> bool {
-        if let TES3Object::Creature(r) = self.record {
-            return matches_location(&r.travel_destinations, location);
-        } else if let TES3Object::Npc(r) = self.record {
-            return matches_location(&r.travel_destinations, location);
+        if let Some(destinations) = self.record.get_destinations() {
+            return destinations.iter().any(|d| location.matches(d));
         }
         return false;
     }
 
     fn matches_class(&self, class: &String) -> bool {
-        if let TES3Object::Creature(_) = self.record {
-            return true;
-        } else if let TES3Object::Npc(r) = self.record {
-            if let Some(id) = &r.class {
-                return id.eq_ignore_ascii_case(class);
-            }
+        if let Some(id) = self.record.get_class() {
+            return id.eq_ignore_ascii_case(class);
         }
         return false;
     }
@@ -99,18 +86,18 @@ impl<'a> Handler<'a> for TravelValidator<'a> {
                 }
             }
             TES3Object::Creature(creature) => {
-                if let Some(destinations) = &creature.travel_destinations {
+                if let Some(destinations) = creature.get_destinations() {
                     if !destinations.is_empty() {
                         self.caravaners
-                            .insert(creature.id.to_ascii_lowercase(), Caravaner::new(record));
+                            .insert(creature.id.to_ascii_lowercase(), Caravaner::new(creature));
                     }
                 }
             }
             TES3Object::Npc(npc) => {
-                if let Some(destinations) = &npc.travel_destinations {
+                if let Some(destinations) = npc.get_destinations() {
                     if !destinations.is_empty() {
                         self.caravaners
-                            .insert(npc.id.to_ascii_lowercase(), Caravaner::new(record));
+                            .insert(npc.id.to_ascii_lowercase(), Caravaner::new(npc));
                         return;
                     }
                 }
@@ -153,23 +140,7 @@ impl<'a> Handler<'a> for TravelValidator<'a> {
 
     fn on_end(&mut self, _: &Context) {
         for (_, caravaner) in &self.caravaners {
-            if let TES3Object::Creature(r) = caravaner.record {
-                self.check_caravaner(
-                    caravaner,
-                    r.type_name(),
-                    &r.id,
-                    r.travel_destinations.as_ref().unwrap(),
-                    &None,
-                );
-            } else if let TES3Object::Npc(r) = caravaner.record {
-                self.check_caravaner(
-                    caravaner,
-                    r.type_name(),
-                    &r.id,
-                    r.travel_destinations.as_ref().unwrap(),
-                    &r.class,
-                );
-            }
+            self.check_caravaner(caravaner);
         }
     }
 }
@@ -184,14 +155,9 @@ impl TravelValidator<'_> {
         });
     }
 
-    fn check_caravaner(
-        &self,
-        caravaner: &Caravaner,
-        typename: &str,
-        id: &String,
-        destinations: &Vec<TravelDestination>,
-        class: &Option<String>,
-    ) {
+    fn check_caravaner(&self, caravaner: &Caravaner) {
+        let typename = caravaner.record.get_type();
+        let id = caravaner.record.get_id();
         if caravaner.destination.is_empty() {
             println!(
                 "{} {} offers travel services but does not have a reply to the destination topic",
@@ -204,7 +170,7 @@ impl TravelValidator<'_> {
                 .values()
                 .filter(|c| c.is_counterpart(cell))
                 .collect();
-            for dest in destinations {
+            for dest in caravaner.record.get_destinations().as_ref().unwrap() {
                 let return_services: Vec<&Caravaner> = counterparts
                     .iter()
                     .filter(|c| c.cells.iter().any(|l| l.matches(dest)))
@@ -219,7 +185,7 @@ impl TravelValidator<'_> {
                         get_cell_name(cell.cell),
                         dest_name
                     )
-                } else if let Some(class_id) = class {
+                } else if let Some(class_id) = caravaner.record.get_class() {
                     if !return_services.iter().any(|c| c.matches_class(class_id)) {
                         println!("{} {} in {} offers {} travel to {} but there is no corresponding return travel there", typename, id, get_cell_name(cell.cell), class_id, dest_name);
                     }

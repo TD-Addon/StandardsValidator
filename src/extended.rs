@@ -1,8 +1,17 @@
+use clap::ArgMatches;
 use tes3::esp::{Dialogue, Info, ObjectFlags, TES3Object};
 
-use self::names::{NameValidator, QuestNameValidator};
+use self::{
+    cells::CellValidator,
+    items::OwnershipValidator,
+    names::{NameValidator, QuestNameValidator},
+    weapons::WeaponValidator,
+};
 
+mod cells;
+mod items;
 mod names;
+mod weapons;
 
 pub struct ExtendedValidator {
     handlers: Vec<Box<dyn ExtendedHandler>>,
@@ -26,9 +35,15 @@ trait ExtendedHandler {
 }
 
 impl ExtendedValidator {
-    pub fn new(extended: bool, names: bool) -> Self {
+    pub fn new(args: &ArgMatches) -> Self {
         let mut handlers: Vec<Box<dyn ExtendedHandler>> = Vec::new();
-        if extended {}
+        let extended = args.get_flag("extended");
+        let names = args.get_flag("names");
+        if extended {
+            handlers.push(Box::new(CellValidator::new(args)));
+            handlers.push(Box::new(OwnershipValidator::new()));
+            handlers.push(Box::new(WeaponValidator::new()));
+        }
         if names {
             handlers.push(Box::new(NameValidator::new()));
             handlers.push(Box::new(QuestNameValidator::new()));

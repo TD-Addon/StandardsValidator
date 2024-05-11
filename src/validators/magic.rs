@@ -4,7 +4,7 @@ use super::Context;
 use crate::{
     context::Mode,
     handlers::Handler,
-    util::{ci_starts_with, is_dead},
+    util::{ci_starts_with, Actor},
 };
 use serde::Deserialize;
 use tes3::esp::{Effect, EffectId2, EnchantType, Npc, SpellType, TES3Object};
@@ -202,7 +202,7 @@ impl Handler<'_> for MagicValidator {
     fn on_record(&mut self, context: &Context, record: &TES3Object, typename: &str, id: &String) {
         match record {
             TES3Object::Npc(npc) => {
-                if !is_dead(record) {
+                if !npc.is_dead() {
                     for id in npc.spells.iter().flat_map(|s| s.iter()) {
                         if let Some((rule, alternatives)) =
                             self.spells.get(&id.to_ascii_lowercase())

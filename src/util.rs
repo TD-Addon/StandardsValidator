@@ -1,26 +1,80 @@
 use std::collections::HashMap;
-use tes3::esp::{Cell, Npc, ObjectFlags, TES3Object};
+use tes3::esp::{Cell, Creature, Npc, ObjectFlags, TES3Object, TravelDestination};
 
 pub const CELL_SIZE: i32 = 8192;
 const FLAG_NPC_AUTO_CALC: u32 = 0x10;
+const FLAG_CELL_NO_SLEEP: u32 = 4;
+
+pub trait Actor {
+    fn is_dead(&self) -> bool;
+
+    fn get_destinations(&self) -> &Option<Vec<TravelDestination>>;
+
+    fn get_class(&self) -> Option<&String>;
+
+    fn get_type(&self) -> &'static str;
+
+    fn get_id(&self) -> &String;
+}
+
+impl Actor for Creature {
+    fn is_dead(&self) -> bool {
+        if let Some(data) = &self.data {
+            return data.health == 0;
+        }
+        return false;
+    }
+
+    fn get_destinations(&self) -> &Option<Vec<TravelDestination>> {
+        return &self.travel_destinations;
+    }
+
+    fn get_class(&self) -> Option<&String> {
+        return None;
+    }
+
+    fn get_type(&self) -> &'static str {
+        return self.type_name();
+    }
+
+    fn get_id(&self) -> &String {
+        return &self.id;
+    }
+}
+
+impl Actor for Npc {
+    fn is_dead(&self) -> bool {
+        if let Some(data) = &self.data {
+            if let Some(stats) = &data.stats {
+                return stats.health == 0;
+            }
+        }
+        return false;
+    }
+
+    fn get_destinations(&self) -> &Option<Vec<TravelDestination>> {
+        return &self.travel_destinations;
+    }
+
+    fn get_class(&self) -> Option<&String> {
+        return self.class.as_ref();
+    }
+
+    fn get_type(&self) -> &'static str {
+        return self.type_name();
+    }
+
+    fn get_id(&self) -> &String {
+        return &self.id;
+    }
+}
 
 pub fn is_dead(record: &TES3Object) -> bool {
     match record {
-        TES3Object::Creature(creature) => {
-            if let Some(data) = &creature.data {
-                return data.health == 0;
-            }
-        }
-        TES3Object::Npc(npc) => {
-            if let Some(data) = &npc.data {
-                if let Some(stats) = &data.stats {
-                    return stats.health == 0;
-                }
-            }
-        }
-        _ => {}
+        TES3Object::Creature(creature) => creature.is_dead(),
+        TES3Object::Npc(npc) => npc.is_dead(),
+        _ => false,
     }
-    return false;
 }
 
 pub fn is_persistent(record: &TES3Object) -> bool {
@@ -97,4 +151,8 @@ pub fn is_autocalc(npc: &Npc) -> bool {
         return (flags & FLAG_NPC_AUTO_CALC) != 0;
     }
     return false;
+}
+
+pub fn cannot_sleep(cell: &Cell) -> bool {
+    return (cell.data.flags & FLAG_CELL_NO_SLEEP) != 0;
 }
