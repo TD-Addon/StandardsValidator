@@ -1,7 +1,7 @@
 use clap::{Arg, ArgGroup, ArgMatches, Command};
 use context::{Context, Mode};
 use extended::ExtendedValidator;
-use std::{error::Error, io::ErrorKind, path::Path};
+use std::{error::Error, path::Path};
 use tes3::esp::Plugin;
 use validators::Validator;
 
@@ -17,17 +17,21 @@ fn main() -> Result<(), Box<dyn Error>> {
             Arg::new("extended")
                 .num_args(0)
                 .long("extended")
-                .help("Run extended checks that require master files instead"),
+                .help("Run extended checks that require master files instead."),
             Arg::new("names")
                 .num_args(0)
                 .long("names")
-                .help("Report similar NPC and quest names instead"),
+                .help("Report similar NPC and quest names instead."),
+            Arg::new("dontautoload")
+                .num_args(0)
+                .long("disable-master-loading")
+                .help("--extended and --names automatically attempt to load the last <path>'s master files from the same directory if no other <path>s with the same file name are supplied. This flag disables that behaviour."),
             Arg::new("duplicatethreshold")
                 .long("duplicate-threshold")
                 .default_value("0")
                 .value_parser(&str::parse::<f32>)
                 .value_name("threshold")
-                .help("Squared distance at which two objects with the same id, scale, and orientation are considered duplicates"),
+                .help("Squared distance at which two objects with the same id, scale, and orientation are considered duplicates."),
             Arg::new("mode")
                 .required(true)
                 .value_parser(["PT", "TD", "TR", "Vanilla"]),
@@ -41,13 +45,15 @@ fn main() -> Result<(), Box<dyn Error>> {
             ArgGroup::new("g_extended")
                 .args(["extended", "names"])
                 .conflicts_with("g_validator"),
+            ArgGroup::new("g_autoload").arg("dontautoload").requires("g_extended")
         ])
         .get_matches();
     let extended = args.get_flag("extended");
     let names = args.get_flag("names");
+    let autoload = !args.get_flag("dontautoload");
     let mut paths = args.get_many::<String>("path").unwrap();
     if extended || names {
-        return run_extended(paths.collect(), extended, names);
+        return Ok(run_extended(paths.collect(), extended, names, autoload)?);
     }
     if paths.clone().count() > 1 {
         Err("The default validator only takes a single path")?;
@@ -67,47 +73,58 @@ fn validate(path: &String, context: Context, args: &ArgMatches) -> Result<(), Bo
     Ok(())
 }
 
-fn load_plugin(string: &String) -> Result<Plugin, Box<dyn Error>> {
-    let path: &Path = string.as_ref();
+fn load_plugin(p: impl AsRef<Path>) -> Result<Plugin, String> {
+    let path: &Path = p.as_ref();
     let mut plugin = Plugin::new();
     let result = plugin.load_path(path);
     if let Some(err) = result.err() {
-        if err.kind() == ErrorKind::NotFound {
-            Err(format!("File not found: {}", path.display()))?;
-        }
-        Err(err)?;
+        return Err(format!(
+            "Failed to load {} ({})",
+            path.display(),
+            err.to_string()
+        ));
     }
     return Ok(plugin);
 }
 
-fn run_extended(paths: Vec<&String>, extended: bool, names: bool) -> Result<(), Box<dyn Error>> {
+fn run_extended(
+    paths: Vec<&String>,
+    extended: bool,
+    names: bool,
+    autoload: bool,
+) -> Result<(), String> {
     let mut validator = ExtendedValidator::new(extended, names);
     let (plugin_path, master_paths) = paths.split_last().unwrap();
     let plugin = load_plugin(plugin_path)?;
     let mut auto_discovered = Vec::new();
-    if let Some(header) = plugin.header() {
-        if let Some(masters) = &header.masters {
-            for (file, _) in masters {
-                auto_discovered.push(file);
+    if autoload {
+        if let Some(header) = plugin.header() {
+            if let Some(masters) = &header.masters {
+                for (file, _) in masters {
+                    auto_discovered.push(file);
+                }
             }
         }
     }
-    for path in master_paths {
-        auto_discovered.retain_mut(|p| !path.eq_ignore_ascii_case(p));
-        let master = load_plugin(path)?;
-        validator.validate(&master.objects, false);
+    for master_path in master_paths {
+        let path: &Path = plugin_path.as_ref();
+        let master = load_plugin(master_path)?;
+        if autoload {
+            auto_discovered.retain_mut(|p| !path.file_name().unwrap().eq_ignore_ascii_case(p));
+        }
+        validator.validate(&master.objects, master_path, false);
     }
     if !auto_discovered.is_empty() {
         let path: &Path = plugin_path.as_ref();
         let parent = path.parent().unwrap();
-        let mut master = Plugin::new();
+        // let mut master = Plugin::new();
         for name in auto_discovered {
             let discovered_path = parent.join(name);
-            if master.load_path(discovered_path).is_ok() {
-                validator.validate(&master.objects, false);
-            }
+            let master = load_plugin(discovered_path.as_path())?;
+            let file = discovered_path.to_str().unwrap_or("<funky path>");
+            validator.validate(&master.objects, file, false);
         }
     }
-    validator.validate(&plugin.objects, true);
+    validator.validate(&plugin.objects, plugin_path, true);
     Ok(())
 }
