@@ -4,7 +4,7 @@ use regex::Regex;
 use tes3::esp::{Dialogue, Info, TES3Object};
 
 pub struct UnicodeValidator {
-    invalid: Regex
+    invalid: Regex,
 }
 
 impl Handler<'_> for UnicodeValidator {
@@ -95,7 +95,7 @@ impl Handler<'_> for UnicodeValidator {
             TES3Object::Weapon(r) => {
                 self.test_o(typename, id, "name", &r.name, None);
             }
-            _ => {},
+            _ => {}
         }
         if !id.is_empty() {
             self.test(typename, id, "id", id, None);
@@ -103,29 +103,68 @@ impl Handler<'_> for UnicodeValidator {
     }
 
     fn on_info(&mut self, _: &Context, record: &Info, topic: &Dialogue) {
-        self.test_o(record.type_name(), &record.id, "text", &record.text, Some(topic));
-        self.test_o(record.type_name(), &record.id, "script_text", &record.script_text, Some(topic));
+        self.test_o(
+            record.type_name(),
+            &record.id,
+            "text",
+            &record.text,
+            Some(topic),
+        );
+        self.test_o(
+            record.type_name(),
+            &record.id,
+            "script_text",
+            &record.script_text,
+            Some(topic),
+        );
     }
 }
 
 impl UnicodeValidator {
     pub fn new() -> Result<Self, regex::Error> {
         let invalid = Regex::new(r"[\u0000-\u0008\u000b\u000c\u000e-\u001f\u007f-\uffff]")?;
-        return Ok(Self{ invalid });
+        return Ok(Self { invalid });
     }
 
-    fn test_o(&self, typename: &str, id: &String, field: &str, value: &Option<String>, topic: Option<&Dialogue>) {
+    fn test_o(
+        &self,
+        typename: &str,
+        id: &String,
+        field: &str,
+        value: &Option<String>,
+        topic: Option<&Dialogue>,
+    ) {
         if let Some(s) = value {
             self.test(typename, id, field, s, topic);
         }
     }
 
-    fn test(&self, typename: &str, id: &String, field: &str, value: &String, topic: Option<&Dialogue>) {
+    fn test(
+        &self,
+        typename: &str,
+        id: &String,
+        field: &str,
+        value: &String,
+        topic: Option<&Dialogue>,
+    ) {
         if let Some(m) = self.invalid.find(value) {
             if let Some(dial) = topic {
-                println!("{} {} in topic {} contains odd character {} in field {}", typename, id, dial.id, m.as_str(), field);
+                println!(
+                    "{} {} in topic {} contains odd character {} in field {}",
+                    typename,
+                    id,
+                    dial.id,
+                    m.as_str(),
+                    field
+                );
             } else {
-                println!("{} {} contains odd character {} in field {}", typename, id, m.as_str(), field);
+                println!(
+                    "{} {} contains odd character {} in field {}",
+                    typename,
+                    id,
+                    m.as_str(),
+                    field
+                );
             }
         }
     }

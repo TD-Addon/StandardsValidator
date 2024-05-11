@@ -1,5 +1,6 @@
 use super::Context;
 use crate::{handlers::Handler, util::get_cell_name};
+use clap::ArgMatches;
 use tes3::esp::{Cell, Reference};
 
 pub struct DuplicateRefValidator {
@@ -54,10 +55,12 @@ impl Handler<'_> for DuplicateRefValidator {
 }
 
 impl DuplicateRefValidator {
-    pub fn new(threshold: f32) -> Self {
-        return DuplicateRefValidator {
-            threshold: threshold.max(0.),
-        };
+    pub fn new(args: &ArgMatches) -> Self {
+        let threshold = args
+            .get_one::<f32>("duplicatethreshold")
+            .unwrap_or(&0.)
+            .max(0.);
+        return DuplicateRefValidator { threshold };
     }
 
     fn translation(&self, a: &[f32; 3], b: &[f32; 3]) -> bool {

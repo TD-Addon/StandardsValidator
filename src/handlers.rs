@@ -1,4 +1,5 @@
 use crate::context::{Context, Mode};
+use clap::ArgMatches;
 use std::error::Error;
 use tes3::esp::{Cell, Dialogue, FixedString, Info, Reference, TES3Object};
 
@@ -54,13 +55,13 @@ pub struct Handlers<'a> {
 }
 
 impl Handlers<'_> {
-    pub fn new<'a>(context: &Context) -> Result<Handlers<'a>, Box<dyn Error>> {
+    pub fn new<'a>(context: &Context, args: &ArgMatches) -> Result<Handlers<'a>, Box<dyn Error>> {
         let mut handlers: Vec<Box<dyn Handler<'a> + 'a>> = vec![
             Box::new(crate::validators::books::BookValidator {}),
             Box::new(crate::validators::cells::CellValidator::new()?),
             Box::new(crate::validators::corpse::CorpseValidator {}),
             Box::new(crate::validators::duplicates::DuplicateRefValidator::new(
-                0.,
+                args,
             )),
             Box::new(crate::validators::doors::DoorValidator {}),
             Box::new(crate::validators::keys::KeyValidator::new()),
@@ -85,7 +86,9 @@ impl Handlers<'_> {
         if context.mode != Mode::Vanilla {
             handlers.push(Box::new(crate::validators::autocalc::AutoCalcValidator {}));
             handlers.push(Box::new(crate::validators::ids::IdValidator::new()));
-            handlers.push(Box::new(crate::validators::uniques::UniquesValidator::new()?));
+            handlers.push(Box::new(
+                crate::validators::uniques::UniquesValidator::new()?
+            ));
         }
         return Ok(Handlers { handlers });
     }
@@ -99,7 +102,7 @@ impl<'a> Handler<'a> for Handlers<'a> {
         typename: &'static str,
         id: &String,
     ) {
-        for handler in self.handlers.iter_mut() {
+        for handler in &mut self.handlers {
             handler.on_record(context, record, typename, &id);
         }
     }
@@ -113,19 +116,19 @@ impl<'a> Handler<'a> for Handlers<'a> {
         refs: &Vec<&Reference>,
         i: usize,
     ) {
-        for handler in self.handlers.iter_mut() {
+        for handler in &mut self.handlers {
             handler.on_cellref(context, record, reference, id, refs, i);
         }
     }
 
     fn on_info(&mut self, context: &Context, record: &'a Info, topic: &Dialogue) {
-        for handler in self.handlers.iter_mut() {
+        for handler in &mut self.handlers {
             handler.on_info(context, record, topic);
         }
     }
 
     fn on_leveled(&mut self, context: &Context, record: &TES3Object, entry: &(String, u16)) {
-        for handler in self.handlers.iter_mut() {
+        for handler in &mut self.handlers {
             handler.on_leveled(context, record, entry);
         }
     }
@@ -136,7 +139,7 @@ impl<'a> Handler<'a> for Handlers<'a> {
         record: &TES3Object,
         entry: &(i32, FixedString<32>),
     ) {
-        for handler in self.handlers.iter_mut() {
+        for handler in &mut self.handlers {
             handler.on_inventory(context, record, entry);
         }
     }
@@ -149,13 +152,13 @@ impl<'a> Handler<'a> for Handlers<'a> {
         comment: &str,
         topic: &Dialogue,
     ) {
-        for handler in self.handlers.iter_mut() {
+        for handler in &mut self.handlers {
             handler.on_scriptline(context, record, code, comment, topic);
         }
     }
 
     fn on_end(&mut self, context: &Context) {
-        for handler in self.handlers.iter_mut() {
+        for handler in &mut self.handlers {
             handler.on_end(context);
         }
     }

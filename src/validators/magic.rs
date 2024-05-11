@@ -164,12 +164,7 @@ fn get_effect_details(id: EffectId2) -> (bool, Duration, bool) {
     };
 }
 
-fn check_effects(
-    typename: &str,
-    id: &String,
-    option: &Option<Vec<Effect>>,
-    constant_effect: bool,
-) {
+fn check_effects(typename: &str, id: &String, option: &Option<Vec<Effect>>, constant_effect: bool) {
     for effect in option.iter().flat_map(|v| v.iter()) {
         let (illegal, duration, magnitude) = get_effect_details(effect.magic_effect);
         if illegal {
@@ -204,13 +199,7 @@ fn check_effects(
 }
 
 impl Handler<'_> for MagicValidator {
-    fn on_record(
-        &mut self,
-        context: &Context,
-        record: &TES3Object,
-        typename: &str,
-        id: &String,
-    ) {
+    fn on_record(&mut self, context: &Context, record: &TES3Object, typename: &str, id: &String) {
         match record {
             TES3Object::Npc(npc) => {
                 if !is_dead(record) {

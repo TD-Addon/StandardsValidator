@@ -27,6 +27,7 @@ use crate::{
     context::Context,
     handlers::{Handler, Handlers},
 };
+use clap::ArgMatches;
 use std::error::Error;
 use tes3::esp::{Dialogue, FixedString, ObjectFlags, TES3Object};
 
@@ -36,9 +37,9 @@ pub struct Validator<'a> {
 }
 
 impl<'a> Validator<'a> {
-    pub fn new<'b>(context: Context) -> Result<Validator<'b>, Box<dyn Error>> {
+    pub fn new<'b>(context: Context, args: &ArgMatches) -> Result<Validator<'b>, Box<dyn Error>> {
         return Ok(Validator {
-            handlers: Handlers::new(&context)?,
+            handlers: Handlers::new(&context, args)?,
             context,
         });
     }

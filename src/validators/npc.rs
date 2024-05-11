@@ -4,7 +4,7 @@ use super::Context;
 use crate::{
     context::Mode,
     handlers::Handler,
-    util::{is_autocalc, is_dead, update_or_insert, StringError},
+    util::{is_autocalc, is_dead, update_or_insert},
 };
 use serde::Deserialize;
 use serde_json::Value;
@@ -218,7 +218,7 @@ impl RulesParser {
         &mut self,
         values: &Vec<HashMap<String, Value>>,
         params: Option<(BodypartId, &String)>,
-    ) -> Result<SomeRules, StringError> {
+    ) -> Result<SomeRules, String> {
         let mut out = SomeRules { rules: Vec::new() };
         for rule in values {
             let mut equality = Vec::new();
@@ -242,10 +242,10 @@ impl RulesParser {
                         }
                         equality.push(FieldRule::Id(built));
                     } else {
-                        return Err(StringError::new(format!("Invalid key {}", key)));
+                        return Err(format!("Invalid key {}", key));
                     }
                 } else {
-                    return Err(StringError::new(format!("Failed to parse {}", value)));
+                    return Err(format!("Failed to parse {}", value));
                 }
             }
             if !equality.is_empty() {
@@ -259,7 +259,7 @@ impl RulesParser {
         &mut self,
         definitions: &Vec<Definition>,
         part: BodypartId,
-    ) -> Result<(), StringError> {
+    ) -> Result<(), String> {
         for definition in definitions {
             let model = definition.model.to_ascii_lowercase();
             let mut predicate = AllRules { rules: Vec::new() };
@@ -285,7 +285,7 @@ impl RulesParser {
     fn parse_rulesets(
         &mut self,
         rulesets: &HashMap<String, Vec<HashMap<String, Value>>>,
-    ) -> Result<(), StringError> {
+    ) -> Result<(), String> {
         for (name, json) in rulesets {
             let parsed = self.parse_rules(json, None)?;
             self.rulesets.insert(name.clone(), Rc::new(parsed));

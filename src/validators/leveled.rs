@@ -38,13 +38,7 @@ fn get_first(list: &Option<Vec<(String, u16)>>) -> Option<&(String, u16)> {
 }
 
 impl<'a> Handler<'a> for LeveledValidator<'a> {
-    fn on_record(
-        &mut self,
-        _: &Context,
-        record: &'a TES3Object,
-        typename: &str,
-        id: &String,
-    ) {
+    fn on_record(&mut self, _: &Context, record: &'a TES3Object, typename: &str, id: &String) {
         match record {
             TES3Object::LeveledCreature(r) => {
                 if !has_flag(&r.list_flags, FLAG_ALL_LEVELS_CREATURE) {

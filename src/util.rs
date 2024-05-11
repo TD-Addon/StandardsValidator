@@ -1,32 +1,8 @@
-use core::fmt;
-use std::{collections::HashMap, error::Error};
+use std::collections::HashMap;
 use tes3::esp::{Cell, Npc, ObjectFlags, TES3Object};
 
 pub const CELL_SIZE: i32 = 8192;
 const FLAG_NPC_AUTO_CALC: u32 = 0x10;
-
-#[derive(Debug)]
-pub struct StringError {
-    message: String,
-}
-
-impl fmt::Display for StringError {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        return write!(f, "{}", self.message);
-    }
-}
-
-impl Error for StringError {
-    fn description(&self) -> &str {
-        return self.message.as_str();
-    }
-}
-
-impl StringError {
-    pub fn new(message: String) -> Self {
-        return Self { message };
-    }
-}
 
 pub fn is_dead(record: &TES3Object) -> bool {
     match record {
