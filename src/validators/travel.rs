@@ -52,7 +52,7 @@ impl<'a> Caravaner<'a> {
     }
 
     fn matches_class(&self, class: &String) -> bool {
-        if let TES3Object::Creature(r) = self.record {
+        if let TES3Object::Creature(_) = self.record {
             return true;
         } else if let TES3Object::Npc(r) = self.record {
             if let Some(id) = &r.class {
@@ -88,7 +88,7 @@ impl Location<'_> {
 }
 
 impl<'a> Handler<'a> for TravelValidator<'a> {
-    fn on_record(&mut self, _: &Context, record: &'a TES3Object, _: &'static str, _: &String) {
+    fn on_record(&mut self, _: &Context, record: &'a TES3Object, _: &str, _: &String) {
         if is_dead(record) {
             return;
         }

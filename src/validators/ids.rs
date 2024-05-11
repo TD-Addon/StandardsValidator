@@ -95,11 +95,13 @@ impl Handler<'_> for IdValidator {
                 self.check_known(typename, id);
             }
             TES3Object::Faction(faction) => {
-                if context.mode == Mode::TD && VANILLA_FACTIONS.contains(&id.as_str()) {
-                    return;
+                if context.mode != Mode::TD || !VANILLA_FACTIONS.contains(&id.as_str()) {
+                    check_id(context, typename, &faction.id);
+                    self.check_known(typename, id);
                 }
-                check_id(context, typename, &faction.id);
-                self.check_known(typename, id);
+            }
+            TES3Object::GameSetting(_) => {
+                println!("Found dirty {} {}", typename, id);
             }
             TES3Object::Info(_) => {}
             TES3Object::PathGrid(_) => {}
@@ -108,6 +110,9 @@ impl Handler<'_> for IdValidator {
             }
             TES3Object::SoundGen(_) => {}
             TES3Object::StartScript(_) => {}
+            TES3Object::MagicEffect(mgef) => {
+                println!("Found dirty {} {:?}", typename, mgef.effect_id);
+            }
             _ => {
                 check_id(context, typename, id);
                 self.check_known(typename, id);

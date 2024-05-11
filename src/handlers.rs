@@ -56,7 +56,6 @@ pub struct Handlers<'a> {
 impl Handlers<'_> {
     pub fn new<'a>(context: &Context) -> Result<Handlers<'a>, Box<dyn Error>> {
         let mut handlers: Vec<Box<dyn Handler<'a> + 'a>> = vec![
-            Box::new(crate::validators::test::TestValidator {}),
             Box::new(crate::validators::books::BookValidator {}),
             Box::new(crate::validators::cells::CellValidator::new()?),
             Box::new(crate::validators::corpse::CorpseValidator {}),
@@ -78,6 +77,7 @@ impl Handlers<'_> {
             Box::new(crate::validators::supplies::SupplyChestValidator::new()?),
             Box::new(crate::validators::todo::ToDoValidator::new()?),
             Box::new(crate::validators::travel::TravelValidator::new()?),
+            Box::new(crate::validators::unicode::UnicodeValidator::new()?),
         ];
         if context.mode == Mode::PT || context.mode == Mode::TR {
             handlers.push(Box::new(crate::validators::classes::ClassValidator::new()?));
@@ -85,6 +85,7 @@ impl Handlers<'_> {
         if context.mode != Mode::Vanilla {
             handlers.push(Box::new(crate::validators::autocalc::AutoCalcValidator {}));
             handlers.push(Box::new(crate::validators::ids::IdValidator::new()));
+            handlers.push(Box::new(crate::validators::uniques::UniquesValidator::new()?));
         }
         return Ok(Handlers { handlers });
     }

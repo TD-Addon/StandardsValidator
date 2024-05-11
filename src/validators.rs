@@ -20,8 +20,8 @@ pub mod soundgens;
 pub mod supplies;
 pub mod todo;
 pub mod travel;
-
-pub mod test;
+pub mod unicode;
+pub mod uniques;
 
 use crate::{
     context::Context,
@@ -130,7 +130,10 @@ impl<'a> Validator<'a> {
                     self.handlers
                         .on_record(&self.context, record, r.type_name(), &r.id)
                 }
-                TES3Object::GameSetting(_) => {}
+                TES3Object::GameSetting(r) => {
+                    self.handlers
+                        .on_record(&self.context, record, r.type_name(), &r.id)
+                }
                 TES3Object::GlobalVariable(r) => {
                     self.handlers
                         .on_record(&self.context, record, r.type_name(), &r.id)
@@ -166,7 +169,10 @@ impl<'a> Validator<'a> {
                     self.handlers
                         .on_record(&self.context, record, r.type_name(), &r.id)
                 }
-                TES3Object::MagicEffect(_) => {}
+                TES3Object::MagicEffect(r) => {
+                    self.handlers
+                        .on_record(&self.context, record, r.type_name(), &String::new())
+                }
                 TES3Object::MiscItem(r) => {
                     self.handlers
                         .on_record(&self.context, record, r.type_name(), &r.id)

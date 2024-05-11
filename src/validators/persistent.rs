@@ -9,7 +9,7 @@ pub struct PersistentValidator {
 }
 
 impl Handler<'_> for PersistentValidator {
-    fn on_record(&mut self, _: &Context, record: &TES3Object, _: &'static str, id: &String) {
+    fn on_record(&mut self, _: &Context, record: &TES3Object, _: &str, id: &String) {
         if is_persistent(record) {
             match record {
                 TES3Object::Creature(_) => {}

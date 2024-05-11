@@ -45,7 +45,7 @@ impl ScriptInfo {
 }
 
 impl Handler<'_> for ScriptValidator {
-    fn on_record(&mut self, context: &Context, record: &TES3Object, _: &'static str, _: &String) {
+    fn on_record(&mut self, context: &Context, record: &TES3Object, _: &str, _: &String) {
         if context.mode == Mode::Vanilla {
             return;
         }

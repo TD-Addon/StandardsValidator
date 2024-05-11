@@ -58,7 +58,7 @@ fn has_water(cell: &Cell) -> bool {
 }
 
 impl Handler<'_> for CellValidator {
-    fn on_record(&mut self, context: &Context, record: &TES3Object, _: &'static str, _: &String) {
+    fn on_record(&mut self, context: &Context, record: &TES3Object, _: &str, _: &String) {
         match record {
             TES3Object::Cell(cell) => {
                 if cell.is_interior()

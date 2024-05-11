@@ -10,7 +10,7 @@ pub struct SoundGenValidator {
 }
 
 impl Handler<'_> for SoundGenValidator {
-    fn on_record(&mut self, _: &Context, record: &TES3Object, _: &'static str, _: &String) {
+    fn on_record(&mut self, _: &Context, record: &TES3Object, _: &str, _: &String) {
         if let TES3Object::Creature(creature) = record {
             if creature.sound.is_none() {
                 self.to_check.push(creature.id.to_ascii_lowercase());

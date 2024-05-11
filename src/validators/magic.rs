@@ -165,7 +165,7 @@ fn get_effect_details(id: EffectId2) -> (bool, Duration, bool) {
 }
 
 fn check_effects(
-    typename: &'static str,
+    typename: &str,
     id: &String,
     option: &Option<Vec<Effect>>,
     constant_effect: bool,
@@ -208,7 +208,7 @@ impl Handler<'_> for MagicValidator {
         &mut self,
         context: &Context,
         record: &TES3Object,
-        typename: &'static str,
+        typename: &str,
         id: &String,
     ) {
         match record {

@@ -14,7 +14,7 @@ fn is_marker(book: &Book) -> bool {
 }
 
 impl Handler<'_> for BookValidator {
-    fn on_record(&mut self, _: &Context, record: &TES3Object, _: &'static str, _: &String) {
+    fn on_record(&mut self, _: &Context, record: &TES3Object, _: &str, _: &String) {
         if let TES3Object::Book(book) = record {
             if is_marker(book) {
                 return;

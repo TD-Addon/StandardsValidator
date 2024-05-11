@@ -16,7 +16,7 @@ fn is_key(misc: &MiscItem) -> bool {
 }
 
 impl Handler<'_> for KeyValidator {
-    fn on_record(&mut self, context: &Context, record: &TES3Object, _: &'static str, id: &String) {
+    fn on_record(&mut self, context: &Context, record: &TES3Object, _: &str, id: &String) {
         if let TES3Object::MiscItem(misc) = record {
             let lower = id.to_ascii_lowercase();
             if context.mode != Mode::TD && !is_key(misc) && lower.contains("key") {

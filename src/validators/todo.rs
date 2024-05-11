@@ -1,7 +1,7 @@
 use super::Context;
 use crate::handlers::Handler;
 use regex::{Error, Regex, RegexBuilder};
-use tes3::esp::TES3Object;
+use tes3::esp::{Dialogue, TES3Object};
 
 pub struct ToDoValidator {
     todo: Regex,
@@ -14,7 +14,7 @@ impl Handler<'_> for ToDoValidator {
         record: &TES3Object,
         _: &str,
         comment: &str,
-        topic: &tes3::esp::Dialogue,
+        topic: &Dialogue,
     ) {
         if self.todo.is_match(comment) {
             if let TES3Object::Script(script) = record {

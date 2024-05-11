@@ -35,7 +35,7 @@ impl Handler<'_> for OrphanValidator {
         typename: &'static str,
         id: &String,
     ) {
-        if context.mode == Mode::PT {
+        if context.mode == Mode::TD {
             return;
         }
         match record {

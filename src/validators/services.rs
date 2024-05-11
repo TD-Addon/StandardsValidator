@@ -55,7 +55,7 @@ pub struct ServiceValidator {
 }
 
 impl Handler<'_> for ServiceValidator {
-    fn on_record(&mut self, _: &Context, record: &TES3Object, _: &'static str, _: &String) {
+    fn on_record(&mut self, _: &Context, record: &TES3Object, _: &str, _: &String) {
         match record {
             TES3Object::Class(class) => {
                 if let Some(data) = &class.data {

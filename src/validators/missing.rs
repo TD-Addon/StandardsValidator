@@ -4,7 +4,7 @@ use tes3::esp::TES3Object;
 
 pub struct FieldValidator {}
 
-fn check(typename: &'static str, id: &String, field: &str, value: &Option<String>) {
+fn check(typename: &str, id: &String, field: &str, value: &Option<String>) {
     if let Some(str) = value {
         if !str.trim().is_empty() {
             if field != "name" && !str.contains('.') {
@@ -17,7 +17,7 @@ fn check(typename: &'static str, id: &String, field: &str, value: &Option<String
 }
 
 impl Handler<'_> for FieldValidator {
-    fn on_record(&mut self, _: &Context, record: &TES3Object, typename: &'static str, id: &String) {
+    fn on_record(&mut self, _: &Context, record: &TES3Object, typename: &str, id: &String) {
         match record {
             TES3Object::Activator(r) => {
                 check(typename, id, "mesh", &r.mesh);

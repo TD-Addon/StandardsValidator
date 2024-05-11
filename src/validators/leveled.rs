@@ -42,7 +42,7 @@ impl<'a> Handler<'a> for LeveledValidator<'a> {
         &mut self,
         _: &Context,
         record: &'a TES3Object,
-        typename: &'static str,
+        typename: &str,
         id: &String,
     ) {
         match record {

@@ -11,7 +11,7 @@ pub struct ClassValidator {
 }
 
 impl Handler<'_> for ClassValidator {
-    fn on_record(&mut self, context: &Context, record: &TES3Object, _: &'static str, _: &String) {
+    fn on_record(&mut self, context: &Context, record: &TES3Object, _: &str, _: &String) {
         if let TES3Object::Npc(npc) = record {
             if let Some(class) = &npc.class {
                 if let Some(replacement) = self.get_replacement(class, context) {
