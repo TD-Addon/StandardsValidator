@@ -88,7 +88,7 @@ fn main() -> Result<(), Box<dyn Error>> {
         .get_one::<String>("mode")
         .unwrap_or(&String::new())
         .into();
-    let context = Context::new(mode)?;
+    let context = Context::new(mode);
     return validate(paths.next().unwrap(), context, &args);
 }
 

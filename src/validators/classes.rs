@@ -2,12 +2,13 @@ use std::collections::HashMap;
 
 use super::Context;
 use crate::{context::Mode, handlers::Handler};
-use serde::Deserialize;
 use tes3::esp::{Dialogue, FilterType, Info, TES3Object};
 
+include!(concat!(env!("OUT_DIR"), "/gen_classes.rs"));
+
 pub struct ClassValidator {
-    tr_classes: HashMap<String, String>,
-    classes: HashMap<String, String>,
+    tr_classes: HashMap<&'static str, &'static str>,
+    classes: HashMap<&'static str, &'static str>,
 }
 
 impl Handler<'_> for ClassValidator {
@@ -48,37 +49,20 @@ impl Handler<'_> for ClassValidator {
     }
 }
 
-#[derive(Deserialize)]
-struct ClassData {
-    vanilla: String,
-    data: String,
-}
-
 impl ClassValidator {
-    pub fn new() -> serde_json::Result<Self> {
-        let classes: Vec<ClassData> =
-            serde_json::from_str(include_str!("../../data/classes.json"))?;
-        let mut validator = Self {
-            tr_classes: HashMap::new(),
-            classes: HashMap::new(),
+    pub fn new() -> Self {
+        let (tr_classes, classes) = get_class_data();
+        return Self {
+            tr_classes,
+            classes,
         };
-        for class in &classes {
-            let lower = class.vanilla.to_ascii_lowercase();
-            if lower != "miner" {
-                validator
-                    .tr_classes
-                    .insert(class.data.to_ascii_lowercase(), class.vanilla.clone());
-            }
-            validator.classes.insert(lower, class.data.clone());
-        }
-        return Ok(validator);
     }
 
-    fn get_replacement(&self, id: &String, context: &Context) -> Option<&String> {
+    fn get_replacement(&self, id: &String, context: &Context) -> Option<&&'static str> {
         if context.mode == Mode::PT {
-            return self.classes.get(&id.to_ascii_lowercase());
+            return self.classes.get(id.to_ascii_lowercase().as_str());
         } else if context.mode == Mode::TR {
-            return self.tr_classes.get(&id.to_ascii_lowercase());
+            return self.tr_classes.get(id.to_ascii_lowercase().as_str());
         }
         return None;
     }

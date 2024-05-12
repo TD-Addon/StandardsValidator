@@ -7,9 +7,11 @@ use crate::{
 };
 use tes3::esp::{Cell, Dialogue, Info, Reference, TES3Object, TravelDestination};
 
+include!(concat!(env!("OUT_DIR"), "/gen_travel.rs"));
+
 pub struct TravelValidator<'a> {
     cells: HashMap<(i32, i32), &'a Cell>,
-    classes: HashSet<String>,
+    classes: HashSet<&'static str>,
     caravaners: HashMap<String, Caravaner<'a>>,
 }
 
@@ -102,7 +104,7 @@ impl<'a> Handler<'a> for TravelValidator<'a> {
                     }
                 }
                 if let Some(class) = &npc.class {
-                    if self.classes.contains(&class.to_ascii_lowercase()) {
+                    if self.classes.contains(&class.to_ascii_lowercase().as_str()) {
                         println!(
                             "Npc {} has class {} but does not offer travel services",
                             npc.id, class
@@ -146,13 +148,12 @@ impl<'a> Handler<'a> for TravelValidator<'a> {
 }
 
 impl TravelValidator<'_> {
-    pub fn new() -> Result<Self, serde_json::Error> {
-        let classes = serde_json::from_str(include_str!("../../data/travel.json"))?;
-        return Ok(Self {
+    pub fn new() -> Self {
+        return Self {
             cells: HashMap::new(),
-            classes,
+            classes: get_travel_classes(),
             caravaners: HashMap::new(),
-        });
+        };
     }
 
     fn check_caravaner(&self, caravaner: &Caravaner) {

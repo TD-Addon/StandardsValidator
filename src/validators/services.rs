@@ -2,8 +2,9 @@ use std::collections::HashSet;
 
 use super::Context;
 use crate::{handlers::Handler, util::is_autocalc};
-use serde::Deserialize;
 use tes3::esp::{AiData, TES3Object};
+
+include!(concat!(env!("OUT_DIR"), "/gen_services.rs"));
 
 const FLAG_SERVICE_WEAPON: u32 = 0x1;
 const FLAG_SERVICE_ARMOR: u32 = 0x2;
@@ -124,18 +125,10 @@ impl Handler<'_> for ServiceValidator {
     }
 }
 
-#[derive(Deserialize)]
-pub struct Services {
-    barter: Vec<String>,
-}
-
 impl ServiceValidator {
-    pub fn new() -> Result<Self, serde_json::Error> {
-        let services: Services = serde_json::from_str(include_str!("../../data/services.json"))?;
-        let mut barter_classes = HashSet::new();
-        for class in &services.barter {
-            barter_classes.insert(class.to_ascii_lowercase());
-        }
-        return Ok(Self { barter_classes });
+    pub fn new() -> Self {
+        return Self {
+            barter_classes: get_barter_classes(),
+        };
     }
 }

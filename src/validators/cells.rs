@@ -6,6 +6,8 @@ use crate::{
 use std::collections::{HashMap, HashSet};
 use tes3::esp::{Cell, PathGrid, PathGridPoint, Reference, TES3Object};
 
+include!(concat!(env!("OUT_DIR"), "/gen_broken.rs"));
+
 const MAX_Z: f32 = 64000.;
 const MIN_Z: f32 = -32000.;
 const MAX_SAFE_INT: f32 = 9007199254740991.;
@@ -20,7 +22,7 @@ const BLACK_SQUARES: [&str; 4] = [
 
 pub struct CellValidator {
     seen: HashSet<String>,
-    broken: HashMap<String, String>,
+    broken: HashMap<&'static str, &'static str>,
 }
 
 fn get_cell_name(pathgrid: &PathGrid) -> String {
@@ -171,7 +173,7 @@ impl Handler<'_> for CellValidator {
                 );
             }
         }
-        if let Some(replacement) = self.broken.get(id) {
+        if let Some(replacement) = self.broken.get(id.as_str()) {
             if replacement.is_empty() {
                 println!(
                     "Cell {} contains broken reference {}",
@@ -209,10 +211,10 @@ impl Handler<'_> for CellValidator {
 }
 
 impl CellValidator {
-    pub fn new() -> serde_json::Result<Self> {
-        return Ok(Self {
+    pub fn new() -> Self {
+        return Self {
             seen: HashSet::new(),
-            broken: serde_json::from_str(include_str!("../../data/broken.json"))?,
-        });
+            broken: get_broken_data(),
+        };
     }
 }

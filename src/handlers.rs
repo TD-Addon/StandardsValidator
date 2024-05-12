@@ -58,7 +58,7 @@ impl Handlers<'_> {
     pub fn new<'a>(context: &Context, args: &ArgMatches) -> Result<Handlers<'a>, Box<dyn Error>> {
         let mut handlers: Vec<Box<dyn Handler<'a> + 'a>> = vec![
             Box::new(crate::validators::books::BookValidator {}),
-            Box::new(crate::validators::cells::CellValidator::new()?),
+            Box::new(crate::validators::cells::CellValidator::new()),
             Box::new(crate::validators::corpse::CorpseValidator {}),
             Box::new(crate::validators::duplicates::DuplicateRefValidator::new(
                 args,
@@ -67,21 +67,21 @@ impl Handlers<'_> {
             Box::new(crate::validators::keys::KeyValidator::new()),
             Box::new(crate::validators::leveled::LeveledValidator::new()),
             Box::new(crate::validators::dialogue::DialogueValidator::new()?),
-            Box::new(crate::validators::magic::MagicValidator::new()?),
+            Box::new(crate::validators::magic::MagicValidator::new()),
             Box::new(crate::validators::missing::FieldValidator {}),
             Box::new(crate::validators::npc::NpcValidator::new()?),
             Box::new(crate::validators::orphans::OrphanValidator::new()?),
             Box::new(crate::validators::persistent::PersistentValidator::new()),
             Box::new(crate::validators::scripts::ScriptValidator::new(context)?),
-            Box::new(crate::validators::services::ServiceValidator::new()?),
+            Box::new(crate::validators::services::ServiceValidator::new()),
             Box::new(crate::validators::soundgens::SoundGenValidator::new()),
-            Box::new(crate::validators::supplies::SupplyChestValidator::new()?),
+            Box::new(crate::validators::supplies::SupplyChestValidator::new()),
             Box::new(crate::validators::todo::ToDoValidator::new()?),
-            Box::new(crate::validators::travel::TravelValidator::new()?),
+            Box::new(crate::validators::travel::TravelValidator::new()),
             Box::new(crate::validators::unicode::UnicodeValidator::new()?),
         ];
         if context.mode == Mode::PT || context.mode == Mode::TR {
-            handlers.push(Box::new(crate::validators::classes::ClassValidator::new()?));
+            handlers.push(Box::new(crate::validators::classes::ClassValidator::new()));
         }
         if context.mode != Mode::Vanilla {
             handlers.push(Box::new(crate::validators::autocalc::AutoCalcValidator {}));

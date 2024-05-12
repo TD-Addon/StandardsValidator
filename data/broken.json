@@ -1,10 +1,10 @@
 {
 	"cavern_spore00": "T_Mw_Flora_Bloatspore01",
-	"com_chest_11_open": "T_Com_Var_ChestOpen_01",
+	"Com_Chest_11_open": "T_Com_Var_ChestOpen_01",
 	"door_load_darkness00": "T_Glb_BlackDoor_XX",
-	"ex_mh_palace_tower": "",
+	"Ex_MH_Palace_Tower": "",
 	"in_velothismall_ramplong_01": "T_De_SetVeloth_I_RampLong_01",
-	"gold_dae_cursed_001": "T_Com_GoldCoinDae_01",
-	"gold_dae_cursed_005": "T_Com_GoldCoinDae_05",
-	"sound_rock_crumbling_00": "Sound_Rocks00"
+	"Gold_Dae_cursed_001": "T_Com_GoldCoinDae_01",
+	"Gold_Dae_cursed_005": "T_Com_GoldCoinDae_05",
+	"Sound_rock_crumbling_00": "Sound_Rocks00"
 }

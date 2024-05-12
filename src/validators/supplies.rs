@@ -4,8 +4,10 @@ use super::Context;
 use crate::{handlers::Handler, util::get_cell_name};
 use tes3::esp::{Cell, Reference};
 
+include!(concat!(env!("OUT_DIR"), "/gen_supplies.rs"));
+
 pub struct SupplyChestValidator {
-    chests: HashMap<String, String>,
+    chests: HashMap<&'static str, &'static str>,
 }
 
 const ALL_RANKS: u32 = 4294967295;
@@ -20,7 +22,7 @@ impl Handler<'_> for SupplyChestValidator {
         _: &Vec<&Reference>,
         _: usize,
     ) {
-        if let Some(faction) = self.chests.get(id) {
+        if let Some(faction) = self.chests.get(id.as_str()) {
             if !reference
                 .owner_faction
                 .as_ref()
@@ -48,8 +50,9 @@ impl Handler<'_> for SupplyChestValidator {
 }
 
 impl SupplyChestValidator {
-    pub fn new() -> Result<Self, serde_json::Error> {
-        let chests = serde_json::from_str(include_str!("../../data/supplies.json"))?;
-        return Ok(Self { chests });
+    pub fn new() -> Self {
+        return Self {
+            chests: get_supplies_data(),
+        };
     }
 }

@@ -5,20 +5,26 @@ use crate::{handlers::Handler, util::get_cell_name};
 use regex::{escape, Regex};
 use tes3::esp::{Cell, Dialogue, FixedString, Reference, TES3Object};
 
+include!(concat!(env!("OUT_DIR"), "/gen_uniques.rs"));
+
 pub struct UniquesValidator {
-    uniques: HashSet<String>,
+    uniques: HashSet<&'static str>,
     create_func: Regex,
-    regex_cache: HashMap<String, Regex>,
+    regex_cache: HashMap<&'static str, Regex>,
 }
 
-fn check_script_line(regex_cache: &mut HashMap<String, Regex>, line: &str, item: &String) -> bool {
+fn check_script_line(
+    regex_cache: &mut HashMap<&'static str, Regex>,
+    line: &str,
+    item: &'static str,
+) -> bool {
     if line.contains(item) {
         if let Some(regex) = regex_cache.get(item) {
             return regex.is_match(line);
         }
         let regex = Regex::new(&format!(r#"[ ,"]{}($|[ ,"])"#, escape(item))).unwrap();
         let matches = regex.is_match(line);
-        regex_cache.insert(item.clone(), regex);
+        regex_cache.insert(item, regex);
         return matches;
     }
     return false;
@@ -52,7 +58,7 @@ impl Handler<'_> for UniquesValidator {
         _: &Vec<&Reference>,
         _: usize,
     ) {
-        if self.uniques.contains(id) {
+        if self.uniques.contains(id.as_str()) {
             println!(
                 "{} {} references {}",
                 record.type_name(),
@@ -119,15 +125,8 @@ impl UniquesValidator {
         let create_func = Regex::new(
             r"placeatme|addtolevcreature|addtolevitem|addsoulgem|addspell|cast|explodespell|dropsoulgem|additem|equip|drop|placeatpc|placeitem|placeitemcell",
         )?;
-        let mut uniques = HashSet::new();
-        for line in include_str!("../../data/uniques.txt").split('\n') {
-            let id = line.trim();
-            if !id.is_empty() {
-                uniques.insert(id.trim().to_ascii_lowercase());
-            }
-        }
         return Ok(Self {
-            uniques,
+            uniques: get_uniques(),
             create_func,
             regex_cache: HashMap::new(),
         });
@@ -140,7 +139,7 @@ impl UniquesValidator {
     }
 
     fn check(&self, value: &str, id: &String, typename: &str) {
-        if self.uniques.contains(&value.to_ascii_lowercase()) {
+        if self.uniques.contains(value.to_ascii_lowercase().as_str()) {
             println!("{} {} references {}", typename, id, value);
         }
     }

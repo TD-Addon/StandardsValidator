@@ -1,8 +1,8 @@
 {
 	"com_chest_02_fg_supply": "Fighters Guild",
-	"t_mwcom_furn_ch2fguild": "Fighters Guild",
-	"t_skycom_furn_ch2fguild": "T_Sky_FightersGuild",
+	"T_MwCom_Furn_Ch2FGuild": "Fighters Guild",
+	"T_SkyCom_Furn_Ch2FGuild": "T_Sky_FightersGuild",
 	"com_chest_02_mg_supply": "Mages Guild",
-	"t_mwcom_furn_ch2mguild": "Mages Guild",
-	"t_skycom_furn_ch2mguild": "T_Sky_MagesGuild"
+	"T_MwCom_Furn_Ch2MGuild": "Mages Guild",
+	"T_SkyCom_Furn_Ch2MGuild": "T_Sky_MagesGuild"
 }

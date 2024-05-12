@@ -1,4 +1,4 @@
-use std::{collections::HashMap, mem::transmute};
+use std::collections::HashMap;
 
 use super::Context;
 use crate::{
@@ -9,6 +9,8 @@ use crate::{
 use regex::{Regex, RegexBuilder};
 use tes3::esp::{Dialogue, Npc, Script, TES3Object};
 
+include!(concat!(env!("OUT_DIR"), "/gen_mwscript.rs"));
+
 pub struct ScriptValidator {
     scripts: HashMap<String, ScriptInfo>,
     npc: Regex,
@@ -16,7 +18,7 @@ pub struct ScriptValidator {
     nolore: Regex,
     commands: Regex,
     khajiit_script: Regex,
-    projects: Vec<(String, Regex)>,
+    projects: Vec<(&'static str, Regex)>,
     set_khajiit_neg1: Regex,
     set_khajiit_var: Regex,
     position: Regex,
@@ -28,7 +30,7 @@ struct ScriptInfo {
     npc: bool,
     khajiit: bool,
     nolore: bool,
-    projects: Vec<&'static String>,
+    projects: Vec<&'static str>,
 }
 
 impl ScriptInfo {
@@ -58,10 +60,7 @@ impl Handler<'_> for ScriptValidator {
                 );
                 for (local, regex) in &self.projects {
                     if regex.is_match(text) {
-                        unsafe {
-                            info.projects
-                                .push(transmute::<&String, &'static String>(local));
-                        }
+                        info.projects.push(local);
                     }
                 }
                 if info.khajiit && !self.has_correct_khajiit_check(script, text) {
@@ -140,27 +139,14 @@ impl ScriptValidator {
         let npc = get_variable("T_Local_NPC", "short")?;
         let khajiit = get_variable("T_Local_Khajiit", "short")?;
         let nolore = get_variable("NoLore", "short")?;
-        let joined_commands = include_str!("../../data/mwscript.returning.txt")
-            .trim()
-            .split_whitespace()
-            .map(&String::from)
-            .collect::<Vec<String>>()
-            .join("|");
-        let commands = get_variable(&joined_commands, "(short|long|float)")?;
-        let mut khajiit_input = include_str!("../../data/khajiit.mwscript")
-            .replace("(", r"\(")
-            .replace(")", r"\)")
-            .replace("\n", r"\s*((;.*)?\n)+\s*");
-        khajiit_input = Regex::new(r"\s+")?
-            .replace_all(&khajiit_input, r"\s+")
-            .into_owned();
-        let khajiit_script = RegexBuilder::new(&khajiit_input)
+        let commands = get_variable(get_joined_commands(), "(short|long|float)")?;
+        let khajiit_script = RegexBuilder::new(get_khajiit_script())
             .case_insensitive(true)
             .build()?;
         let mut projects = Vec::new();
         for project in &context.projects {
             if let Some(local) = &project.local {
-                projects.push((local.clone(), get_variable(local, "short")?));
+                projects.push((*local, get_variable(local, "short")?));
             }
         }
         let set_khajiit_neg1 =
@@ -222,7 +208,7 @@ impl ScriptValidator {
                     script
                         .projects
                         .iter()
-                        .map(|s| (*s).clone())
+                        .map(|s| s.to_string())
                         .collect::<Vec<String>>()
                         .join(", ")
                 );

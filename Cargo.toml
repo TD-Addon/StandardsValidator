@@ -18,3 +18,11 @@ features = ["derive"]
 git = "https://github.com/Greatness7/tes3"
 default-features = false
 features = ["esp"]
+
+[build_dependencies]
+serde_json = "^1.0"
+regex = "^1.10"
+
+[build_dependencies.serde]
+version = "^1.0"
+features = ["derive"]

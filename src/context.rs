@@ -1,5 +1,3 @@
-use serde::Deserialize;
-
 use crate::util::ci_starts_with;
 
 #[derive(Clone, PartialEq)]
@@ -26,11 +24,10 @@ impl From<&String> for Mode {
     }
 }
 
-#[derive(Deserialize)]
 pub struct Project {
-    pub name: String,
-    pub prefix: String,
-    pub local: Option<String>,
+    pub name: &'static str,
+    pub prefix: &'static str,
+    pub local: Option<&'static str>,
 }
 
 impl Project {
@@ -43,14 +40,18 @@ impl Project {
     }
 }
 
+include!(concat!(env!("OUT_DIR"), "/gen_projects.rs"));
+
 pub struct Context {
     pub mode: Mode,
     pub projects: Vec<Project>,
 }
 
 impl Context {
-    pub fn new(mode: Mode) -> serde_json::Result<Self> {
-        let projects: Vec<Project> = serde_json::from_str(include_str!("../data/projects.json"))?;
-        return Ok(Context { mode, projects });
+    pub fn new(mode: Mode) -> Self {
+        return Context {
+            mode,
+            projects: get_project_data(),
+        };
     }
 }

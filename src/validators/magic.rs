@@ -6,11 +6,12 @@ use crate::{
     handlers::Handler,
     util::{ci_starts_with, Actor},
 };
-use serde::Deserialize;
 use tes3::esp::{Effect, EffectId2, EnchantType, Npc, SpellType, TES3Object};
 
+include!(concat!(env!("OUT_DIR"), "/gen_spells.rs"));
+
 pub struct MagicValidator {
-    spells: HashMap<String, (Rc<Rule>, Rc<Vec<String>>)>,
+    spells: HashMap<&'static str, (Rc<Rule>, Rc<Vec<&'static str>>)>,
 }
 
 enum Duration {
@@ -205,7 +206,7 @@ impl Handler<'_> for MagicValidator {
                 if !npc.is_dead() {
                     for id in npc.spells.iter().flat_map(|s| s.iter()) {
                         if let Some((rule, alternatives)) =
-                            self.spells.get(&id.to_ascii_lowercase())
+                            self.spells.get(id.to_ascii_lowercase().as_str())
                         {
                             if !rule.matches(npc) {
                                 if context.mode == Mode::Vanilla {
@@ -220,6 +221,7 @@ impl Handler<'_> for MagicValidator {
                                         self.spells.get(*a).iter().any(|r| r.0.matches(npc))
                                     })
                                     .cloned()
+                                    .map(&String::from)
                                     .collect();
                                 if valid_alternatives.is_empty() {
                                     println!("Npc {} knows spell {}", npc.id, id);
@@ -258,10 +260,9 @@ impl Handler<'_> for MagicValidator {
     }
 }
 
-#[derive(Deserialize)]
 struct Rule {
-    prefix: Option<String>,
-    race: Option<String>,
+    prefix: Option<&'static str>,
+    race: Option<&'static str>,
 }
 
 impl Rule {
@@ -280,43 +281,10 @@ impl Rule {
     }
 }
 
-#[derive(Deserialize)]
-struct SpellData {
-    alternatives: Vec<HashMap<String, String>>,
-    races: HashMap<String, Rule>,
-    blacklist: Vec<String>,
-}
-
 impl MagicValidator {
-    pub fn new() -> serde_json::Result<Self> {
-        let data: SpellData = serde_json::from_str(include_str!("../../data/spells.json"))?;
-        let mut rules: HashMap<String, Rc<Rule>> = HashMap::new();
-        for (id, rule) in data.races {
-            rules.insert(id, Rc::new(rule));
-        }
-        let mut spells = HashMap::new();
-        for alternatives in &data.alternatives {
-            let ids: Rc<Vec<String>> = Rc::new(
-                alternatives
-                    .values()
-                    .map(&String::as_str)
-                    .map(&str::to_ascii_lowercase)
-                    .collect(),
-            );
-            for (rule, spell) in alternatives {
-                if let Some(rule) = rules.get(rule) {
-                    spells.insert(spell.to_ascii_lowercase(), (rule.clone(), ids.clone()));
-                }
-            }
-        }
-        let never = Rc::new(Rule {
-            prefix: None,
-            race: None,
-        });
-        let none = Rc::new(Vec::new());
-        for id in &data.blacklist {
-            spells.insert(id.to_ascii_lowercase(), (never.clone(), none.clone()));
-        }
-        return Ok(Self { spells });
+    pub fn new() -> Self {
+        return Self {
+            spells: get_spell_data(),
+        };
     }
 }
