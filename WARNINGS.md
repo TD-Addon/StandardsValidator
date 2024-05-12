@@ -1,7 +1,7 @@
 # General advice
 False positives are a possibility. Consult the [glossary](https://wiki.project-tamriel.com/wiki/Glossary) if you don't know what a word means.
 
-# The primary validator (validator.js)
+# The primary validator (without `--extended`, `--names`, or `--fix-out-of-bounds`)
 
 ## Records
 
@@ -281,7 +281,7 @@ This magic effect needs a magnitude to be useful. Might be fine if the spell is 
 ### Uses effect with duration 1
 This magic effect needs a duration to be useful. Might be fine if the spell is only meant to be detected by a script.
 
-# The extended validator (extendedvalidator.js)
+# The extended validator (`--extended`)
 
 ## Ownership checks
 Items in dungeons should not have owners. Items in towns should.
