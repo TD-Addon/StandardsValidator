@@ -19,7 +19,10 @@ fn main() -> Result<(), Box<dyn Error>> {
             Arg::new("ooboutput")
                 .long("fix-out-of-bounds")
                 .value_name("output file")
-                .help(""),
+                .help(
+                    "Move references that should belong to another cell to that cell \
+                and output a new file. Warning: overwrites the output file!",
+                ),
             Arg::new("extended")
                 .num_args(0)
                 .long("extended")
