@@ -55,8 +55,13 @@ fn get_point_coords(point: &PathGridPoint, record: &PathGrid) -> String {
     return location;
 }
 
-fn has_water(cell: &Cell) -> bool {
-    return cell.is_exterior() || (cell.data.flags & FLAG_CELL_WATER) != 0;
+fn get_water_height(cell: &Cell) -> Option<f32> {
+    if cell.is_exterior() {
+        return Some(-1.);
+    } else if (cell.data.flags & FLAG_CELL_WATER) != 0 {
+        return cell.water_height;
+    }
+    return None;
 }
 
 impl Handler<'_> for CellValidator {
@@ -189,19 +194,21 @@ impl Handler<'_> for CellValidator {
                 );
             }
         }
-        if record.is_interior()
-            && has_water(record)
-            && BLACK_SQUARES
-                .iter()
-                .any(|id| id.eq_ignore_ascii_case(&reference.id))
-        {
+        if let Some(height) = get_water_height(record) {
             let [x, y, _] = reference.rotation;
-            if x == 0. && y == 0. {
+            if record.is_interior()
+                && reference.translation[2] >= height
+                && x == 0.
+                && y == 0.
+                && BLACK_SQUARES
+                    .iter()
+                    .any(|id| id.eq_ignore_ascii_case(&reference.id))
+            {
                 let name = crate::util::get_cell_name(record);
                 let key = format!("{}_{}", name, id);
                 if self.seen.insert(key) {
                     println!(
-                        "Cell {} contains black square {} despite having water",
+                        "Cell {} contains above water black square {}",
                         name, reference.id
                     );
                 }
