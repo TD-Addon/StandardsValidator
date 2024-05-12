@@ -45,8 +45,8 @@ fn get_point_coords(point: &PathGridPoint, record: &PathGrid) -> String {
     if let Some(data) = &record.data {
         let (x, y) = data.grid;
         if x != 0 || y != 0 {
-            let ext_x = x_pos + x * CELL_SIZE;
-            let ext_y = y_pos + y * CELL_SIZE;
+            let ext_x = x_pos + x * CELL_SIZE as i32;
+            let ext_y = y_pos + y * CELL_SIZE as i32;
             return format!("{} ({}, {})", location, ext_x, ext_y);
         }
     }
@@ -132,10 +132,10 @@ impl Handler<'_> for CellValidator {
     ) {
         if !reference.deleted.unwrap_or(false) && !record.is_interior() {
             let (x, y) = record.data.grid;
-            let x_bound = CELL_SIZE * x;
-            let y_bound = CELL_SIZE * y;
-            let x_pos = reference.translation[0] as i32;
-            let y_pos = reference.translation[1] as i32;
+            let x_bound = CELL_SIZE * x as f64;
+            let y_bound = CELL_SIZE * y as f64;
+            let x_pos = reference.translation[0] as f64;
+            let y_pos = reference.translation[1] as f64;
             let z_pos = reference.translation[2];
             if reference
                 .translation
@@ -158,7 +158,17 @@ impl Handler<'_> for CellValidator {
                 || y_pos >= y_bound + CELL_SIZE
             {
                 let (actual_x, actual_y) = get_cell_grid(x_pos.into(), y_pos.into());
-                println!("Cell {} contains out of bounds reference {} at [{}, {}, {}] which should be in ({}, {})", crate::util::get_cell_name(record), reference.id, x_pos, y_pos, z_pos, actual_x, actual_y);
+                println!(
+                    "Cell {} contains out of bounds reference {} \
+                at [{}, {}, {}] which should be in ({}, {})",
+                    crate::util::get_cell_name(record),
+                    reference.id,
+                    x_pos,
+                    y_pos,
+                    z_pos,
+                    actual_x,
+                    actual_y
+                );
             }
         }
         if let Some(replacement) = self.broken.get(id) {

@@ -1,6 +1,7 @@
 use clap::{Arg, ArgGroup, ArgMatches, Command};
 use context::{Context, Mode};
 use extended::ExtendedValidator;
+use oob::fix_oob;
 use std::{error::Error, path::Path};
 use tes3::esp::Plugin;
 use validators::Validator;
@@ -8,12 +9,17 @@ use validators::Validator;
 mod context;
 mod extended;
 mod handlers;
+mod oob;
 mod util;
 mod validators;
 
 fn main() -> Result<(), Box<dyn Error>> {
     let args = Command::new("validator")
         .args(&[
+            Arg::new("ooboutput")
+                .long("fix-out-of-bounds")
+                .value_name("output file")
+                .help(""),
             Arg::new("extended")
                 .num_args(0)
                 .long("extended")
@@ -25,7 +31,12 @@ fn main() -> Result<(), Box<dyn Error>> {
             Arg::new("dontautoload")
                 .num_args(0)
                 .long("disable-master-loading")
-                .help("--extended and --names automatically attempt to load the last <path>'s master files from the same directory if no other <path>s with the same file name are supplied. This flag disables that behaviour."),
+                .help(
+                    "--extended and --names automatically \
+                attempt to load the last <path>'s master files \
+                from the same directory if no other <path>s with \
+                the same file name are supplied. This flag disables that behaviour.",
+                ),
             Arg::new("mininhabitants")
                 .value_name("number")
                 .default_value("3")
@@ -38,7 +49,10 @@ fn main() -> Result<(), Box<dyn Error>> {
                 .default_value("0")
                 .value_parser(&str::parse::<f32>)
                 .value_name("threshold")
-                .help("Squared distance at which two objects with the same id, scale, and orientation are considered duplicates."),
+                .help(
+                    "Squared distance at which two objects with the same id, \
+                scale, and orientation are considered duplicates.",
+                ),
             Arg::new("mode")
                 .required(true)
                 .value_parser(["PT", "TD", "TR", "Vanilla"]),
@@ -52,7 +66,12 @@ fn main() -> Result<(), Box<dyn Error>> {
             ArgGroup::new("g_extended")
                 .args(["extended", "names"])
                 .conflicts_with("g_validator"),
-            ArgGroup::new("g_autoload").arg("dontautoload").requires("g_extended")
+            ArgGroup::new("g_autoload")
+                .arg("dontautoload")
+                .requires("g_extended"),
+            ArgGroup::new("g_oob")
+                .arg("ooboutput")
+                .conflicts_with_all(["g_validator", "g_extended"]),
         ])
         .get_matches();
     let mut paths = args.get_many::<String>("path").unwrap();
@@ -60,7 +79,10 @@ fn main() -> Result<(), Box<dyn Error>> {
         return Ok(run_extended(paths.collect(), &args)?);
     }
     if paths.clone().count() > 1 {
-        Err("The default validator only takes a single path")?;
+        Err("Multiple paths are only allowed for --extended and --names")?;
+    }
+    if let Some(output) = args.get_one::<String>("ooboutput") {
+        return run_oob_fixes(paths.next().unwrap(), output);
     }
     let mode: Mode = args
         .get_one::<String>("mode")
@@ -117,7 +139,6 @@ fn run_extended(paths: Vec<&String>, args: &ArgMatches) -> Result<(), String> {
     if !auto_discovered.is_empty() {
         let path: &Path = plugin_path.as_ref();
         let parent = path.parent().unwrap();
-        // let mut master = Plugin::new();
         for name in auto_discovered {
             let discovered_path = parent.join(name);
             let master = load_plugin(discovered_path.as_path())?;
@@ -126,5 +147,12 @@ fn run_extended(paths: Vec<&String>, args: &ArgMatches) -> Result<(), String> {
         }
     }
     validator.validate(&plugin.objects, plugin_path, true);
+    Ok(())
+}
+
+fn run_oob_fixes(input: &String, output: &String) -> Result<(), Box<dyn Error>> {
+    let mut plugin = load_plugin(input)?;
+    fix_oob(&mut plugin.objects);
+    plugin.save_path(output)?;
     Ok(())
 }

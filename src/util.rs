@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 use tes3::esp::{Cell, Creature, Npc, ObjectFlags, TES3Object, TravelDestination};
 
-pub const CELL_SIZE: i32 = 8192;
+pub const CELL_SIZE: f64 = 8192.;
 const FLAG_NPC_AUTO_CALC: u32 = 0x10;
 const FLAG_CELL_NO_SLEEP: u32 = 4;
 
@@ -117,8 +117,8 @@ pub fn get_cell_name(cell: &Cell) -> String {
 
 pub fn get_cell_grid(x: f64, y: f64) -> (i32, i32) {
     return (
-        f64::floor(x / CELL_SIZE as f64) as i32,
-        f64::floor(y / CELL_SIZE as f64) as i32,
+        f64::floor(x / CELL_SIZE) as i32,
+        f64::floor(y / CELL_SIZE) as i32,
     );
 }
 
