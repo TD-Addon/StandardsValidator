@@ -1,4 +1,4 @@
-use std::collections::HashMap;
+use std::{collections::HashMap, hash::Hash};
 use tes3::esp::{Cell, Creature, Npc, ObjectFlags, TES3Object, TravelDestination};
 
 pub const CELL_SIZE: f64 = 8192.;
@@ -129,8 +129,11 @@ pub fn ci_starts_with(s: &str, prefix: &str) -> bool {
     return false;
 }
 
-pub fn update_or_insert<V: Default, F>(map: &mut HashMap<String, V>, key: String, f: F)
+pub fn update_or_insert<K, V: Default, F>(map: &mut HashMap<K, V>, key: K, f: F)
 where
+    K: PartialEq,
+    K: Eq,
+    K: Hash,
     F: FnOnce(&mut V),
 {
     if let Some(entry) = map.get_mut(&key) {

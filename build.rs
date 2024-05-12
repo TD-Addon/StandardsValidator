@@ -1,11 +1,12 @@
 use regex::Regex;
 use serde::Deserialize;
+use serde_json::Value;
 use std::{
     collections::HashMap,
     env,
     error::Error,
     fs::File,
-    io::{self, Write},
+    io::{self, ErrorKind, Write},
     path::{Path, PathBuf},
 };
 
@@ -13,7 +14,7 @@ fn main() -> Result<(), Box<dyn Error>> {
     println!("cargo::rerun-if-changed=data");
     println!("cargo::rerun-if-changed=build.rs");
     let out_dir = env::var_os("OUT_DIR").unwrap();
-    //bodyparts
+    write_bodyparts(Path::new(&out_dir).join("gen_bodyparts.rs"))?;
     write_classes(Path::new(&out_dir).join("gen_classes.rs"))?;
     write_broken(Path::new(&out_dir).join("gen_broken.rs"))?;
     write_mwscript(Path::new(&out_dir).join("gen_mwscript.rs"))?;
@@ -24,6 +25,178 @@ fn main() -> Result<(), Box<dyn Error>> {
     write_travel(Path::new(&out_dir).join("gen_travel.rs"))?;
     write_uniques(Path::new(&out_dir).join("gen_uniques.rs"))?;
     return Ok(());
+}
+
+trait FileWritable {
+    fn write_to_file(&self, file: &mut File) -> Result<(), io::Error>;
+}
+
+impl FileWritable for &str {
+    fn write_to_file(&self, file: &mut File) -> Result<(), io::Error> {
+        file.write_all(br##"r#""##)?;
+        file.write_all(self.as_bytes())?;
+        return file.write_all(br##""#"##);
+    }
+}
+
+impl FileWritable for String {
+    fn write_to_file(&self, file: &mut File) -> Result<(), io::Error> {
+        self.as_str().write_to_file(file)
+    }
+}
+
+impl<T> FileWritable for Option<T>
+where
+    T: FileWritable,
+{
+    fn write_to_file(&self, file: &mut File) -> Result<(), io::Error> {
+        if let Some(value) = self {
+            file.write_all(b"Some(")?;
+            value.write_to_file(file)?;
+            file.write_all(b")")
+        } else {
+            file.write_all(b"None")
+        }
+    }
+}
+
+fn write_vec<'a, T, F>(
+    file: &mut File,
+    iter: impl Iterator<Item = T>,
+    f: F,
+) -> Result<(), io::Error>
+where
+    T: 'a,
+    F: Fn(T, &mut File) -> Result<(), io::Error>,
+{
+    file.write_all(b"vec![\n")?;
+    for element in iter {
+        f(element, file)?;
+        file.write_all(b",\n")?;
+    }
+    file.write_all(b"]")
+}
+
+impl<T> FileWritable for Vec<T>
+where
+    T: FileWritable,
+{
+    fn write_to_file(&self, file: &mut File) -> Result<(), io::Error> {
+        write_vec(file, self.iter(), &FileWritable::write_to_file)
+    }
+}
+
+#[derive(Deserialize)]
+struct BodyPartDefinition {
+    model: String,
+    ruleset: Option<String>,
+    rules: Option<Vec<HashMap<String, Value>>>,
+}
+
+fn parse_bodypart_rule(value: &Value, file: &mut File) -> Result<(), io::Error> {
+    match value {
+        Value::Array(rule) => {
+            file.write_all(b"Rule::Array(")?;
+            write_vec(file, rule.iter(), &parse_bodypart_rule)?;
+            return file.write_all(b")");
+        }
+        Value::Object(rule) => {
+            if let Some(v) = rule.get("not") {
+                file.write_all(b"Rule::Negation(Box::new(")?;
+                parse_bodypart_rule(v, file)?;
+                return file.write_all(b"))");
+            }
+        }
+        Value::String(rule) => {
+            file.write_all(b"Rule::Equality(")?;
+            rule.to_ascii_lowercase().write_to_file(file)?;
+            return file.write_all(b")");
+        }
+        _ => {}
+    }
+    Err(io::Error::new(
+        ErrorKind::Other,
+        format!("Failed to parse {}", value),
+    ))
+}
+
+fn parse_bodypart_fields(map: &HashMap<String, Value>, file: &mut File) -> Result<(), io::Error> {
+    write_vec(file, map.iter(), |(key, value), file| {
+        file.write_all(b"FieldRule::")?;
+        if key == "class" {
+            file.write_all(b"Class")?;
+        } else if key == "faction" {
+            file.write_all(b"Faction")?;
+        } else if key == "id" {
+            file.write_all(b"Id")?;
+        } else {
+            return Err(io::Error::new(
+                ErrorKind::Other,
+                format!("Invalid key {}", key),
+            ));
+        }
+        file.write_all(b"(")?;
+        parse_bodypart_rule(value, file)?;
+        file.write_all(b")")
+    })
+}
+
+impl FileWritable for BodyPartDefinition {
+    fn write_to_file(&self, file: &mut File) -> Result<(), io::Error> {
+        file.write_all(b"(")?;
+        self.model.to_ascii_lowercase().write_to_file(file)?;
+        file.write_all(b",")?;
+        self.ruleset.write_to_file(file)?;
+        file.write_all(b",")?;
+        if let Some(rules) = &self.rules {
+            file.write_all(b"Some(")?;
+            write_vec(file, rules.iter(), &parse_bodypart_fields)?;
+            file.write_all(b")")?;
+        } else {
+            file.write_all(b"None")?;
+        }
+        file.write_all(b")")
+    }
+}
+
+#[derive(Deserialize)]
+struct BodyParts {
+    rulesets: HashMap<String, Vec<HashMap<String, Value>>>,
+    head: Vec<BodyPartDefinition>,
+    hair: Vec<BodyPartDefinition>,
+}
+
+impl FileWritable for BodyParts {
+    fn write_to_file(&self, file: &mut File) -> Result<(), io::Error> {
+        file.write_all(b"(")?;
+        write_vec(file, self.rulesets.iter(), |(id, ruleset), file| {
+            file.write_all(b"(")?;
+            id.write_to_file(file)?;
+            file.write_all(b",")?;
+            write_vec(file, ruleset.iter(), &parse_bodypart_fields)?;
+            file.write_all(b")")
+        })?;
+        file.write_all(b",")?;
+        self.head.write_to_file(file)?;
+        file.write_all(b",")?;
+        self.hair.write_to_file(file)?;
+        file.write_all(b")")
+    }
+}
+
+fn write_bodyparts(path: PathBuf) -> Result<(), Box<dyn Error>> {
+    let data: BodyParts = serde_json::from_str(include_str!("./data/bodyparts.json"))?;
+    let mut file = File::create(path)?;
+    file.write_all(
+        br"fn get_bodypart_data()
+    -> (Vec<(&'static str, Vec<Vec<FieldRule>>)>,
+    Vec<(&'static str, Option<&'static str>, Option<Vec<Vec<FieldRule>>>)>,
+    Vec<(&'static str, Option<&'static str>, Option<Vec<Vec<FieldRule>>>)>) {
+        return ",
+    )?;
+    data.write_to_file(&mut file)?;
+    file.write_all(b"; }")?;
+    Ok(())
 }
 
 #[derive(Deserialize)]
@@ -39,18 +212,13 @@ fn write_string_map_insert(
     value: &str,
 ) -> Result<(), io::Error> {
     file.write_all(map.as_bytes())?;
-    file.write_all(br##".insert(r#""##)?;
-    file.write_all(key.as_bytes())?;
-    file.write_all(br##""#, r#""##)?;
-    file.write_all(value.as_bytes())?;
-    file.write_all(
-        br##""#);
-    "##,
-    )?;
-    Ok(())
+    file.write_all(b".insert(")?;
+    key.write_to_file(file)?;
+    file.write_all(b", ")?;
+    value.write_to_file(file)?;
+    file.write_all(b");\n")
 }
 
-#[must_use]
 fn write_classes(path: PathBuf) -> Result<(), Box<dyn Error>> {
     let classes: Vec<ClassData> = serde_json::from_str(include_str!("./data/classes.json"))?;
     let mut file = File::create(path)?;
@@ -73,11 +241,10 @@ fn write_classes(path: PathBuf) -> Result<(), Box<dyn Error>> {
         }
         write_string_map_insert(&mut file, "classes", lower, &class.data)?;
     }
-    file.write_all(br"return (tr_classes, classes); }")?;
+    file.write_all(b"return (tr_classes, classes); }")?;
     Ok(())
 }
 
-#[must_use]
 fn write_broken(path: PathBuf) -> Result<(), Box<dyn Error>> {
     let broken: HashMap<String, String> = serde_json::from_str(include_str!("./data/broken.json"))?;
     let mut file = File::create(path)?;
@@ -90,11 +257,10 @@ fn write_broken(path: PathBuf) -> Result<(), Box<dyn Error>> {
     for (key, value) in &broken {
         write_string_map_insert(&mut file, "broken", key.to_ascii_lowercase(), value)?;
     }
-    file.write_all(br"return broken; }")?;
+    file.write_all(b"return broken; }")?;
     Ok(())
 }
 
-#[must_use]
 fn write_mwscript(path: PathBuf) -> Result<(), Box<dyn Error>> {
     let mut file = File::create(path)?;
     file.write_all(
@@ -116,18 +282,17 @@ fn write_mwscript(path: PathBuf) -> Result<(), Box<dyn Error>> {
     file.write_all(
         br##""; }
     fn get_khajiit_script() -> &'static str {
-        return r#""##,
+        return "##,
     )?;
     let khajiit_input = include_str!("./data/khajiit.mwscript")
         .replace("(", r"\(")
         .replace(")", r"\)")
         .replace("\n", r"\s*((;.*)?\n)+\s*");
-    file.write_all(
-        Regex::new(r"\s+")?
-            .replace_all(&khajiit_input, r"\s+")
-            .as_bytes(),
-    )?;
-    file.write_all(br##""#; }"##)?;
+    Regex::new(r"\s+")?
+        .replace_all(&khajiit_input, r"\s+")
+        .to_string()
+        .write_to_file(&mut file)?;
+    file.write_all(b"; }")?;
     Ok(())
 }
 
@@ -138,39 +303,27 @@ pub struct Project {
     pub local: Option<String>,
 }
 
-#[must_use]
-fn write_option(file: &mut File, option: &Option<String>) -> Result<(), io::Error> {
-    if let Some(value) = option {
-        file.write_all(br#"Some(r""#)?;
-        file.write_all(value.as_bytes())?;
-        file.write_all(br#"")"#)?;
-    } else {
-        file.write_all(b"None")?;
+impl FileWritable for Project {
+    fn write_to_file(&self, file: &mut File) -> Result<(), io::Error> {
+        file.write_all(b"Project { name: ")?;
+        self.name.write_to_file(file)?;
+        file.write_all(b", prefix: ")?;
+        self.prefix.write_to_file(file)?;
+        file.write_all(b", local: ")?;
+        self.local.write_to_file(file)?;
+        file.write_all(b"}")
     }
-    Ok(())
 }
 
-#[must_use]
 fn write_projects(path: PathBuf) -> Result<(), Box<dyn Error>> {
     let projects: Vec<Project> = serde_json::from_str(include_str!("./data/projects.json"))?;
     let mut file = File::create(path)?;
     file.write_all(
         br"fn get_project_data() -> Vec<Project> {
-        return vec![",
+        return ",
     )?;
-    for project in projects {
-        file.write_all(
-            br#"
-        Project { name: r""#,
-        )?;
-        file.write_all(project.name.as_bytes())?;
-        file.write_all(br#"", prefix: r""#)?;
-        file.write_all(project.prefix.as_bytes())?;
-        file.write_all(br#"", local: "#)?;
-        write_option(&mut file, &project.local)?;
-        file.write_all(b"},")?;
-    }
-    file.write_all(br"]; }")?;
+    projects.write_to_file(&mut file)?;
+    file.write_all(b"; }")?;
     Ok(())
 }
 
@@ -179,7 +332,6 @@ pub struct Services {
     barter: Vec<String>,
 }
 
-#[must_use]
 fn write_services(path: PathBuf) -> Result<(), Box<dyn Error>> {
     let services: Services = serde_json::from_str(include_str!("./data/services.json"))?;
     let mut file = File::create(path)?;
@@ -189,11 +341,11 @@ fn write_services(path: PathBuf) -> Result<(), Box<dyn Error>> {
         ",
     )?;
     for class in services.barter {
-        file.write_all(br#"barter_classes.insert(String::from(r""#)?;
-        file.write_all(class.to_ascii_lowercase().as_bytes())?;
-        file.write_all(br#""));"#)?;
+        file.write_all(b"barter_classes.insert(String::from(")?;
+        class.to_ascii_lowercase().write_to_file(&mut file)?;
+        file.write_all(b"));\n")?;
     }
-    file.write_all(br"return barter_classes; }")?;
+    file.write_all(b"return barter_classes; }")?;
     Ok(())
 }
 
@@ -203,6 +355,16 @@ struct SpellRule {
     race: Option<String>,
 }
 
+impl FileWritable for SpellRule {
+    fn write_to_file(&self, file: &mut File) -> Result<(), io::Error> {
+        file.write_all(b"Rc::new(Rule { prefix: ")?;
+        self.prefix.write_to_file(file)?;
+        file.write_all(b", race: ")?;
+        self.race.write_to_file(file)?;
+        file.write_all(b"})")
+    }
+}
+
 #[derive(Deserialize)]
 struct SpellData {
     alternatives: Vec<HashMap<String, String>>,
@@ -210,17 +372,6 @@ struct SpellData {
     blacklist: Vec<String>,
 }
 
-#[must_use]
-fn write_rule(file: &mut File, rule: &SpellRule) -> Result<(), io::Error> {
-    file.write_all(b"Rc::new(Rule { prefix: ")?;
-    write_option(file, &rule.prefix)?;
-    file.write_all(b", race: ")?;
-    write_option(file, &rule.race)?;
-    file.write_all(b"})")?;
-    Ok(())
-}
-
-#[must_use]
 fn write_spells(path: PathBuf) -> Result<(), Box<dyn Error>> {
     let data: SpellData = serde_json::from_str(include_str!("./data/spells.json"))?;
     let mut file = File::create(path)?;
@@ -234,7 +385,7 @@ fn write_spells(path: PathBuf) -> Result<(), Box<dyn Error>> {
         file.write_all(b"let rule_")?;
         file.write_all(index.to_string().as_bytes())?;
         file.write_all(b" = ")?;
-        write_rule(&mut file, rule)?;
+        rule.write_to_file(&mut file)?;
         file.write_all(b";\n")?;
     }
     for (index, alternatives) in data.alternatives.iter().enumerate() {
@@ -245,18 +396,11 @@ fn write_spells(path: PathBuf) -> Result<(), Box<dyn Error>> {
             .collect();
         let str_index = index.to_string();
         let alternatives_index = str_index.as_bytes();
-        file.write_all(br"let alternatives_")?;
+        file.write_all(b"let alternatives_")?;
         file.write_all(alternatives_index)?;
-        file.write_all(br" = Rc::new(vec![")?;
-        for alternative in &ids {
-            file.write_all(br##"r#""##)?;
-            file.write_all(alternative.as_bytes())?;
-            file.write_all(
-                br##""#,
-            "##,
-            )?;
-        }
-        file.write_all(b"]);\n")?;
+        file.write_all(b" = Rc::new(")?;
+        ids.write_to_file(&mut file)?;
+        file.write_all(b");\n")?;
         for (rule, spell) in alternatives {
             if let Some((rule_index, _)) = data
                 .races
@@ -264,9 +408,9 @@ fn write_spells(path: PathBuf) -> Result<(), Box<dyn Error>> {
                 .enumerate()
                 .find(|(_, (id, _))| (**id) == *rule)
             {
-                file.write_all(br##"spells.insert(r#""##)?;
-                file.write_all(spell.to_ascii_lowercase().as_bytes())?;
-                file.write_all(br##""#, (rule_"##)?;
+                file.write_all(b"spells.insert(")?;
+                spell.to_ascii_lowercase().write_to_file(&mut file)?;
+                file.write_all(b", (rule_")?;
                 file.write_all(rule_index.to_string().as_bytes())?;
                 file.write_all(b".clone(), alternatives_")?;
                 file.write_all(alternatives_index)?;
@@ -275,27 +419,21 @@ fn write_spells(path: PathBuf) -> Result<(), Box<dyn Error>> {
         }
     }
     file.write_all(b"let never = ")?;
-    write_rule(
-        &mut file,
-        &SpellRule {
-            prefix: None,
-            race: None,
-        },
-    )?;
+    SpellRule {
+        prefix: None,
+        race: None,
+    }
+    .write_to_file(&mut file)?;
     file.write_all(b";\nlet none = Rc::new(Vec::new());")?;
     for id in &data.blacklist {
-        file.write_all(br##"spells.insert(r#""##)?;
-        file.write_all(id.to_ascii_lowercase().as_bytes())?;
-        file.write_all(
-            br##""#, (never.clone(), none.clone()));
-        "##,
-        )?;
+        file.write_all(b"spells.insert(")?;
+        id.to_ascii_lowercase().write_to_file(&mut file)?;
+        file.write_all(b", (never.clone(), none.clone()));\n")?;
     }
     file.write_all(br"return spells; }")?;
     Ok(())
 }
 
-#[must_use]
 fn write_supplies(path: PathBuf) -> Result<(), Box<dyn Error>> {
     let supplies: HashMap<String, String> =
         serde_json::from_str(include_str!("./data/supplies.json"))?;
@@ -309,11 +447,10 @@ fn write_supplies(path: PathBuf) -> Result<(), Box<dyn Error>> {
     for (key, value) in &supplies {
         write_string_map_insert(&mut file, "supplies", key.to_ascii_lowercase(), value)?;
     }
-    file.write_all(br"return supplies; }")?;
+    file.write_all(b"return supplies; }")?;
     Ok(())
 }
 
-#[must_use]
 fn write_travel(path: PathBuf) -> Result<(), Box<dyn Error>> {
     let classes: Vec<String> = serde_json::from_str(include_str!("./data/travel.json"))?;
     let mut file = File::create(path)?;
@@ -323,15 +460,14 @@ fn write_travel(path: PathBuf) -> Result<(), Box<dyn Error>> {
         ",
     )?;
     for class in classes {
-        file.write_all(br#"travel_classes.insert(r""#)?;
-        file.write_all(class.to_ascii_lowercase().as_bytes())?;
-        file.write_all(br#"");"#)?;
+        file.write_all(b"travel_classes.insert(")?;
+        class.to_ascii_lowercase().write_to_file(&mut file)?;
+        file.write_all(b");\n")?;
     }
-    file.write_all(br"return travel_classes; }")?;
+    file.write_all(b"return travel_classes; }")?;
     Ok(())
 }
 
-#[must_use]
 fn write_uniques(path: PathBuf) -> Result<(), io::Error> {
     let mut file = File::create(path)?;
     file.write_all(
@@ -342,11 +478,10 @@ fn write_uniques(path: PathBuf) -> Result<(), io::Error> {
     for line in include_str!("./data/uniques.txt").split('\n') {
         let id = line.trim();
         if !id.is_empty() {
-            file.write_all(br#"uniques.insert(r""#)?;
-            file.write_all(id.to_ascii_lowercase().as_bytes())?;
-            file.write_all(br#"");"#)?;
+            file.write_all(b"uniques.insert(")?;
+            id.to_ascii_lowercase().write_to_file(&mut file)?;
+            file.write_all(b");\n")?;
         }
     }
-    file.write_all(br"return uniques; }")?;
-    Ok(())
+    file.write_all(b"return uniques; }")
 }

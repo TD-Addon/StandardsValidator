@@ -1,4 +1,4 @@
-use std::{collections::HashMap, error::Error, rc::Rc};
+use std::{collections::HashMap, rc::Rc};
 
 use super::Context;
 use crate::{
@@ -6,15 +6,15 @@ use crate::{
     handlers::Handler,
     util::{is_autocalc, is_dead, update_or_insert},
 };
-use serde::Deserialize;
-use serde_json::Value;
 use tes3::esp::{BodypartId, FixedString, Npc, TES3Object};
+
+include!(concat!(env!("OUT_DIR"), "/gen_bodyparts.rs"));
 
 pub struct NpcValidator {
     slave_bracers: i32,
-    uniques: HashMap<String, UniqueNpc>,
-    heads: HashMap<String, AllRules>,
-    hairs: HashMap<String, AllRules>,
+    uniques: HashMap<&'static str, UniqueNpc>,
+    heads: HashMap<&'static str, AllRules>,
+    hairs: HashMap<&'static str, AllRules>,
 }
 
 const FLAG_NPC_FEMALE: u32 = 1;
@@ -91,7 +91,7 @@ impl Handler<'_> for NpcValidator {
 enum Rule {
     Array(Vec<Rule>),
     Negation(Box<Rule>),
-    Equality(String),
+    Equality(&'static str),
 }
 
 impl Rule {
@@ -153,55 +153,17 @@ impl Testable for SomeRules {
     }
 }
 
-#[derive(Deserialize)]
-struct Definition {
-    model: String,
-    ruleset: Option<String>,
-    rules: Option<Vec<HashMap<String, Value>>>,
-}
-
-#[derive(Deserialize)]
-struct BodyParts {
-    rulesets: HashMap<String, Vec<HashMap<String, Value>>>,
-    head: Vec<Definition>,
-    hair: Vec<Definition>,
-}
-
-fn build_rule(value: &Value) -> Option<Rule> {
-    return match value {
-        Value::Array(rule) => {
-            let sub: Vec<Rule> = rule.iter().map(&build_rule).flatten().collect();
-            if !sub.is_empty() {
-                return Some(Rule::Array(sub));
-            }
-            None
-        }
-        Value::Object(rule) => {
-            if let Some(v) = rule.get("not") {
-                if let Some(sub) = build_rule(v) {
-                    return Some(Rule::Negation(Box::new(sub)));
-                }
-            }
-            None
-        }
-        Value::String(rule) => {
-            return Some(Rule::Equality(rule.clone()));
-        }
-        _ => None,
-    };
-}
-
 #[derive(Default)]
 struct UniqueNpc {
-    head: Option<String>,
-    hair: Option<String>,
+    head: Option<&'static str>,
+    hair: Option<&'static str>,
 }
 
 struct RulesParser {
-    uniques: HashMap<String, UniqueNpc>,
-    heads: HashMap<String, AllRules>,
-    hairs: HashMap<String, AllRules>,
-    rulesets: HashMap<String, Rc<SomeRules>>,
+    uniques: HashMap<&'static str, UniqueNpc>,
+    heads: HashMap<&'static str, AllRules>,
+    hairs: HashMap<&'static str, AllRules>,
+    rulesets: HashMap<&'static str, Rc<SomeRules>>,
 }
 
 impl RulesParser {
@@ -216,36 +178,25 @@ impl RulesParser {
 
     fn parse_rules(
         &mut self,
-        values: &Vec<HashMap<String, Value>>,
-        params: Option<(BodypartId, &String)>,
+        values: Vec<Vec<FieldRule>>,
+        params: Option<(BodypartId, &'static str)>,
     ) -> Result<SomeRules, String> {
         let mut out = SomeRules { rules: Vec::new() };
-        for rule in values {
-            let mut equality = Vec::new();
-            for (key, value) in rule {
-                if let Some(built) = build_rule(value) {
-                    if key == "class" {
-                        equality.push(FieldRule::Class(built));
-                    } else if key == "faction" {
-                        equality.push(FieldRule::Faction(built));
-                    } else if key == "id" {
-                        if let Some((part, model)) = params {
-                            if let Rule::Equality(id) = &built {
-                                update_or_insert(&mut self.uniques, id.to_ascii_lowercase(), |u| {
-                                    if part == BodypartId::Hair {
-                                        u.hair = Some(model.clone());
-                                    } else if part == BodypartId::Head {
-                                        u.head = Some(model.clone());
-                                    }
-                                });
-                            }
+        for equality in values {
+            for rule in &equality {
+                if let FieldRule::Id(id_rule) = rule {
+                    if let Some((part, model)) = params {
+                        if let Rule::Equality(id) = &id_rule {
+                            update_or_insert(&mut self.uniques, id, |u| {
+                                if part == BodypartId::Hair {
+                                    u.hair = Some(model);
+                                } else if part == BodypartId::Head {
+                                    u.head = Some(model);
+                                }
+                            });
                         }
-                        equality.push(FieldRule::Id(built));
-                    } else {
-                        return Err(format!("Invalid key {}", key));
                     }
-                } else {
-                    return Err(format!("Failed to parse {}", value));
+                    break;
                 }
             }
             if !equality.is_empty() {
@@ -257,18 +208,21 @@ impl RulesParser {
 
     fn parse_part(
         &mut self,
-        definitions: &Vec<Definition>,
+        definitions: Vec<(
+            &'static str,
+            std::option::Option<&'static str>,
+            std::option::Option<Vec<Vec<FieldRule>>>,
+        )>,
         part: BodypartId,
     ) -> Result<(), String> {
-        for definition in definitions {
-            let model = definition.model.to_ascii_lowercase();
+        for (model, ruleset, rules_opt) in definitions {
             let mut predicate = AllRules { rules: Vec::new() };
-            if let Some(rules) = &definition.rules {
+            if let Some(rules) = rules_opt {
                 predicate
                     .rules
-                    .push(Rc::new(self.parse_rules(rules, Some((part, &model)))?))
+                    .push(Rc::new(self.parse_rules(rules, Some((part, model)))?))
             }
-            if let Some(name) = &definition.ruleset {
+            if let Some(name) = ruleset {
                 if let Some(ruleset) = self.rulesets.get(name) {
                     predicate.rules.push(ruleset.clone());
                 }
@@ -284,23 +238,23 @@ impl RulesParser {
 
     fn parse_rulesets(
         &mut self,
-        rulesets: &HashMap<String, Vec<HashMap<String, Value>>>,
+        rulesets: Vec<(&'static str, Vec<Vec<FieldRule>>)>,
     ) -> Result<(), String> {
-        for (name, json) in rulesets {
-            let parsed = self.parse_rules(json, None)?;
-            self.rulesets.insert(name.clone(), Rc::new(parsed));
+        for (name, rules) in rulesets {
+            let parsed = self.parse_rules(rules, None)?;
+            self.rulesets.insert(name, Rc::new(parsed));
         }
         Ok(())
     }
 }
 
 impl NpcValidator {
-    pub fn new() -> Result<Self, Box<dyn Error>> {
-        let data: BodyParts = serde_json::from_str(include_str!("../../data/bodyparts.json"))?;
+    pub fn new() -> Result<Self, String> {
+        let (rulesets, head, hair) = get_bodypart_data();
         let mut parser = RulesParser::new();
-        parser.parse_rulesets(&data.rulesets)?;
-        parser.parse_part(&data.head, BodypartId::Head)?;
-        parser.parse_part(&data.hair, BodypartId::Hair)?;
+        parser.parse_rulesets(rulesets)?;
+        parser.parse_part(head, BodypartId::Head)?;
+        parser.parse_part(hair, BodypartId::Hair)?;
         return Ok(Self {
             slave_bracers: 0,
             uniques: parser.uniques,
@@ -312,7 +266,7 @@ impl NpcValidator {
     fn check_bodyparts(&self, npc: &Npc) {
         self.check_part_rules(npc, &npc.hair, &self.hairs, "hair");
         self.check_part_rules(npc, &npc.head, &self.heads, "head");
-        if let Some(unique) = self.uniques.get(&npc.id.to_ascii_lowercase()) {
+        if let Some(unique) = self.uniques.get(npc.id.to_ascii_lowercase().as_str()) {
             self.check_part(npc, &npc.hair, &unique.hair, "hair");
             self.check_part(npc, &npc.head, &unique.head, "head");
         }
@@ -322,12 +276,12 @@ impl NpcValidator {
         &self,
         npc: &Npc,
         part: &Option<String>,
-        rules: &HashMap<String, AllRules>,
+        rules: &HashMap<&'static str, AllRules>,
         name: &str,
     ) {
         if let Some(id) = part {
             let bodypart = id.to_lowercase();
-            if let Some(rule) = rules.get(&bodypart) {
+            if let Some(rule) = rules.get(bodypart.as_str()) {
                 if !rule.test(npc) {
                     println!("Npc {} is using {} {}", npc.id, name, id);
                 }
@@ -339,7 +293,7 @@ impl NpcValidator {
         &self,
         npc: &Npc,
         actual: &Option<String>,
-        expected: &Option<String>,
+        expected: &Option<&'static str>,
         name: &str,
     ) {
         if let Some(expid) = expected {
