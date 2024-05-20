@@ -1,5 +1,5 @@
 use super::Context;
-use crate::handlers::Handler;
+use crate::{handlers::Handler, util::is_marker};
 use tes3::esp::TES3Object;
 
 pub struct FieldValidator {}
@@ -38,9 +38,11 @@ impl Handler<'_> for FieldValidator {
                 check(typename, id, "name", &r.name);
             }
             TES3Object::Book(r) => {
-                check(typename, id, "icon", &r.icon);
-                check(typename, id, "mesh", &r.mesh);
-                check(typename, id, "name", &r.name);
+                if !is_marker(r) {
+                    check(typename, id, "icon", &r.icon);
+                    check(typename, id, "mesh", &r.mesh);
+                    check(typename, id, "name", &r.name);
+                }
             }
             TES3Object::Clothing(r) => {
                 check(typename, id, "icon", &r.icon);

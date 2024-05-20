@@ -1,17 +1,9 @@
 use super::Context;
-use crate::handlers::Handler;
+use crate::{handlers::Handler, util::is_marker};
 use std::{error::Error, fmt};
 use tes3::esp::{Book, TES3Object};
 
 pub struct BookValidator {}
-
-fn is_marker(book: &Book) -> bool {
-    if let Some(mesh) = &book.mesh {
-        return mesh.eq_ignore_ascii_case("tr\\tr_note_pin.nif")
-            || mesh.eq_ignore_ascii_case("tr\\tr_editormarker_npc.nif");
-    }
-    return false;
-}
 
 impl Handler<'_> for BookValidator {
     fn on_record(&mut self, _: &Context, record: &TES3Object, _: &str, _: &String) {

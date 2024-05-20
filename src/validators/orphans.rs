@@ -124,6 +124,9 @@ impl Handler<'_> for OrphanValidator {
                 self.remove_script(&r.script);
                 self.objects.insert(id.to_ascii_lowercase(), typename);
             }
+            TES3Object::StartScript(r) => {
+                self.remove_script(&r.script);
+            }
             TES3Object::Static(_) => {
                 self.objects.insert(id.to_ascii_lowercase(), typename);
             }

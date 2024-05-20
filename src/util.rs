@@ -1,5 +1,5 @@
 use std::{collections::HashMap, hash::Hash};
-use tes3::esp::{Cell, Creature, Npc, ObjectFlags, TES3Object, TravelDestination};
+use tes3::esp::{Book, Cell, Creature, Npc, ObjectFlags, TES3Object, TravelDestination};
 
 pub const CELL_SIZE: f64 = 8192.;
 const FLAG_NPC_AUTO_CALC: u32 = 0x10;
@@ -158,4 +158,13 @@ pub fn is_autocalc(npc: &Npc) -> bool {
 
 pub fn cannot_sleep(cell: &Cell) -> bool {
     return (cell.data.flags & FLAG_CELL_NO_SLEEP) != 0;
+}
+
+pub fn is_marker(book: &Book) -> bool {
+    if let Some(mesh) = &book.mesh {
+        return mesh.eq_ignore_ascii_case("tr\\tr_note_pin.nif")
+            || mesh.eq_ignore_ascii_case("tr\\tr_editormarker_npc.nif")
+            || mesh.eq_ignore_ascii_case("editormarker.nif");
+    }
+    return false;
 }

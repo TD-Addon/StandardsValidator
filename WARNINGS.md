@@ -66,10 +66,10 @@ This exterior cell contains a reference that, by its position, should be part of
 ### Contains broken reference
 There is something wrong with this object and it should not be used.
 
-### Contains black square despite having water
+### Contains above water black square
 Black squares are used to hide things on the minimap (as black blends in with the fog of war's color as well as the there-is-nothing-here-background's color.)
 This doesn't work very well in cells with water as those get a water texture for a background instead of the usual black.
-Which makes the black squares stand out like a sore thumb.
+Which makes the black squares stand out like a sore thumb if placed above the water.
 
 ### Contains an unlinked PrisonMarker
 This cell contains a `PrisonMarker` that doesn't link to an interior cell. `PrisonMarker`s need to link to interiors containing `stolen_goods` to prevent crashes.
