@@ -326,7 +326,6 @@ bm_mace_aevar_uni
 bm_mazegate_01
 bm_mazegate_02
 bm_mazegate_03
-bm_misc_skull_griss
 bm_misc_skull_griss_floor
 bm_nordic01_robe_whitewalk
 bm_nordic_silver_lgswd_bloodska
