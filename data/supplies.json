@@ -4,5 +4,8 @@
 	"T_SkyCom_Furn_Ch2FGuild": "T_Sky_FightersGuild",
 	"com_chest_02_mg_supply": "Mages Guild",
 	"T_MwCom_Furn_Ch2MGuild": "Mages Guild",
+	"T_CyrCom_Furn_Ch2MGuild": "T_Cyr_MagesGuild",
+	"T_HFCom_Furn_Ch2MGuild": "T_Ham_MagesGuild",
+	"T_HRCom_Furn_Ch2MGuild": "T_HR_MagesGuild",
 	"T_SkyCom_Furn_Ch2MGuild": "T_Sky_MagesGuild"
 }
