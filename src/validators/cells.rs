@@ -177,7 +177,7 @@ impl Handler<'_> for CellValidator {
                     .iter()
                     .any(|id| id.eq_ignore_ascii_case(&reference.id))
             {
-                let name = record.editor_id(); // TODO: verify
+                let name = record.editor_id();
                 let key = format!("{}_{}", name, id);
                 if self.seen.insert(key) {
                     println!(

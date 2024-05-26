@@ -283,7 +283,7 @@ impl NpcValidator {
 
     fn check_part(&self, npc: &Npc, actual: &str, expected: &Option<&'static str>, name: &str) {
         if let Some(expid) = expected {
-            if !actual.is_empty() && expid.eq_ignore_ascii_case(actual) {
+            if expid.eq_ignore_ascii_case(actual) {
                 return;
             }
             println!("Npc {} is not using unique {} {}", npc.id, name, expid);

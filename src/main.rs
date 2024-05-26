@@ -96,9 +96,7 @@ fn main() -> Result<(), Box<dyn Error>> {
         .map_or(Mode::None, Mode::from);
 
     let context = Context::new(mode);
-    validate(paths.next().unwrap(), context, &args).unwrap();
-
-    Ok(())
+    validate(paths.next().unwrap(), context, &args)
 }
 
 fn validate(path: &str, context: Context, args: &ArgMatches) -> Result<(), Box<dyn Error>> {

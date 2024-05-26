@@ -71,15 +71,12 @@ impl Handler<'_> for IdValidator {
         match record {
             TES3Object::Bodypart(part) => {
                 if is_vampire_head(part) {
-                    let prefix = "b_v_";
-                    let suffix = if is_female(part) {
-                        "f_head_01"
-                    } else {
-                        "m_head_01"
-                    };
-
-                    let id = part.id.to_ascii_lowercase();
-                    if !(id.starts_with(prefix) && id.ends_with(suffix)) {
+                    let id = format!(
+                        "b_v_{}_{}_head_01",
+                        part.id,
+                        if is_female(part) { "f" } else { "m" }
+                    );
+                    if !part.id.eq_ignore_ascii_case(&id) {
                         println!("Bodypart {} should have id {}", part.id, id);
                     }
                 } else {

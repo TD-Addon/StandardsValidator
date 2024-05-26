@@ -24,7 +24,7 @@ pub fn fix_oob(plugin: &mut Plugin) {
                 continue;
             }
 
-            // More then 1 cell away
+            // More than 1 cell away
             if dx > 1 || dy > 1 {
                 println!(
                     "Not moving {} {:?} from cell {:?} as cell {:?} is too far away",
