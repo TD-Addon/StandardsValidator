@@ -1,9 +1,9 @@
 use std::collections::HashSet;
 
 use clap::ArgMatches;
-use tes3::esp::TES3Object;
+use tes3::esp::{EditorId, TES3Object};
 
-use crate::util::{cannot_sleep, get_cell_name, Actor};
+use crate::util::{cannot_sleep, Actor};
 
 use super::ExtendedHandler;
 
@@ -15,21 +15,21 @@ pub struct CellValidator {
 }
 
 impl ExtendedHandler for CellValidator {
-    fn on_record(&mut self, record: &TES3Object, _: &str, id: &String, _: &str, last: bool) {
+    fn on_record(&mut self, record: &TES3Object, _: &str, id: &str, _: &str, last: bool) {
         match record {
             TES3Object::PathGrid(pathgrid) => {
-                if let Some(cell) = &pathgrid.cell {
-                    self.pathgrids.insert(cell.to_ascii_lowercase());
+                if !pathgrid.cell.is_empty() {
+                    self.pathgrids.insert(pathgrid.cell.to_ascii_lowercase());
                 }
             }
             TES3Object::Cell(cell) => {
                 if last
                     && cell.is_interior()
                     && cell.references.len() > 1
-                    && !cell.id.starts_with("T_")
+                    && !cell.name.starts_with("T_")
                 {
                     self.cells
-                        .push((id.to_ascii_lowercase(), get_cell_name(cell)));
+                        .push((id.to_ascii_lowercase(), cell.editor_id().into()));
                     if !cannot_sleep(cell) {
                         let count = cell
                             .references
@@ -39,7 +39,7 @@ impl ExtendedHandler for CellValidator {
                         if count < self.min_inhabitants {
                             println!(
                                 "Cell {} contains {} NPCs or creatures",
-                                get_cell_name(cell),
+                                cell.editor_id(),
                                 count
                             );
                         }
@@ -75,11 +75,11 @@ impl ExtendedHandler for CellValidator {
 impl CellValidator {
     pub fn new(args: &ArgMatches) -> Self {
         let min_inhabitants = *args.get_one::<usize>("mininhabitants").unwrap();
-        return Self {
+        Self {
             inhabitants: HashSet::new(),
             pathgrids: HashSet::new(),
             cells: Vec::new(),
             min_inhabitants,
-        };
+        }
     }
 }

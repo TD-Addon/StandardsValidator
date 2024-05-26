@@ -3,7 +3,9 @@ use std::collections::{HashMap, HashSet};
 use super::Context;
 use crate::{context::Mode, handlers::Handler, util::update_or_insert};
 use regex::{Error, Regex};
-use tes3::esp::{Cell, Dialogue, DialogueType2, FixedString, Info, Reference, TES3Object};
+use tes3::esp::{
+    Cell, Dialogue, DialogueInfo, DialogueType2, FixedString, QuestState, Reference, TES3Object,
+};
 
 pub struct OrphanValidator {
     script_ids: HashSet<String>,
@@ -21,10 +23,7 @@ pub struct OrphanValidator {
 }
 
 fn is_journal(dialogue: &Dialogue) -> bool {
-    if let Some(kind) = dialogue.kind {
-        return kind == DialogueType2::Journal;
-    }
-    return false;
+    dialogue.dialogue_type == DialogueType2::Journal
 }
 
 impl Handler<'_> for OrphanValidator {
@@ -33,7 +32,7 @@ impl Handler<'_> for OrphanValidator {
         context: &Context,
         record: &TES3Object,
         typename: &'static str,
-        id: &String,
+        id: &str,
     ) {
         if context.mode == Mode::TD {
             return;
@@ -139,12 +138,10 @@ impl Handler<'_> for OrphanValidator {
         }
     }
 
-    fn on_info(&mut self, _: &Context, record: &Info, topic: &Dialogue) {
-        if is_journal(topic) && record.quest_name.is_none() {
-            if let Some(data) = &record.data {
-                if let Some(indices) = self.journals.get_mut(&topic.id.to_ascii_lowercase()) {
-                    indices.insert(data.disposition);
-                }
+    fn on_info(&mut self, _: &Context, record: &DialogueInfo, topic: &Dialogue) {
+        if is_journal(topic) && record.quest_state != Some(QuestState::Name) {
+            if let Some(indices) = self.journals.get_mut(&topic.id.to_ascii_lowercase()) {
+                indices.insert(record.data.disposition);
             }
         }
     }
@@ -154,8 +151,8 @@ impl Handler<'_> for OrphanValidator {
         _: &Context,
         _: &Cell,
         _: &Reference,
-        id: &String,
-        _: &Vec<&Reference>,
+        id: &str,
+        _: &[&Reference],
         _: usize,
     ) {
         self.objects.remove(id);
@@ -245,7 +242,7 @@ impl OrphanValidator {
         let secondarg = Regex::new(
             r#"^([,\s]*|.*?->[,\s]*)(addtolevcreature|addtolevitem)[,\s]+("[^"]+"|[^,\s]+)[,\s]+("[^"]+"|[^,\s]+)([,\s]+|$)"#,
         )?;
-        return Ok(Self {
+        Ok(Self {
             script_ids: HashSet::new(),
             start_scripts: Vec::new(),
             objects: HashMap::new(),
@@ -258,23 +255,19 @@ impl OrphanValidator {
             firstarg,
             journal,
             secondarg,
-        });
+        })
     }
 
-    fn remove_script(&mut self, option: &Option<String>) {
-        if let Some(script) = option {
-            if !script.is_empty() {
-                self.script_ids.remove(&script.to_ascii_lowercase());
-            }
+    fn remove_script(&mut self, script: &str) {
+        if !script.is_empty() {
+            self.script_ids.remove(&script.to_ascii_lowercase());
         }
     }
 
-    fn add_enchantment(&mut self, option: &Option<String>) {
-        if let Some(enchantment) = option {
-            if !enchantment.is_empty() {
-                self.used_enchantments
-                    .insert(enchantment.to_ascii_lowercase());
-            }
+    fn add_enchantment(&mut self, enchantment: &str) {
+        if !enchantment.is_empty() {
+            self.used_enchantments
+                .insert(enchantment.to_ascii_lowercase());
         }
     }
 }

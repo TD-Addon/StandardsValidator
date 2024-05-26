@@ -1,8 +1,8 @@
 use std::collections::HashMap;
 
 use super::Context;
-use crate::{handlers::Handler, util::get_cell_name};
-use tes3::esp::{Cell, Reference};
+use crate::handlers::Handler;
+use tes3::esp::{Cell, EditorId, Reference};
 
 include!(concat!(env!("OUT_DIR"), "/gen_supplies.rs"));
 
@@ -18,11 +18,11 @@ impl Handler<'_> for SupplyChestValidator {
         _: &Context,
         record: &Cell,
         reference: &Reference,
-        id: &String,
-        _: &Vec<&Reference>,
+        id: &str,
+        _: &[&Reference],
         _: usize,
     ) {
-        if let Some(faction) = self.chests.get(id.as_str()) {
+        if let Some(faction) = self.chests.get(id) {
             if !reference
                 .owner_faction
                 .as_ref()
@@ -31,7 +31,7 @@ impl Handler<'_> for SupplyChestValidator {
             {
                 println!(
                     "Cell {} contains {} not owned by the {}",
-                    get_cell_name(record),
+                    record.editor_id(),
                     reference.id,
                     faction
                 );
@@ -40,7 +40,7 @@ impl Handler<'_> for SupplyChestValidator {
                 if rank != 0 && rank != ALL_RANKS {
                     println!(
                         "Cell {} contains {} not available to all ranks",
-                        get_cell_name(record),
+                        record.editor_id(),
                         reference.id
                     );
                 }
@@ -51,8 +51,8 @@ impl Handler<'_> for SupplyChestValidator {
 
 impl SupplyChestValidator {
     pub fn new() -> Self {
-        return Self {
+        Self {
             chests: get_supplies_data(),
-        };
+        }
     }
 }

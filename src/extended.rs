@@ -1,5 +1,5 @@
 use clap::ArgMatches;
-use tes3::esp::{Dialogue, Info, ObjectFlags, TES3Object};
+use tes3::esp::{Dialogue, DialogueInfo, TES3Object, TypeInfo};
 
 use self::{
     cells::CellValidator,
@@ -23,13 +23,13 @@ trait ExtendedHandler {
         &mut self,
         record: &TES3Object,
         typename: &'static str,
-        id: &String,
+        id: &str,
         file: &str,
         last: bool,
     ) {
     }
 
-    fn on_info(&mut self, record: &Info, topic: &Dialogue, file: &str, last: bool) {}
+    fn on_info(&mut self, record: &DialogueInfo, topic: &Dialogue, file: &str, last: bool) {}
 
     fn on_end(&mut self) {}
 }
@@ -48,15 +48,11 @@ impl ExtendedValidator {
             handlers.push(Box::new(NameValidator::new()));
             handlers.push(Box::new(QuestNameValidator::new()));
         }
-        return Self { handlers };
+        Self { handlers }
     }
 
     pub fn validate(&mut self, records: &Vec<TES3Object>, file: &str, last: bool) {
-        let dummy = Dialogue {
-            flags: ObjectFlags::empty(),
-            id: String::new(),
-            kind: None,
-        };
+        let dummy = Dialogue::default();
         let mut current_topic = &dummy;
         for record in records {
             match record {
@@ -74,7 +70,7 @@ impl ExtendedValidator {
                 TES3Object::Bodypart(r) => self.on_record(record, r.type_name(), &r.id, file, last),
                 TES3Object::Book(r) => self.on_record(record, r.type_name(), &r.id, file, last),
                 TES3Object::Cell(r) => {
-                    self.on_record(record, r.type_name(), &r.id, file, last);
+                    self.on_record(record, r.type_name(), &r.name, file, last);
                 }
                 TES3Object::Class(r) => self.on_record(record, r.type_name(), &r.id, file, last),
                 TES3Object::Clothing(r) => self.on_record(record, r.type_name(), &r.id, file, last),
@@ -100,7 +96,7 @@ impl ExtendedValidator {
                     self.on_record(record, r.type_name(), &r.id, file, last)
                 }
                 TES3Object::Header(_) => {}
-                TES3Object::Info(r) => {
+                TES3Object::DialogueInfo(r) => {
                     self.on_record(record, r.type_name(), &r.id, file, last);
                     self.on_info(r, current_topic, file, last);
                 }
@@ -117,16 +113,12 @@ impl ExtendedValidator {
                 }
                 TES3Object::Light(r) => self.on_record(record, r.type_name(), &r.id, file, last),
                 TES3Object::Lockpick(r) => self.on_record(record, r.type_name(), &r.id, file, last),
-                TES3Object::MagicEffect(r) => {
-                    self.on_record(record, r.type_name(), &String::new(), file, last)
-                }
+                TES3Object::MagicEffect(r) => self.on_record(record, r.type_name(), "", file, last),
                 TES3Object::MiscItem(r) => self.on_record(record, r.type_name(), &r.id, file, last),
                 TES3Object::Npc(r) => {
                     self.on_record(record, r.type_name(), &r.id, file, last);
                 }
-                TES3Object::PathGrid(r) => {
-                    self.on_record(record, r.type_name(), &String::new(), file, last)
-                }
+                TES3Object::PathGrid(r) => self.on_record(record, r.type_name(), "", file, last),
                 TES3Object::Probe(r) => self.on_record(record, r.type_name(), &r.id, file, last),
                 TES3Object::Race(r) => self.on_record(record, r.type_name(), &r.id, file, last),
                 TES3Object::Region(r) => self.on_record(record, r.type_name(), &r.id, file, last),
@@ -158,7 +150,7 @@ impl ExtendedValidator {
         &mut self,
         record: &TES3Object,
         typename: &'static str,
-        id: &String,
+        id: &str,
         file: &str,
         last: bool,
     ) {
@@ -167,7 +159,7 @@ impl ExtendedValidator {
         }
     }
 
-    fn on_info(&mut self, record: &Info, topic: &Dialogue, file: &str, last: bool) {
+    fn on_info(&mut self, record: &DialogueInfo, topic: &Dialogue, file: &str, last: bool) {
         for handler in &mut self.handlers {
             handler.on_info(record, topic, file, last);
         }

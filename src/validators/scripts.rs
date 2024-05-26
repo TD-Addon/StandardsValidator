@@ -35,54 +35,51 @@ struct ScriptInfo {
 
 impl ScriptInfo {
     fn new(npc: bool, khajiit: bool, nolore: bool) -> Self {
-        return Self {
+        Self {
             used: false,
             used_by_khajiit: false,
             npc,
             khajiit,
             nolore,
             projects: Vec::new(),
-        };
+        }
     }
 }
 
 impl Handler<'_> for ScriptValidator {
-    fn on_record(&mut self, context: &Context, record: &TES3Object, _: &str, _: &String) {
+    fn on_record(&mut self, context: &Context, record: &TES3Object, _: &str, _: &str) {
         if context.mode == Mode::Vanilla {
             return;
         }
         if let TES3Object::Script(script) = record {
-            if let Some(text) = &script.script_text {
-                let mut info = ScriptInfo::new(
-                    self.npc.is_match(text),
-                    self.khajiit.is_match(text),
-                    self.nolore.is_match(text),
+            let text = &script.text;
+            let mut info = ScriptInfo::new(
+                self.npc.is_match(text),
+                self.khajiit.is_match(text),
+                self.nolore.is_match(text),
+            );
+            for (local, regex) in &self.projects {
+                if regex.is_match(text) {
+                    info.projects.push(local);
+                }
+            }
+            if info.khajiit && !self.has_correct_khajiit_check(script, text) {
+                println!("Script {} contains non-standard khajiit check", script.id);
+            }
+            self.scripts.insert(script.id.to_ascii_lowercase(), info);
+            if let Some(captures) = self.commands.captures(text) {
+                println!(
+                    "Script {} contains line {}",
+                    script.id,
+                    captures.get(0).unwrap().as_str()
                 );
-                for (local, regex) in &self.projects {
-                    if regex.is_match(text) {
-                        info.projects.push(local);
-                    }
-                }
-                if info.khajiit && !self.has_correct_khajiit_check(script, text) {
-                    println!("Script {} contains non-standard khajiit check", script.id);
-                }
-                self.scripts.insert(script.id.to_ascii_lowercase(), info);
-                if let Some(captures) = self.commands.captures(text) {
-                    println!(
-                        "Script {} contains line {}",
-                        script.id,
-                        captures.get(0).unwrap().as_str()
-                    );
-                }
             }
         } else if let TES3Object::Npc(npc) = record {
             if !npc.is_dead() {
-                if let Some(script) = &npc.script {
-                    if !script.is_empty() {
-                        let id = script.to_ascii_lowercase();
-                        self.check_npc_script(npc, id);
-                        return;
-                    }
+                if !npc.script.is_empty() {
+                    let id = npc.script.to_ascii_lowercase();
+                    self.check_npc_script(npc, id);
+                    return;
                 }
                 println!("Npc {} does not have a script", npc.id);
             }
@@ -97,16 +94,14 @@ impl Handler<'_> for ScriptValidator {
         _: &str,
         topic: &Dialogue,
     ) {
-        if !code.is_empty() {
-            if self.position.is_match(code) {
-                if let TES3Object::Info(info) = record {
-                    println!(
-                        "Info {} in topic {} uses Position instead of PositionCell",
-                        info.id, topic.id
-                    );
-                } else if let TES3Object::Script(script) = record {
-                    println!("Script {} uses Position instead of PositionCell", script.id);
-                }
+        if !code.is_empty() && self.position.is_match(code) {
+            if let TES3Object::DialogueInfo(info) = record {
+                println!(
+                    "Info {} in topic {} uses Position instead of PositionCell",
+                    info.id, topic.id
+                );
+            } else if let TES3Object::Script(script) = record {
+                println!("Script {} uses Position instead of PositionCell", script.id);
             }
         }
     }
@@ -158,7 +153,7 @@ impl ScriptValidator {
                 .case_insensitive(true)
                 .build()?;
         let position = Regex::new(r"^([,\s]*|.*?->[,\s]*)position[,\s]+")?;
-        return Ok(Self {
+        Ok(Self {
             scripts: HashMap::new(),
             npc,
             khajiit,
@@ -169,7 +164,7 @@ impl ScriptValidator {
             set_khajiit_neg1,
             set_khajiit_var,
             position,
-        });
+        })
     }
 
     fn check_npc_script(&mut self, npc: &Npc, id: String) {
@@ -187,15 +182,14 @@ impl ScriptValidator {
                     npc.id, id
                 );
             }
-            if let Some(race) = &npc.race {
-                if race.eq_ignore_ascii_case("khajiit") || ci_starts_with(race, "t_els_") {
-                    script.used_by_khajiit = true;
-                    if !script.khajiit {
-                        println!(
-                            "Npc {} uses script {} which does not define T_Local_Khajiit",
-                            npc.id, id
-                        );
-                    }
+            let race = &npc.race;
+            if race.eq_ignore_ascii_case("khajiit") || ci_starts_with(race, "t_els_") {
+                script.used_by_khajiit = true;
+                if !script.khajiit {
+                    println!(
+                        "Npc {} uses script {} which does not define T_Local_Khajiit",
+                        npc.id, id
+                    );
                 }
             }
             if script.projects.is_empty() {
@@ -218,7 +212,7 @@ impl ScriptValidator {
         }
     }
 
-    fn has_correct_khajiit_check(&self, record: &Script, text: &String) -> bool {
+    fn has_correct_khajiit_check(&self, record: &Script, text: &str) -> bool {
         if self.set_khajiit_neg1.is_match(text) {
             return self.khajiit_script.is_match(text);
         }
@@ -238,6 +232,6 @@ impl ScriptValidator {
                 return false;
             }
         }
-        return found;
+        found
     }
 }

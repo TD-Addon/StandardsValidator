@@ -9,7 +9,7 @@ pub struct PersistentValidator {
 }
 
 impl Handler<'_> for PersistentValidator {
-    fn on_record(&mut self, _: &Context, record: &TES3Object, _: &str, id: &String) {
+    fn on_record(&mut self, _: &Context, record: &TES3Object, _: &str, id: &str) {
         if is_persistent(record) {
             match record {
                 TES3Object::Creature(_) => {}
@@ -26,8 +26,8 @@ impl Handler<'_> for PersistentValidator {
         _: &Context,
         _: &Cell,
         _: &Reference,
-        id: &String,
-        _: &Vec<&Reference>,
+        id: &str,
+        _: &[&Reference],
         _: usize,
     ) {
         if let Some(count) = self.counts.get_mut(id) {
@@ -42,8 +42,8 @@ impl Handler<'_> for PersistentValidator {
 
 impl PersistentValidator {
     pub fn new() -> Self {
-        return Self {
+        Self {
             counts: HashMap::new(),
-        };
+        }
     }
 }

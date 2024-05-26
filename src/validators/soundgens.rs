@@ -10,14 +10,15 @@ pub struct SoundGenValidator {
 }
 
 impl Handler<'_> for SoundGenValidator {
-    fn on_record(&mut self, _: &Context, record: &TES3Object, _: &str, _: &String) {
+    fn on_record(&mut self, _: &Context, record: &TES3Object, _: &str, _: &str) {
         if let TES3Object::Creature(creature) = record {
-            if creature.sound.is_none() {
+            if creature.sound.is_empty() {
                 self.to_check.push(creature.id.to_ascii_lowercase());
             }
         } else if let TES3Object::SoundGen(soundgen) = record {
-            if let Some(id) = &soundgen.creature {
-                self.sound_gens.insert(id.to_ascii_lowercase());
+            if !soundgen.creature.is_empty() {
+                self.sound_gens
+                    .insert(soundgen.creature.to_ascii_lowercase());
             }
         }
     }
@@ -33,9 +34,9 @@ impl Handler<'_> for SoundGenValidator {
 
 impl SoundGenValidator {
     pub fn new() -> Self {
-        return Self {
+        Self {
             sound_gens: HashSet::new(),
             to_check: Vec::new(),
-        };
+        }
     }
 }

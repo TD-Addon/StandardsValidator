@@ -2,58 +2,48 @@ use std::collections::HashMap;
 
 use super::Context;
 use crate::handlers::Handler;
-use tes3::esp::TES3Object;
+use tes3::esp::{LeveledCreatureFlags, LeveledItemFlags, TES3Object, TypeInfo};
 
 pub struct LeveledValidator<'a> {
     to_check: Vec<&'a TES3Object>,
     minimum_levels: HashMap<String, u16>,
 }
 
-const FLAG_ALL_LEVELS_CREATURE: u32 = 1;
-const FLAG_ALL_LEVELS_ITEM: u32 = 2;
-
-fn has_flag(flags: &Option<u32>, flag: u32) -> bool {
-    if let Some(f) = flags {
-        return (f & flag) != 0;
-    }
-    return false;
-}
-
-fn check_all_levels(t: &str, id: &String, list: &Option<Vec<(String, u16)>>) {
-    if let Some(entries) = list {
-        if entries.len() > 1 {
-            let first = unsafe { entries.get_unchecked(0).1 };
-            for entry in &entries[1..] {
-                if entry.1 != first {
-                    println!("{} {} is not calculated for all levels", t, id);
-                    break;
-                }
-            }
+fn check_all_levels(t: &str, id: &str, list: &[(String, u16)]) {
+    let [first, rest @ ..] = list else {
+        return;
+    };
+    for item in rest {
+        if item.1 != first.1 {
+            println!("{} {} is not calculated for all levels", t, id);
+            break;
         }
     }
 }
 
-fn get_first(list: &Option<Vec<(String, u16)>>) -> Option<&(String, u16)> {
-    return list.iter().flat_map(|l| l.first()).next();
-}
-
 impl<'a> Handler<'a> for LeveledValidator<'a> {
-    fn on_record(&mut self, _: &Context, record: &'a TES3Object, typename: &str, id: &String) {
+    fn on_record(&mut self, _: &Context, record: &'a TES3Object, typename: &str, id: &str) {
         match record {
             TES3Object::LeveledCreature(r) => {
-                if !has_flag(&r.list_flags, FLAG_ALL_LEVELS_CREATURE) {
+                if !r
+                    .leveled_creature_flags
+                    .contains(LeveledCreatureFlags::CALCULATE_FROM_ALL_LEVELS)
+                {
                     check_all_levels(typename, &r.id, &r.creatures);
                 }
-                if let Some(entry) = get_first(&r.creatures) {
+                if let Some(entry) = &r.creatures.first() {
                     self.minimum_levels.insert(id.to_ascii_lowercase(), entry.1);
                 }
                 self.to_check.push(record);
             }
             TES3Object::LeveledItem(r) => {
-                if !has_flag(&r.list_flags, FLAG_ALL_LEVELS_ITEM) {
+                if !r
+                    .leveled_item_flags
+                    .contains(LeveledItemFlags::CALCULATE_FROM_ALL_LEVELS)
+                {
                     check_all_levels(typename, &r.id, &r.items);
                 }
-                if let Some(entry) = get_first(&r.items) {
+                if let Some(entry) = r.items.first() {
                     self.minimum_levels.insert(id.to_ascii_lowercase(), entry.1);
                 }
                 self.to_check.push(record);
@@ -79,19 +69,17 @@ impl<'a> Handler<'a> for LeveledValidator<'a> {
 
 impl LeveledValidator<'_> {
     pub fn new<'a>() -> LeveledValidator<'a> {
-        return LeveledValidator {
+        LeveledValidator {
             to_check: Vec::new(),
             minimum_levels: HashMap::new(),
-        };
+        }
     }
 
-    fn check_min(&self, t: &str, id: &String, option: &Option<Vec<(String, u16)>>) {
-        if let Some(list) = option {
-            for entry in list {
-                if let Some(min) = self.minimum_levels.get(&entry.0.to_ascii_lowercase()) {
-                    if min.clone() > entry.1 {
-                        println!("{} {} contains {} at level {} which will not resolve to anything at that level", t, id, entry.0, entry.1);
-                    }
+    fn check_min(&self, t: &str, id: &str, list: &[(String, u16)]) {
+        for entry in list {
+            if let Some(min) = self.minimum_levels.get(&entry.0.to_ascii_lowercase()) {
+                if *min > entry.1 {
+                    println!("{} {} contains {} at level {} which will not resolve to anything at that level", t, id, entry.0, entry.1);
                 }
             }
         }

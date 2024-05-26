@@ -1,8 +1,9 @@
 use super::Context;
-use crate::{context::Mode, handlers::Handler, util::is_empty};
+use crate::{context::Mode, handlers::Handler};
 use regex::{Error, Regex, RegexBuilder};
 use tes3::esp::{
-    Dialogue, DialogueType, FilterComparison, FilterFunction, FilterType, FilterValue, Info, Sex,
+    Dialogue, DialogueInfo, DialogueType, FilterComparison, FilterFunction, FilterType,
+    FilterValue, Sex,
 };
 
 const HIGH_RANK: i8 = 7;
@@ -17,14 +18,11 @@ pub struct DialogueValidator {
     overrides: Regex,
 }
 
-fn get_int(value: &Option<FilterValue>) -> Option<i32> {
-    if let Some(v) = value {
-        match v {
-            FilterValue::Integer(i) => return Some(*i),
-            FilterValue::Float(f) => return Some(*f as i32),
-        }
+fn get_int(value: FilterValue) -> i32 {
+    match value {
+        FilterValue::Integer(i) => i,
+        FilterValue::Float(f) => f as i32,
     }
-    return None;
 }
 
 fn to_op(comp: FilterComparison) -> &'static str {
@@ -39,25 +37,19 @@ fn to_op(comp: FilterComparison) -> &'static str {
 }
 
 impl Handler<'_> for DialogueValidator {
-    fn on_info(&mut self, context: &Context, record: &Info, topic: &Dialogue) {
-        if record
-            .speaker_id
-            .iter()
-            .any(|id| id.eq_ignore_ascii_case("dialog placeholder"))
-        {
+    fn on_info(&mut self, context: &Context, record: &DialogueInfo, topic: &Dialogue) {
+        if record.speaker_id.eq_ignore_ascii_case("dialog placeholder") {
             return;
         }
-        if is_empty(&record.text) {
-            if !record
-                .data
-                .iter()
-                .any(|data| data.kind == DialogueType::Journal || data.kind == DialogueType::Voice)
+        if record.text.is_empty() {
+            if record.data.dialogue_type != DialogueType::Journal
+                && record.data.dialogue_type != DialogueType::Voice
                 && !self.intentionally_left_blank(record)
             {
                 println!("Info {} in topic {} has no text", record.id, topic.id);
             }
         } else {
-            let text = record.text.as_ref().unwrap();
+            let text = &record.text;
             if self.double_spaces.is_match(text) {
                 println!(
                     "Info {} in topic {} contains double spaces",
@@ -101,49 +93,51 @@ impl Handler<'_> for DialogueValidator {
                 );
             }
         }
-        for filter in record.filters.iter().flat_map(|f| f.iter()) {
-            if let Some(value) = get_int(&filter.value) {
-                if filter.kind == FilterType::Dead
-                    && filter.comparison == FilterComparison::Equal
-                    && value > 0
-                {
-                    println!(
-                        "Info {} in topic {} checks for Dead = {}",
-                        record.id, topic.id, value
-                    );
-                }
+        for filter in &record.filters {
+            let value = get_int(filter.value);
+            if filter.filter_type == FilterType::Dead
+                && filter.comparison == FilterComparison::Equal
+                && value > 0
+            {
+                println!(
+                    "Info {} in topic {} checks for Dead = {}",
+                    record.id, topic.id, value
+                );
             }
         }
-        if let Some(speaker) = &record.speaker_id {
+        if !record.speaker_id.is_empty() {
+            let speaker = &record.speaker_id;
             let is_player = speaker.eq_ignore_ascii_case("player");
             if !is_player {
-                if !is_empty(&record.speaker_rank) {
+                if !record.speaker_race.is_empty() {
                     println!(
                         "Info {} in topic {} has an unnecessary race filter",
                         record.id, topic.id
                     );
                 }
-                if !is_empty(&record.speaker_class) {
+                if !record.speaker_class.is_empty() {
                     println!(
                         "Info {} in topic {} has an unnecessary class filter",
                         record.id, topic.id
                     );
                 }
-                if !is_empty(&record.speaker_faction) {
+                if !record.speaker_faction.is_empty() {
                     println!(
                         "Info {} in topic {} has an unnecessary faction filter",
                         record.id, topic.id
                     );
                 }
-                if record.data.iter().any(|d| d.speaker_sex != Sex::Any) {
+                if record.data.speaker_sex != Sex::Any {
                     println!(
                         "Info {} in topic {} has an unnecessary sex filter",
                         record.id, topic.id
                     );
                 }
             }
-            for filter in record.filters.iter().flat_map(|f| f.iter()) {
-                if filter.kind == FilterType::Local || filter.kind == FilterType::NotLocal {
+            for filter in &record.filters {
+                if filter.filter_type == FilterType::Local
+                    || filter.filter_type == FilterType::NotLocal
+                {
                     if filter.id.eq_ignore_ascii_case("nolore")
                         || filter.id.eq_ignore_ascii_case("t_local_nolore")
                         || filter.id.eq_ignore_ascii_case("t_local_khajiit")
@@ -154,23 +148,23 @@ impl Handler<'_> for DialogueValidator {
                             record.id, topic.id, filter.id
                         );
                     }
-                } else if filter.kind == FilterType::NotId {
+                } else if filter.filter_type == FilterType::NotId {
                     println!(
                         "Info {} in topic {} has an unnecessary Not ID filter",
                         record.id, topic.id
                     );
                 } else if !is_player {
-                    if filter.kind == FilterType::NotFaction {
+                    if filter.filter_type == FilterType::NotFaction {
                         println!(
                             "Info {} in topic {} has an unnecessary Not Faction filter",
                             record.id, topic.id
                         );
-                    } else if filter.kind == FilterType::NotClass {
+                    } else if filter.filter_type == FilterType::NotClass {
                         println!(
                             "Info {} in topic {} has an unnecessary Not Class filter",
                             record.id, topic.id
                         );
-                    } else if filter.kind == FilterType::NotRace {
+                    } else if filter.filter_type == FilterType::NotRace {
                         println!(
                             "Info {} in topic {} has an unnecessary Not Race filter",
                             record.id, topic.id
@@ -178,17 +172,16 @@ impl Handler<'_> for DialogueValidator {
                     }
                 }
             }
-        } else if record.data.iter().any(|d| d.kind == DialogueType::Voice) {
+        } else if record.data.dialogue_type == DialogueType::Voice {
             if context.mode == Mode::TD {
-                if let Some(race) = &record.speaker_rank {
-                    if !race.is_empty() && context.projects.iter().any(|p| p.matches(race)) {
-                        return;
-                    }
+                let race = &record.speaker_race;
+                if !race.is_empty() && context.projects.iter().any(|p| p.matches(race)) {
+                    return;
                 }
             }
             if context.mode != Mode::Vanilla {
-                let project = record.filters.iter().flat_map(|f| f.iter()).any(|filter| {
-                    if filter.kind == FilterType::Local && !filter.id.is_empty() {
+                let project = record.filters.iter().any(|filter| {
+                    if filter.filter_type == FilterType::Local && !filter.id.is_empty() {
                         return filter.id.eq_ignore_ascii_case("t_local_npc")
                             || filter.id.eq_ignore_ascii_case("t_local_khajiit")
                             || context
@@ -196,7 +189,7 @@ impl Handler<'_> for DialogueValidator {
                                 .iter()
                                 .any(|p| p.has_local(&filter.id) || p.matches(&filter.id));
                     }
-                    return false;
+                    false
                 });
                 if !project {
                     println!(
@@ -205,18 +198,17 @@ impl Handler<'_> for DialogueValidator {
                     );
                 }
             }
-        } else if record.data.iter().any(|d| {
-            d.kind == DialogueType::Greeting
-                || d.kind == DialogueType::Topic
-                || d.kind == DialogueType::Persuasion
-        }) {
+        } else if matches!(
+            record.data.dialogue_type,
+            DialogueType::Greeting | DialogueType::Topic | DialogueType::Persuasion
+        ) {
             let is_service_refusal = topic.id == "Service Refusal";
             let mut project = false;
             let mut nolore = false;
             let mut vanilla_nolore = false;
             let mut choice = false;
-            for filter in record.filters.iter().flat_map(|f| f.iter()) {
-                if filter.kind == FilterType::Local {
+            for filter in &record.filters {
+                if filter.filter_type == FilterType::Local {
                     if filter.id.eq_ignore_ascii_case("t_local_nolore")
                         || filter.id.eq_ignore_ascii_case("nolore")
                     {
@@ -237,11 +229,11 @@ impl Handler<'_> for DialogueValidator {
                             nolore = true;
                         }
                     }
-                    let value = get_int(&filter.value);
+                    let value = get_int(filter.value);
                     if filter.id.eq_ignore_ascii_case("t_local_npc")
-                        && (filter.comparison != FilterComparison::Equal || value != Some(0))
+                        && (filter.comparison != FilterComparison::Equal || value != 0)
                         || filter.id.eq_ignore_ascii_case("t_local_khajiit")
-                            && (filter.comparison != FilterComparison::Equal || value != Some(1))
+                            && (filter.comparison != FilterComparison::Equal || value != 1)
                     {
                         println!(
                             "Info {} in topic {} has a Local {} {} {:?} filter",
@@ -252,11 +244,11 @@ impl Handler<'_> for DialogueValidator {
                             value
                         );
                     }
-                } else if filter.kind == FilterType::NotLocal {
-                    let value = get_int(&filter.value);
+                } else if filter.filter_type == FilterType::NotLocal {
+                    let value = get_int(filter.value);
                     if filter.id.eq_ignore_ascii_case("t_local_nolore") {
                         nolore = true;
-                        if filter.comparison != FilterComparison::Equal || value != Some(0) {
+                        if filter.comparison != FilterComparison::Equal || value != 0 {
                             println!(
                                 "Info {} in topic {} has a Not Local {} {} {:?} filter",
                                 record.id,
@@ -268,12 +260,12 @@ impl Handler<'_> for DialogueValidator {
                         }
                     } else if filter.id.eq_ignore_ascii_case("nolore")
                         && filter.comparison == FilterComparison::Equal
-                        && value == Some(0)
+                        && value == 0
                     {
                         vanilla_nolore = true;
                     } else if (filter.id.eq_ignore_ascii_case("t_local_npc")
                         || filter.id.eq_ignore_ascii_case("t_local_khajiit"))
-                        && (filter.comparison != FilterComparison::Equal && value != Some(1))
+                        && (filter.comparison != FilterComparison::Equal && value != 1)
                     {
                         println!(
                             "Info {} in topic {} has a Not Local {} {} {:?} filter",
@@ -284,17 +276,18 @@ impl Handler<'_> for DialogueValidator {
                             value
                         );
                     }
-                } else if filter.kind == FilterType::Function
+                } else if filter.filter_type == FilterType::Function
                     && filter.function == FilterFunction::Choice
                 {
                     choice = true;
                 }
             }
             if !project {
-                if let Some(faction) = &record.speaker_faction {
-                    project =
-                        !faction.is_empty() && context.projects.iter().any(|p| p.matches(faction));
-                }
+                project = !record.speaker_faction.is_empty()
+                    && context
+                        .projects
+                        .iter()
+                        .any(|p| p.matches(&record.speaker_faction));
             }
             if vanilla_nolore {
                 if project {
@@ -312,10 +305,10 @@ impl Handler<'_> for DialogueValidator {
                 );
                 return;
             }
-            if !project
-                && !(is_service_refusal && context.mode == Mode::TD)
-                && !choice
-                && !self.overrides_vanilla(record)
+            if !(project
+                || choice
+                || self.overrides_vanilla(record)
+                || is_service_refusal && context.mode == Mode::TD)
             {
                 println!(
                     "Info {} in topic {} does not have a known project specific local filter",
@@ -351,7 +344,7 @@ impl DialogueValidator {
         let overrides = RegexBuilder::new(r"(^|\n)\s*;\s*SV:\s*vanilla\s+override\s*($|\n)")
             .case_insensitive(true)
             .build()?;
-        return Ok(Self {
+        Ok(Self {
             blank,
             double_spaces,
             short_ellipsis,
@@ -359,37 +352,29 @@ impl DialogueValidator {
             punctuation_double,
             article_pc,
             overrides,
-        });
+        })
     }
 
-    fn intentionally_left_blank(&self, record: &Info) -> bool {
-        if let Some(text) = &record.script_text {
-            return self.blank.is_match(text);
-        }
-        return false;
+    fn intentionally_left_blank(&self, record: &DialogueInfo) -> bool {
+        self.blank.is_match(&record.script_text)
     }
 
-    fn overrides_vanilla(&self, record: &Info) -> bool {
-        if let Some(text) = &record.script_text {
-            return self.overrides.is_match(text);
-        }
-        return false;
+    fn overrides_vanilla(&self, record: &DialogueInfo) -> bool {
+        self.overrides.is_match(&record.script_text)
     }
 
-    fn needs_nolore(&self, record: &Info, topic: &Dialogue, context: &Context) -> bool {
-        if context.mode == Mode::TD {
-            if record.data.iter().any(|d| d.kind == DialogueType::Greeting)
-                || !is_empty(&record.speaker_faction)
-            {
-                return false;
-            }
+    fn needs_nolore(&self, record: &DialogueInfo, topic: &Dialogue, context: &Context) -> bool {
+        if context.mode == Mode::TD
+            && (record.data.dialogue_type == DialogueType::Greeting
+                || !record.speaker_faction.is_empty())
+        {
+            return false;
         }
-        return !record.data.iter().any(|d| d.speaker_rank >= HIGH_RANK) // High-level faction dialogue
+        record.data.speaker_rank < HIGH_RANK // High-level faction dialogue
             && !record
                 .speaker_class
-                .iter()
-                .any(|c| c.eq_ignore_ascii_case("slave")) // Slaves are generally NoLore
+                .eq_ignore_ascii_case("slave") // Slaves are generally NoLore
             && topic.id != "Greeting 9" // Has greetings for NoLore at the top
-            && !self.overrides_vanilla(record);
+            && !self.overrides_vanilla(record)
     }
 }
