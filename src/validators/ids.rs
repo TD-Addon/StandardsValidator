@@ -73,7 +73,7 @@ impl Handler<'_> for IdValidator {
                 if is_vampire_head(part) {
                     let id = format!(
                         "b_v_{}_{}_head_01",
-                        part.id,
+                        part.race,
                         if is_female(part) { "f" } else { "m" }
                     );
                     if !part.id.eq_ignore_ascii_case(&id) {
