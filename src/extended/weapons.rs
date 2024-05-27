@@ -37,7 +37,7 @@ impl ExtendedHandler for WeaponValidator {
                 } else if base.ignores.is_none() && weapon.enchanting.is_empty() {
                     base.silver = silver;
                     base.ignores = ignores;
-                    base.id = weapon.id.clone();
+                    weapon.id.clone_into(&mut base.id);
                 } else if last {
                     if base.silver != silver {
                         println!(

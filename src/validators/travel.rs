@@ -22,7 +22,7 @@ struct Caravaner<'a> {
 }
 
 fn get_town_name(id: &str) -> &str {
-    if let Some((prefix, _)) = id.split_once(",") {
+    if let Some((prefix, _)) = id.split_once(',') {
         return prefix;
     }
     id

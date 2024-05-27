@@ -192,10 +192,10 @@ fn write_bodyparts(path: PathBuf) -> Result<(), Box<dyn Error>> {
     -> (Vec<(&'static str, Vec<Vec<FieldRule>>)>,
     Vec<(&'static str, Option<&'static str>, Option<Vec<Vec<FieldRule>>>)>,
     Vec<(&'static str, Option<&'static str>, Option<Vec<Vec<FieldRule>>>)>) {
-        return ",
+        ",
     )?;
     data.write_to_file(&mut file)?;
-    file.write_all(b"; }")?;
+    file.write_all(b" }")?;
     Ok(())
 }
 
@@ -241,7 +241,7 @@ fn write_classes(path: PathBuf) -> Result<(), Box<dyn Error>> {
         }
         write_string_map_insert(&mut file, "classes", lower, &class.data)?;
     }
-    file.write_all(b"return (tr_classes, classes); }")?;
+    file.write_all(b"(tr_classes, classes) }")?;
     Ok(())
 }
 
@@ -257,7 +257,7 @@ fn write_broken(path: PathBuf) -> Result<(), Box<dyn Error>> {
     for (key, value) in &broken {
         write_string_map_insert(&mut file, "broken", key.to_ascii_lowercase(), value)?;
     }
-    file.write_all(b"return broken; }")?;
+    file.write_all(b"broken }")?;
     Ok(())
 }
 
@@ -265,7 +265,7 @@ fn write_mwscript(path: PathBuf) -> Result<(), Box<dyn Error>> {
     let mut file = File::create(path)?;
     file.write_all(
         br#"fn get_joined_commands() -> &'static str {
-        return r""#,
+        r""#,
     )?;
     let mut first = true;
     for command in include_str!("./data/mwscript.returning.txt").split_whitespace() {
@@ -277,19 +277,19 @@ fn write_mwscript(path: PathBuf) -> Result<(), Box<dyn Error>> {
         file.write_all(command.as_bytes())?;
     }
     file.write_all(
-        br##""; }
+        br##"" }
     fn get_khajiit_script() -> &'static str {
-        return "##,
+        "##,
     )?;
     let khajiit_input = include_str!("./data/khajiit.mwscript")
-        .replace("(", r"\(")
-        .replace(")", r"\)")
-        .replace("\n", r"\s*((;.*)?\n)+\s*");
+        .replace('(', r"\(")
+        .replace(')', r"\)")
+        .replace('\n', r"\s*((;.*)?\n)+\s*");
     Regex::new(r"\s+")?
         .replace_all(&khajiit_input, r"\s+")
         .to_string()
         .write_to_file(&mut file)?;
-    file.write_all(b"; }")?;
+    file.write_all(b" }")?;
     Ok(())
 }
 
@@ -317,10 +317,10 @@ fn write_projects(path: PathBuf) -> Result<(), Box<dyn Error>> {
     let mut file = File::create(path)?;
     file.write_all(
         br"fn get_project_data() -> Vec<Project> {
-        return ",
+        ",
     )?;
     projects.write_to_file(&mut file)?;
-    file.write_all(b"; }")?;
+    file.write_all(b" }")?;
     Ok(())
 }
 
@@ -342,7 +342,7 @@ fn write_services(path: PathBuf) -> Result<(), Box<dyn Error>> {
         class.to_ascii_lowercase().write_to_file(&mut file)?;
         file.write_all(b"));\n")?;
     }
-    file.write_all(b"return barter_classes; }")?;
+    file.write_all(b"barter_classes }")?;
     Ok(())
 }
 
@@ -427,7 +427,7 @@ fn write_spells(path: PathBuf) -> Result<(), Box<dyn Error>> {
         id.to_ascii_lowercase().write_to_file(&mut file)?;
         file.write_all(b", (never.clone(), none.clone()));\n")?;
     }
-    file.write_all(br"return spells; }")?;
+    file.write_all(br"spells }")?;
     Ok(())
 }
 
@@ -444,7 +444,7 @@ fn write_supplies(path: PathBuf) -> Result<(), Box<dyn Error>> {
     for (key, value) in &supplies {
         write_string_map_insert(&mut file, "supplies", key.to_ascii_lowercase(), value)?;
     }
-    file.write_all(b"return supplies; }")?;
+    file.write_all(b"supplies }")?;
     Ok(())
 }
 
@@ -461,7 +461,7 @@ fn write_travel(path: PathBuf) -> Result<(), Box<dyn Error>> {
         class.to_ascii_lowercase().write_to_file(&mut file)?;
         file.write_all(b");\n")?;
     }
-    file.write_all(b"return travel_classes; }")?;
+    file.write_all(b"travel_classes }")?;
     Ok(())
 }
 
@@ -480,5 +480,5 @@ fn write_uniques(path: PathBuf) -> Result<(), io::Error> {
             file.write_all(b");\n")?;
         }
     }
-    file.write_all(b"return uniques; }")
+    file.write_all(b"uniques }")
 }

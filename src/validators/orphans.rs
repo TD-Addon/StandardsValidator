@@ -172,17 +172,17 @@ impl Handler<'_> for OrphanValidator {
         }
         if let Some(captures) = self.startscript.captures(code) {
             let id = captures.get(2).unwrap().as_str();
-            self.start_scripts.push(id.replace("\"", ""));
+            self.start_scripts.push(id.replace('"', ""));
         } else if let Some(captures) = self.firstarg.captures(code) {
             if let Some(quoted) = captures.get(3) {
-                self.used_objects.insert(quoted.as_str().replace("\"", ""));
+                self.used_objects.insert(quoted.as_str().replace('"', ""));
             } else if let Some(unquoted) = captures.get(4) {
                 self.used_objects.insert(unquoted.as_str().to_string());
             }
         } else if let Some(captures) = self.journal.captures(code) {
             let id;
             if let Some(quoted) = captures.get(3) {
-                id = quoted.as_str().replace("\"", "");
+                id = quoted.as_str().replace('"', "");
             } else if let Some(unquoted) = captures.get(4) {
                 id = unquoted.as_str().to_string();
             } else {
@@ -193,7 +193,7 @@ impl Handler<'_> for OrphanValidator {
             }
         } else if let Some(captures) = self.secondarg.captures(code) {
             self.used_objects
-                .insert(captures.get(4).unwrap().as_str().replace("\"", ""));
+                .insert(captures.get(4).unwrap().as_str().replace('"', ""));
         }
     }
 

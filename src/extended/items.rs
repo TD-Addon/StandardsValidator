@@ -75,9 +75,7 @@ impl ExtendedHandler for OwnershipValidator {
                     if scale != 1. && self.items.contains(&lower) {
                         println!(
                             "Cell {} contains {} with scale {}",
-                            name,
-                            reference.id,
-                            scale
+                            name, reference.id, scale
                         );
                     }
 
