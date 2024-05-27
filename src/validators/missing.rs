@@ -1,23 +1,21 @@
 use super::Context;
 use crate::{handlers::Handler, util::is_marker};
-use tes3::esp::TES3Object;
+use tes3::esp::{LightFlags, TES3Object};
 
 pub struct FieldValidator {}
 
-fn check(typename: &str, id: &String, field: &str, value: &Option<String>) {
-    if let Some(str) = value {
-        if !str.trim().is_empty() {
-            if field != "name" && !str.contains('.') {
-                println!("{} {} has invalid {} {}", typename, id, field, str);
-            }
-            return;
+fn check(typename: &str, id: &str, field: &str, value: &str) {
+    if !value.is_empty() && !value.trim().is_empty() {
+        if field != "name" && !value.contains('.') {
+            println!("{} {} has invalid {} {}", typename, id, field, value);
         }
+        return;
     }
     println!("{} {} has a missing {}", typename, id, field);
 }
 
 impl Handler<'_> for FieldValidator {
-    fn on_record(&mut self, _: &Context, record: &TES3Object, typename: &str, id: &String) {
+    fn on_record(&mut self, _: &Context, record: &TES3Object, typename: &str, id: &str) {
         match record {
             TES3Object::Activator(r) => {
                 check(typename, id, "mesh", &r.mesh);
@@ -65,7 +63,7 @@ impl Handler<'_> for FieldValidator {
                 check(typename, id, "name", &r.name);
             }
             TES3Object::Light(r) => {
-                if r.can_carry() {
+                if r.data.flags.contains(LightFlags::CAN_CARRY) {
                     check(typename, id, "icon", &r.icon);
                     check(typename, id, "mesh", &r.mesh);
                     check(typename, id, "name", &r.name);

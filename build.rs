@@ -24,7 +24,7 @@ fn main() -> Result<(), Box<dyn Error>> {
     write_supplies(Path::new(&out_dir).join("gen_supplies.rs"))?;
     write_travel(Path::new(&out_dir).join("gen_travel.rs"))?;
     write_uniques(Path::new(&out_dir).join("gen_uniques.rs"))?;
-    return Ok(());
+    Ok(())
 }
 
 trait FileWritable {
@@ -35,7 +35,7 @@ impl FileWritable for &str {
     fn write_to_file(&self, file: &mut File) -> Result<(), io::Error> {
         file.write_all(br##"r#""##)?;
         file.write_all(self.as_bytes())?;
-        return file.write_all(br##""#"##);
+        file.write_all(br##""#"##)
     }
 }
 
@@ -82,7 +82,7 @@ where
     T: FileWritable,
 {
     fn write_to_file(&self, file: &mut File) -> Result<(), io::Error> {
-        write_vec(file, self.iter(), &FileWritable::write_to_file)
+        write_vec(file, self.iter(), FileWritable::write_to_file)
     }
 }
 
@@ -97,7 +97,7 @@ fn parse_bodypart_rule(value: &Value, file: &mut File) -> Result<(), io::Error> 
     match value {
         Value::Array(rule) => {
             file.write_all(b"Rule::Array(")?;
-            write_vec(file, rule.iter(), &parse_bodypart_rule)?;
+            write_vec(file, rule.iter(), parse_bodypart_rule)?;
             return file.write_all(b")");
         }
         Value::Object(rule) => {
@@ -150,7 +150,7 @@ impl FileWritable for BodyPartDefinition {
         file.write_all(b",")?;
         if let Some(rules) = &self.rules {
             file.write_all(b"Some(")?;
-            write_vec(file, rules.iter(), &parse_bodypart_fields)?;
+            write_vec(file, rules.iter(), parse_bodypart_fields)?;
             file.write_all(b")")?;
         } else {
             file.write_all(b"None")?;
@@ -173,7 +173,7 @@ impl FileWritable for BodyParts {
             file.write_all(b"(")?;
             id.write_to_file(file)?;
             file.write_all(b",")?;
-            write_vec(file, ruleset.iter(), &parse_bodypart_fields)?;
+            write_vec(file, ruleset.iter(), parse_bodypart_fields)?;
             file.write_all(b")")
         })?;
         file.write_all(b",")?;
@@ -268,10 +268,7 @@ fn write_mwscript(path: PathBuf) -> Result<(), Box<dyn Error>> {
         return r""#,
     )?;
     let mut first = true;
-    for command in include_str!("./data/mwscript.returning.txt")
-        .trim()
-        .split_whitespace()
-    {
+    for command in include_str!("./data/mwscript.returning.txt").split_whitespace() {
         if first {
             first = false;
         } else {

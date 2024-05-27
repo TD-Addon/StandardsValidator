@@ -13,6 +13,9 @@ mod oob;
 mod util;
 mod validators;
 
+#[global_allocator]
+static GLOBAL: mimalloc::MiMalloc = mimalloc::MiMalloc;
+
 fn main() -> Result<(), Box<dyn Error>> {
     let args = Command::new("validator")
         .args(&[
@@ -43,14 +46,14 @@ fn main() -> Result<(), Box<dyn Error>> {
             Arg::new("mininhabitants")
                 .value_name("number")
                 .default_value("3")
-                .value_parser(&str::parse::<usize>)
+                .value_parser(str::parse::<usize>)
                 .long("min-inhabitants")
                 .help("Minimum number of inhabitants a dungeon cell should have.")
                 .requires("extended"),
             Arg::new("duplicatethreshold")
                 .long("duplicate-threshold")
                 .default_value("0")
-                .value_parser(&str::parse::<f32>)
+                .value_parser(str::parse::<f32>)
                 .value_name("threshold")
                 .help(
                     "Squared distance at which two objects with the same id, \
@@ -78,6 +81,7 @@ fn main() -> Result<(), Box<dyn Error>> {
         ])
         .get_matches();
     let mut paths = args.get_many::<String>("path").unwrap();
+
     if args.get_flag("extended") || args.get_flag("names") {
         return Ok(run_extended(paths.collect(), &args)?);
     }
@@ -87,15 +91,15 @@ fn main() -> Result<(), Box<dyn Error>> {
     if let Some(output) = args.get_one::<String>("ooboutput") {
         return run_oob_fixes(paths.next().unwrap(), output);
     }
-    let mode: Mode = args
+    let mode = args
         .get_one::<String>("mode")
-        .unwrap_or(&String::new())
-        .into();
+        .map_or(Mode::None, Mode::from);
+
     let context = Context::new(mode);
-    return validate(paths.next().unwrap(), context, &args);
+    validate(paths.next().unwrap(), context, &args)
 }
 
-fn validate(path: &String, context: Context, args: &ArgMatches) -> Result<(), Box<dyn Error>> {
+fn validate(path: &str, context: Context, args: &ArgMatches) -> Result<(), Box<dyn Error>> {
     let plugin = load_plugin(path)?;
     let mut validator = Validator::new(context, args)?;
     validator.validate(&plugin.objects);
@@ -107,13 +111,9 @@ fn load_plugin(p: impl AsRef<Path>) -> Result<Plugin, String> {
     let mut plugin = Plugin::new();
     let result = plugin.load_path(path);
     if let Some(err) = result.err() {
-        return Err(format!(
-            "Failed to load {} ({})",
-            path.display(),
-            err.to_string()
-        ));
+        return Err(format!("Failed to load {} ({})", path.display(), err));
     }
-    return Ok(plugin);
+    Ok(plugin)
 }
 
 fn run_extended(paths: Vec<&String>, args: &ArgMatches) -> Result<(), String> {
@@ -124,10 +124,8 @@ fn run_extended(paths: Vec<&String>, args: &ArgMatches) -> Result<(), String> {
     let autoload = !args.get_flag("dontautoload");
     if autoload {
         if let Some(header) = plugin.header() {
-            if let Some(masters) = &header.masters {
-                for (file, _) in masters {
-                    auto_discovered.push(file);
-                }
+            for (file, _) in &header.masters {
+                auto_discovered.push(file);
             }
         }
     }
@@ -153,9 +151,9 @@ fn run_extended(paths: Vec<&String>, args: &ArgMatches) -> Result<(), String> {
     Ok(())
 }
 
-fn run_oob_fixes(input: &String, output: &String) -> Result<(), Box<dyn Error>> {
+fn run_oob_fixes(input: &str, output: &str) -> Result<(), Box<dyn Error>> {
     let mut plugin = load_plugin(input)?;
-    fix_oob(&mut plugin.objects);
+    fix_oob(&mut plugin);
     plugin.save_path(output)?;
     Ok(())
 }

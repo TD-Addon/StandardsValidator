@@ -6,7 +6,7 @@ use crate::{
     handlers::Handler,
     util::{is_autocalc, is_dead, update_or_insert},
 };
-use tes3::esp::{BodypartId, FixedString, Npc, TES3Object};
+use tes3::esp::{BodypartId, FixedString, Npc, NpcFlags, TES3Object};
 
 include!(concat!(env!("OUT_DIR"), "/gen_bodyparts.rs"));
 
@@ -17,7 +17,6 @@ pub struct NpcValidator {
     hairs: HashMap<&'static str, AllRules>,
 }
 
-const FLAG_NPC_FEMALE: u32 = 1;
 const BOUNTY_ALARM: i8 = 100;
 const HOSTILE: i8 = 70;
 const KHAJIIT_ANIMATIONS: [&str; 2] = ["t_els_ohmes-raht", "t_els_suthay"];
@@ -25,13 +24,10 @@ const KHAJIIT_F: &str = "epos_kha_upr_anim_f.nif";
 const KHAJIIT_M: &str = "epos_kha_upr_anim_m.nif";
 
 fn check_khajiit_animations(npc: &Npc) {
-    let requires_animations = npc
-        .race
-        .iter()
-        .any(|r| KHAJIIT_ANIMATIONS.contains(&r.to_ascii_lowercase().as_str()));
-    let mesh = npc.mesh.as_ref().map(&String::as_str).unwrap_or("");
+    let requires_animations = KHAJIIT_ANIMATIONS.contains(&npc.race.to_ascii_lowercase().as_str());
+    let mesh = &npc.mesh;
     if requires_animations {
-        let male = (npc.npc_flags.unwrap_or(0) & FLAG_NPC_FEMALE) == 0;
+        let male = !npc.npc_flags.contains(NpcFlags::FEMALE);
         let target = if male { KHAJIIT_M } else { KHAJIIT_F };
         if !mesh.eq_ignore_ascii_case(target) {
             println!("Npc {} is not using animation {}", npc.id, target);
@@ -42,7 +38,7 @@ fn check_khajiit_animations(npc: &Npc) {
 }
 
 impl Handler<'_> for NpcValidator {
-    fn on_record(&mut self, context: &Context, record: &TES3Object, _: &str, _: &String) {
+    fn on_record(&mut self, context: &Context, record: &TES3Object, _: &str, _: &str) {
         self.slave_bracers = 0;
         if let TES3Object::Npc(npc) = record {
             self.check_bodyparts(npc);
@@ -50,21 +46,18 @@ impl Handler<'_> for NpcValidator {
                 println!("Npc {} has auto calculated stats and spells", npc.id);
             }
             if !is_dead(record) {
-                if let Some(ai) = &npc.ai_data {
-                    if ai.fight >= HOSTILE && ai.alarm >= BOUNTY_ALARM {
-                        println!(
-                            "Npc {} reports crimes despite having {} fight",
-                            npc.id, ai.fight
-                        );
-                    }
-                    if ai.alarm < BOUNTY_ALARM
-                        && npc.class.iter().any(|c| c.eq_ignore_ascii_case("guard"))
-                    {
-                        println!(
-                            "Npc {} does not report crimes despite being a guard",
-                            npc.id
-                        );
-                    }
+                let ai = &npc.ai_data;
+                if ai.fight >= HOSTILE && ai.alarm >= BOUNTY_ALARM {
+                    println!(
+                        "Npc {} reports crimes despite having {} fight",
+                        npc.id, ai.fight
+                    );
+                }
+                if (ai.alarm < BOUNTY_ALARM) && npc.class.eq_ignore_ascii_case("guard") {
+                    println!(
+                        "Npc {} does not report crimes despite being a guard",
+                        npc.id
+                    );
                 }
             }
             check_khajiit_animations(npc);
@@ -95,7 +88,7 @@ enum Rule {
 }
 
 impl Rule {
-    fn test(&self, value: &String) -> bool {
+    fn test(&self, value: &str) -> bool {
         match self {
             Rule::Array(rules) => rules.iter().all(|r| r.test(value)),
             Rule::Negation(rule) => !rule.test(value),
@@ -117,8 +110,8 @@ trait Testable {
 impl Testable for FieldRule {
     fn test(&self, npc: &Npc) -> bool {
         match self {
-            FieldRule::Class(rule) => npc.class.as_ref().map(|c| rule.test(c)).unwrap_or(false),
-            FieldRule::Faction(rule) => npc.faction.as_ref().map(|f| rule.test(f)).unwrap_or(false),
+            FieldRule::Class(rule) => rule.test(&npc.class),
+            FieldRule::Faction(rule) => rule.test(&npc.faction),
             FieldRule::Id(rule) => rule.test(&npc.id),
         }
     }
@@ -168,12 +161,12 @@ struct RulesParser {
 
 impl RulesParser {
     fn new() -> Self {
-        return Self {
+        Self {
             uniques: HashMap::new(),
             heads: HashMap::new(),
             hairs: HashMap::new(),
             rulesets: HashMap::new(),
-        };
+        }
     }
 
     fn parse_rules(
@@ -203,15 +196,16 @@ impl RulesParser {
                 out.rules.push(FieldRules { rules: equality });
             }
         }
-        return Ok(out);
+        Ok(out)
     }
 
+    #[allow(clippy::type_complexity)]
     fn parse_part(
         &mut self,
         definitions: Vec<(
             &'static str,
-            std::option::Option<&'static str>,
-            std::option::Option<Vec<Vec<FieldRule>>>,
+            Option<&'static str>,
+            Option<Vec<Vec<FieldRule>>>,
         )>,
         part: BodypartId,
     ) -> Result<(), String> {
@@ -255,12 +249,12 @@ impl NpcValidator {
         parser.parse_rulesets(rulesets)?;
         parser.parse_part(head, BodypartId::Head)?;
         parser.parse_part(hair, BodypartId::Hair)?;
-        return Ok(Self {
+        Ok(Self {
             slave_bracers: 0,
             uniques: parser.uniques,
             heads: parser.heads,
             hairs: parser.hairs,
-        });
+        })
     }
 
     fn check_bodyparts(&self, npc: &Npc) {
@@ -275,32 +269,22 @@ impl NpcValidator {
     fn check_part_rules(
         &self,
         npc: &Npc,
-        part: &Option<String>,
+        part_id: &str,
         rules: &HashMap<&'static str, AllRules>,
         name: &str,
     ) {
-        if let Some(id) = part {
-            let bodypart = id.to_lowercase();
-            if let Some(rule) = rules.get(bodypart.as_str()) {
-                if !rule.test(npc) {
-                    println!("Npc {} is using {} {}", npc.id, name, id);
-                }
+        let bodypart = part_id.to_lowercase();
+        if let Some(rule) = rules.get(bodypart.as_str()) {
+            if !rule.test(npc) {
+                println!("Npc {} is using {} {}", npc.id, name, part_id);
             }
         }
     }
 
-    fn check_part(
-        &self,
-        npc: &Npc,
-        actual: &Option<String>,
-        expected: &Option<&'static str>,
-        name: &str,
-    ) {
+    fn check_part(&self, npc: &Npc, actual: &str, expected: &Option<&'static str>, name: &str) {
         if let Some(expid) = expected {
-            if let Some(actid) = actual {
-                if expid.eq_ignore_ascii_case(&actid) {
-                    return;
-                }
+            if expid.eq_ignore_ascii_case(actual) {
+                return;
             }
             println!("Npc {} is not using unique {} {}", npc.id, name, expid);
         }

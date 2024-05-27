@@ -3,9 +3,9 @@ use std::collections::{HashMap, HashSet};
 use super::Context;
 use crate::{
     handlers::Handler,
-    util::{get_cell_grid, get_cell_name, is_dead, Actor},
+    util::{get_cell_grid, is_dead, Actor},
 };
-use tes3::esp::{Cell, Dialogue, Info, Reference, TES3Object, TravelDestination};
+use tes3::esp::{Cell, Dialogue, DialogueInfo, EditorId, Reference, TES3Object, TravelDestination};
 
 include!(concat!(env!("OUT_DIR"), "/gen_travel.rs"));
 
@@ -18,37 +18,34 @@ pub struct TravelValidator<'a> {
 struct Caravaner<'a> {
     record: &'a dyn Actor,
     cells: Vec<Location<'a>>,
-    destination: Vec<&'a Info>,
+    destination: Vec<&'a DialogueInfo>,
 }
 
-fn get_town_name(id: &String) -> &str {
+fn get_town_name(id: &str) -> &str {
     if let Some((prefix, _)) = id.split_once(",") {
         return prefix;
     }
-    return id.as_str();
+    id
 }
 
 impl<'a> Caravaner<'a> {
     pub fn new(record: &'a dyn Actor) -> Self {
-        return Self {
+        Self {
             record,
             cells: Vec::new(),
             destination: Vec::new(),
-        };
+        }
     }
 
     fn is_counterpart(&self, location: &Location) -> bool {
-        if let Some(destinations) = self.record.get_destinations() {
-            return destinations.iter().any(|d| location.matches(d));
-        }
-        return false;
+        self.record
+            .get_destinations()
+            .iter()
+            .any(|destination| location.matches(destination))
     }
 
-    fn matches_class(&self, class: &String) -> bool {
-        if let Some(id) = self.record.get_class() {
-            return id.eq_ignore_ascii_case(class);
-        }
-        return false;
+    fn matches_class(&self, class: &str) -> bool {
+        self.record.get_class().eq_ignore_ascii_case(class)
     }
 }
 
@@ -59,9 +56,7 @@ struct Location<'a> {
 impl Location<'_> {
     fn matches(&self, destination: &TravelDestination) -> bool {
         if self.cell.is_interior() {
-            if let Some(id) = &destination.cell {
-                return self.cell.id.eq_ignore_ascii_case(id);
-            }
+            self.cell.name.eq_ignore_ascii_case(&destination.cell)
         } else {
             let [x, y, _] = destination.translation;
             let grid = get_cell_grid(x.into(), y.into());
@@ -70,14 +65,13 @@ impl Location<'_> {
             }
             let dx = (grid.0 - self.cell.data.grid.0).abs();
             let dy = (grid.1 - self.cell.data.grid.1).abs();
-            return dx <= 1 && dy <= 1;
+            dx <= 1 && dy <= 1
         }
-        return false;
     }
 }
 
 impl<'a> Handler<'a> for TravelValidator<'a> {
-    fn on_record(&mut self, _: &Context, record: &'a TES3Object, _: &str, _: &String) {
+    fn on_record(&mut self, _: &Context, record: &'a TES3Object, _: &str, _: &str) {
         if is_dead(record) {
             return;
         }
@@ -88,28 +82,27 @@ impl<'a> Handler<'a> for TravelValidator<'a> {
                 }
             }
             TES3Object::Creature(creature) => {
-                if let Some(destinations) = creature.get_destinations() {
-                    if !destinations.is_empty() {
-                        self.caravaners
-                            .insert(creature.id.to_ascii_lowercase(), Caravaner::new(creature));
-                    }
+                let destinations = creature.get_destinations();
+                if !destinations.is_empty() {
+                    self.caravaners
+                        .insert(creature.id.to_ascii_lowercase(), Caravaner::new(creature));
                 }
             }
             TES3Object::Npc(npc) => {
-                if let Some(destinations) = npc.get_destinations() {
-                    if !destinations.is_empty() {
-                        self.caravaners
-                            .insert(npc.id.to_ascii_lowercase(), Caravaner::new(npc));
-                        return;
-                    }
+                let destinations = npc.get_destinations();
+                if !destinations.is_empty() {
+                    self.caravaners
+                        .insert(npc.id.to_ascii_lowercase(), Caravaner::new(npc));
+                    return;
                 }
-                if let Some(class) = &npc.class {
-                    if self.classes.contains(&class.to_ascii_lowercase().as_str()) {
-                        println!(
-                            "Npc {} has class {} but does not offer travel services",
-                            npc.id, class
-                        );
-                    }
+                if self
+                    .classes
+                    .contains(npc.class.to_ascii_lowercase().as_str())
+                {
+                    println!(
+                        "Npc {} has class {} but does not offer travel services",
+                        npc.id, npc.class
+                    );
                 }
             }
             _ => {}
@@ -121,8 +114,8 @@ impl<'a> Handler<'a> for TravelValidator<'a> {
         _: &Context,
         cell: &'a Cell,
         _: &Reference,
-        id: &String,
-        _: &Vec<&Reference>,
+        id: &str,
+        _: &[&Reference],
         _: usize,
     ) {
         if let Some(caravaner) = self.caravaners.get_mut(id) {
@@ -130,18 +123,19 @@ impl<'a> Handler<'a> for TravelValidator<'a> {
         }
     }
 
-    fn on_info(&mut self, _: &Context, record: &'a Info, topic: &Dialogue) {
-        if let Some(id) = &record.speaker_id {
-            if topic.id.eq_ignore_ascii_case("destination") {
-                if let Some(caravaner) = self.caravaners.get_mut(&id.to_ascii_lowercase()) {
-                    caravaner.destination.push(record);
-                }
+    fn on_info(&mut self, _: &Context, record: &'a DialogueInfo, topic: &Dialogue) {
+        if !record.speaker_id.is_empty() && topic.id.eq_ignore_ascii_case("destination") {
+            if let Some(caravaner) = self
+                .caravaners
+                .get_mut(&record.speaker_id.to_ascii_lowercase())
+            {
+                caravaner.destination.push(record);
             }
         }
     }
 
     fn on_end(&mut self, _: &Context) {
-        for (_, caravaner) in &self.caravaners {
+        for caravaner in self.caravaners.values() {
             self.check_caravaner(caravaner);
         }
     }
@@ -149,11 +143,11 @@ impl<'a> Handler<'a> for TravelValidator<'a> {
 
 impl TravelValidator<'_> {
     pub fn new() -> Self {
-        return Self {
+        Self {
             cells: HashMap::new(),
             classes: get_travel_classes(),
             caravaners: HashMap::new(),
-        };
+        }
     }
 
     fn check_caravaner(&self, caravaner: &Caravaner) {
@@ -165,17 +159,17 @@ impl TravelValidator<'_> {
                 typename, id
             );
         }
-        for cell in &caravaner.cells {
+        for location in &caravaner.cells {
             let counterparts: Vec<&Caravaner> = self
                 .caravaners
                 .values()
-                .filter(|c| c.is_counterpart(cell))
+                .filter(|c| c.is_counterpart(location))
                 .collect();
-            for dest in caravaner.record.get_destinations().as_ref().unwrap() {
+            for dest in caravaner.record.get_destinations() {
                 let return_services: Vec<&Caravaner> = counterparts
                     .iter()
                     .filter(|c| c.cells.iter().any(|l| l.matches(dest)))
-                    .map(|c| *c)
+                    .copied()
                     .collect();
                 let (dest_name, town) = self.get_destination_name(dest);
                 if return_services.is_empty() {
@@ -183,12 +177,13 @@ impl TravelValidator<'_> {
                         "{} {} in {} offers travel to {} but there is no return travel there",
                         typename,
                         id,
-                        get_cell_name(cell.cell),
+                        location.cell.editor_id(),
                         dest_name
                     )
-                } else if let Some(class_id) = caravaner.record.get_class() {
+                } else if !caravaner.record.get_class().is_empty() {
+                    let class_id = caravaner.record.get_class();
                     if !return_services.iter().any(|c| c.matches_class(class_id)) {
-                        println!("{} {} in {} offers {} travel to {} but there is no corresponding return travel there", typename, id, get_cell_name(cell.cell), class_id, dest_name);
+                        println!("{} {} in {} offers {} travel to {} but there is no corresponding return travel there", typename, id, location.cell.editor_id(), class_id, dest_name);
                     }
                 }
                 if !town.is_empty()
@@ -197,7 +192,6 @@ impl TravelValidator<'_> {
                         .destination
                         .iter()
                         .map(|i| &i.text)
-                        .flatten()
                         .any(|t| t.contains(town))
                 {
                     println!(
@@ -210,14 +204,14 @@ impl TravelValidator<'_> {
     }
 
     fn get_destination_name<'b>(&'b self, dest: &'b TravelDestination) -> (String, &'b str) {
-        if let Some(cell) = &dest.cell {
-            return (cell.clone(), get_town_name(cell));
+        if !dest.cell.is_empty() {
+            return (dest.cell.clone(), get_town_name(&dest.cell));
         }
         let [x, y, _] = dest.translation;
         let grid = get_cell_grid(x.into(), y.into());
         if let Some(cell) = self.cells.get(&grid) {
-            return (get_cell_name(cell), get_town_name(&cell.id));
+            return (cell.editor_id().into(), get_town_name(&cell.name));
         }
-        return (format!("[{}, {}]", x, y), "");
+        (format!("[{}, {}]", x, y), "")
     }
 }

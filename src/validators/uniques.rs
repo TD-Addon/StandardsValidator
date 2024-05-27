@@ -1,9 +1,9 @@
 use std::collections::{HashMap, HashSet};
 
 use super::Context;
-use crate::{handlers::Handler, util::get_cell_name};
+use crate::handlers::Handler;
 use regex::{escape, Regex};
-use tes3::esp::{Cell, Dialogue, FixedString, Reference, TES3Object};
+use tes3::esp::{Cell, Dialogue, EditorId, FixedString, Reference, TES3Object, TypeInfo};
 
 include!(concat!(env!("OUT_DIR"), "/gen_uniques.rs"));
 
@@ -27,23 +27,23 @@ fn check_script_line(
         regex_cache.insert(item, regex);
         return matches;
     }
-    return false;
+    false
 }
 
 impl Handler<'_> for UniquesValidator {
-    fn on_record(&mut self, _: &Context, record: &TES3Object, typename: &str, id: &String) {
+    fn on_record(&mut self, _: &Context, record: &TES3Object, typename: &str, id: &str) {
         match record {
             TES3Object::Armor(r) => {
-                self.check_o(&r.enchanting, id, typename);
+                self.check(&r.enchanting, id, typename);
             }
             TES3Object::Book(r) => {
-                self.check_o(&r.enchanting, id, typename);
+                self.check(&r.enchanting, id, typename);
             }
             TES3Object::Clothing(r) => {
-                self.check_o(&r.enchanting, id, typename);
+                self.check(&r.enchanting, id, typename);
             }
             TES3Object::Weapon(r) => {
-                self.check_o(&r.enchanting, id, typename);
+                self.check(&r.enchanting, id, typename);
             }
             _ => {}
         }
@@ -54,15 +54,15 @@ impl Handler<'_> for UniquesValidator {
         _: &Context,
         record: &Cell,
         reference: &Reference,
-        id: &String,
-        _: &Vec<&Reference>,
+        id: &str,
+        _: &[&Reference],
         _: usize,
     ) {
-        if self.uniques.contains(id.as_str()) {
+        if self.uniques.contains(&id) {
             println!(
                 "{} {} references {}",
                 record.type_name(),
-                get_cell_name(record),
+                record.editor_id(),
                 reference.id
             );
         }
@@ -102,7 +102,7 @@ impl Handler<'_> for UniquesValidator {
         if self.create_func.is_match(code) {
             for uni in &self.uniques {
                 if check_script_line(&mut self.regex_cache, code, uni) {
-                    if let TES3Object::Info(info) = record {
+                    if let TES3Object::DialogueInfo(info) = record {
                         println!(
                             "{} {} in topic {} references {}",
                             info.type_name(),
@@ -125,20 +125,17 @@ impl UniquesValidator {
         let create_func = Regex::new(
             r"placeatme|addtolevcreature|addtolevitem|addsoulgem|addspell|cast|explodespell|dropsoulgem|additem|equip|drop|placeatpc|placeitem|placeitemcell",
         )?;
-        return Ok(Self {
+        Ok(Self {
             uniques: get_uniques(),
             create_func,
             regex_cache: HashMap::new(),
-        });
+        })
     }
 
-    fn check_o(&self, value: &Option<String>, id: &String, typename: &str) {
-        if let Some(s) = value {
-            self.check(s, id, typename);
+    fn check(&self, value: &str, id: &str, typename: &str) {
+        if id.is_empty() {
+            return;
         }
-    }
-
-    fn check(&self, value: &str, id: &String, typename: &str) {
         if self.uniques.contains(value.to_ascii_lowercase().as_str()) {
             println!("{} {} references {}", typename, id, value);
         }

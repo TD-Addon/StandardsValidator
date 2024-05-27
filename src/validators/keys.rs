@@ -1,22 +1,17 @@
-use crate::{context::Context, context::Mode, handlers::Handler, util::get_cell_name};
+use crate::{context::Context, context::Mode, handlers::Handler};
 use std::collections::HashSet;
-use tes3::esp::{Cell, MiscItem, Reference, TES3Object};
+use tes3::esp::{Cell, EditorId, MiscItem, MiscItemFlags, Reference, TES3Object};
 
 pub struct KeyValidator {
     miscs: HashSet<String>,
 }
 
-const FLAG_KEY: u32 = 1;
-
 fn is_key(misc: &MiscItem) -> bool {
-    if let Some(data) = &misc.data {
-        return (data.flags & FLAG_KEY) != 0;
-    }
-    return false;
+    misc.data.flags.contains(MiscItemFlags::KEY)
 }
 
 impl Handler<'_> for KeyValidator {
-    fn on_record(&mut self, context: &Context, record: &TES3Object, _: &str, id: &String) {
+    fn on_record(&mut self, context: &Context, record: &TES3Object, _: &str, id: &str) {
         if let TES3Object::MiscItem(misc) = record {
             let lower = id.to_ascii_lowercase();
             if context.mode != Mode::TD && !is_key(misc) && lower.contains("key") {
@@ -31,15 +26,15 @@ impl Handler<'_> for KeyValidator {
         _: &Context,
         record: &Cell,
         reference: &Reference,
-        _: &String,
-        _: &Vec<&Reference>,
+        _: &str,
+        _: &[&Reference],
         _: usize,
     ) {
         if let Some(key) = &reference.key {
             if !self.miscs.contains(&key.to_ascii_lowercase()) {
                 println!(
                     "Cell {} uses key {} to open {} which is not defined in this file",
-                    get_cell_name(record),
+                    record.editor_id(),
                     key,
                     reference.id
                 );
@@ -50,8 +45,8 @@ impl Handler<'_> for KeyValidator {
 
 impl KeyValidator {
     pub fn new() -> Self {
-        return Self {
+        Self {
             miscs: HashSet::new(),
-        };
+        }
     }
 }

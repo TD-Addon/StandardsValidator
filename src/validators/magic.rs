@@ -20,7 +20,7 @@ enum Duration {
 }
 
 fn get_effect_details(id: EffectId2) -> (bool, Duration, bool) {
-    return match id {
+    match id {
         EffectId2::AbsorbAttribute => (false, Duration::Bool(true), true),
         EffectId2::AbsorbFatigue => (false, Duration::Bool(false), true),
         EffectId2::AbsorbHealth => (false, Duration::Bool(false), true),
@@ -162,16 +162,16 @@ fn get_effect_details(id: EffectId2) -> (bool, Duration, bool) {
         EffectId2::WeaknessToPoison => (false, Duration::Integer(1), true),
         EffectId2::WeaknessToShock => (false, Duration::Integer(1), true),
         _ => (true, Duration::Bool(false), false),
-    };
+    }
 }
 
-fn check_effects(typename: &str, id: &String, option: &Option<Vec<Effect>>, constant_effect: bool) {
-    for effect in option.iter().flat_map(|v| v.iter()) {
+fn check_effects(typename: &str, id: &str, effects: &[Effect], constant_effect: bool) {
+    for effect in effects {
         let (illegal, duration, magnitude) = get_effect_details(effect.magic_effect);
         if illegal {
             println!("{} {} uses {:?}", typename, id, effect.magic_effect);
         } else {
-            if magnitude && (effect.min_magnitude <= 0 && effect.max_magnitude <= 0) {
+            if magnitude && (effect.min_magnitude == 0 && effect.max_magnitude == 0) {
                 println!(
                     "{} {} uses {:?} without a magnitude",
                     typename, id, effect.magic_effect
@@ -200,11 +200,11 @@ fn check_effects(typename: &str, id: &String, option: &Option<Vec<Effect>>, cons
 }
 
 impl Handler<'_> for MagicValidator {
-    fn on_record(&mut self, context: &Context, record: &TES3Object, typename: &str, id: &String) {
+    fn on_record(&mut self, context: &Context, record: &TES3Object, typename: &str, id: &str) {
         match record {
             TES3Object::Npc(npc) => {
                 if !npc.is_dead() {
-                    for id in npc.spells.iter().flat_map(|s| s.iter()) {
+                    for id in &npc.spells {
                         if let Some((rule, alternatives)) =
                             self.spells.get(id.to_ascii_lowercase().as_str())
                         {
@@ -242,17 +242,12 @@ impl Handler<'_> for MagicValidator {
                 check_effects(typename, id, &potion.effects, false);
             }
             TES3Object::Enchanting(enchantment) => {
-                let constant_effect = enchantment
-                    .data
-                    .iter()
-                    .any(|d| d.kind == EnchantType::ConstantEffect);
+                let constant_effect = enchantment.data.enchant_type == EnchantType::ConstantEffect;
                 check_effects(typename, id, &enchantment.effects, constant_effect);
             }
             TES3Object::Spell(spell) => {
-                let temporary = spell
-                    .data
-                    .iter()
-                    .any(|d| d.kind == SpellType::Power || d.kind == SpellType::Spell);
+                let temporary =
+                    matches!(spell.data.spell_type, SpellType::Power | SpellType::Spell);
                 check_effects(typename, id, &spell.effects, !temporary);
             }
             _ => {}
@@ -273,18 +268,16 @@ impl Rule {
             }
         }
         if let Some(race) = &self.race {
-            if let Some(id) = &npc.race {
-                return race.eq_ignore_ascii_case(&id);
-            }
+            return race.eq_ignore_ascii_case(&npc.race);
         }
-        return false;
+        false
     }
 }
 
 impl MagicValidator {
     pub fn new() -> Self {
-        return Self {
+        Self {
             spells: get_spell_data(),
-        };
+        }
     }
 }

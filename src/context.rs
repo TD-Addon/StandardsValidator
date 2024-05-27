@@ -9,18 +9,18 @@ pub enum Mode {
     Vanilla,
 }
 
-impl From<&String> for Mode {
-    fn from(value: &String) -> Self {
-        if value == "PT" {
-            return Mode::PT;
-        } else if value == "TD" {
-            return Mode::TD;
-        } else if value == "TR" {
-            return Mode::TR;
-        } else if value == "Vanilla" {
-            return Mode::Vanilla;
+impl<T> From<T> for Mode
+where
+    T: AsRef<str>,
+{
+    fn from(value: T) -> Self {
+        match value.as_ref() {
+            "PT" => Mode::PT,
+            "TD" => Mode::TD,
+            "TR" => Mode::TR,
+            "Vanilla" => Mode::Vanilla,
+            _ => Mode::None,
         }
-        return Mode::None;
     }
 }
 
@@ -32,7 +32,7 @@ pub struct Project {
 
 impl Project {
     pub fn matches(&self, id: &str) -> bool {
-        return ci_starts_with(id, &self.prefix);
+        ci_starts_with(id, self.prefix)
     }
 
     pub fn has_local(&self, id: &str) -> bool {
@@ -49,9 +49,9 @@ pub struct Context {
 
 impl Context {
     pub fn new(mode: Mode) -> Self {
-        return Context {
+        Context {
             mode,
             projects: get_project_data(),
-        };
+        }
     }
 }

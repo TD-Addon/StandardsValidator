@@ -29,7 +29,7 @@ use crate::{
 };
 use clap::ArgMatches;
 use std::error::Error;
-use tes3::esp::{Dialogue, FixedString, ObjectFlags, TES3Object};
+use tes3::esp::{Dialogue, FixedString, TES3Object, TypeInfo};
 
 pub struct Validator<'a> {
     handlers: Handlers<'a>,
@@ -38,18 +38,14 @@ pub struct Validator<'a> {
 
 impl<'a> Validator<'a> {
     pub fn new<'b>(context: Context, args: &ArgMatches) -> Result<Validator<'b>, Box<dyn Error>> {
-        return Ok(Validator {
+        Ok(Validator {
             handlers: Handlers::new(&context, args)?,
             context,
-        });
+        })
     }
 
     pub fn validate(&mut self, records: &'a Vec<TES3Object>) {
-        let dummy = Dialogue {
-            flags: ObjectFlags::empty(),
-            id: String::new(),
-            kind: None,
-        };
+        let dummy = Dialogue::default();
         let mut current_topic = &dummy;
         for record in records {
             match record {
@@ -83,7 +79,7 @@ impl<'a> Validator<'a> {
                 }
                 TES3Object::Cell(r) => {
                     self.handlers
-                        .on_record(&self.context, record, r.type_name(), &r.id);
+                        .on_record(&self.context, record, r.type_name(), &r.name);
                     let refs: Vec<_> = r.references.values().collect();
                     for (i, reference) in refs.iter().enumerate() {
                         self.handlers.on_cellref(
@@ -91,7 +87,7 @@ impl<'a> Validator<'a> {
                             r,
                             reference,
                             &reference.id.to_ascii_lowercase(),
-                            &refs,
+                            refs.as_slice(),
                             i,
                         );
                     }
@@ -140,7 +136,7 @@ impl<'a> Validator<'a> {
                         .on_record(&self.context, record, r.type_name(), &r.id)
                 }
                 TES3Object::Header(_) => {}
-                TES3Object::Info(r) => {
+                TES3Object::DialogueInfo(r) => {
                     self.handlers
                         .on_record(&self.context, record, r.type_name(), &r.id);
                     self.handlers.on_info(&self.context, r, current_topic);
@@ -172,7 +168,7 @@ impl<'a> Validator<'a> {
                 }
                 TES3Object::MagicEffect(r) => {
                     self.handlers
-                        .on_record(&self.context, record, r.type_name(), &String::new())
+                        .on_record(&self.context, record, r.type_name(), "")
                 }
                 TES3Object::MiscItem(r) => {
                     self.handlers
@@ -185,7 +181,7 @@ impl<'a> Validator<'a> {
                 }
                 TES3Object::PathGrid(r) => {
                     self.handlers
-                        .on_record(&self.context, record, r.type_name(), &String::new())
+                        .on_record(&self.context, record, r.type_name(), "")
                 }
                 TES3Object::Probe(r) => {
                     self.handlers
@@ -206,7 +202,7 @@ impl<'a> Validator<'a> {
                 TES3Object::Script(r) => {
                     self.handlers
                         .on_record(&self.context, record, r.type_name(), &r.id);
-                    self.on_script(record, &r.script_text, &dummy);
+                    self.on_script(record, &r.text, &dummy);
                 }
                 TES3Object::Skill(_) => {}
                 TES3Object::Sound(r) => {
@@ -238,51 +234,32 @@ impl<'a> Validator<'a> {
         self.handlers.on_end(&self.context);
     }
 
-    fn on_leveled(&mut self, record: &TES3Object, entries: &Option<Vec<(String, u16)>>) {
-        if let Some(list) = entries {
-            for entry in list {
-                self.handlers.on_leveled(&self.context, record, entry);
-            }
+    fn on_leveled(&mut self, record: &TES3Object, list: &[(String, u16)]) {
+        for entry in list {
+            self.handlers.on_leveled(&self.context, record, entry);
         }
     }
 
-    fn on_inventory(
-        &mut self,
-        record: &TES3Object,
-        inventory: &Option<Vec<(i32, FixedString<32>)>>,
-    ) {
-        if let Some(list) = inventory {
-            for entry in list {
-                self.handlers.on_inventory(&self.context, record, entry);
-            }
+    fn on_inventory(&mut self, record: &TES3Object, inventory: &[(i32, FixedString<32>)]) {
+        for entry in inventory {
+            self.handlers.on_inventory(&self.context, record, entry);
         }
     }
 
-    fn on_script(&mut self, record: &TES3Object, script: &Option<String>, topic: &Dialogue) {
-        if let Some(text) = script {
-            let empty = "";
-            for line in text.trim().split('\n') {
-                let code: &str;
-                let comment: &str;
-                match line.split_once(';') {
-                    Some(s) => {
-                        code = s.0.trim();
-                        comment = s.1;
-                    }
-                    None => {
-                        code = line.trim();
-                        comment = empty;
-                    }
-                }
-                if !code.is_empty() || !comment.is_empty() {
-                    self.handlers.on_scriptline(
-                        &self.context,
-                        record,
-                        &code.to_ascii_lowercase(),
-                        comment,
-                        topic,
-                    );
-                }
+    fn on_script(&mut self, record: &TES3Object, script_text: &str, topic: &Dialogue) {
+        for line in script_text.trim().split('\n') {
+            let (code, comment) = match line.split_once(';') {
+                Some((code, comment)) => (code.trim(), comment.trim()),
+                None => (line.trim(), ""),
+            };
+            if !code.is_empty() || !comment.is_empty() {
+                self.handlers.on_scriptline(
+                    &self.context,
+                    record,
+                    &code.to_ascii_lowercase(),
+                    comment,
+                    topic,
+                );
             }
         }
     }

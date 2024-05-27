@@ -1,7 +1,7 @@
 use crate::context::{Context, Mode};
 use clap::ArgMatches;
 use std::error::Error;
-use tes3::esp::{Cell, Dialogue, FixedString, Info, Reference, TES3Object};
+use tes3::esp::{Cell, Dialogue, DialogueInfo, FixedString, Reference, TES3Object};
 
 #[allow(unused_variables)]
 pub trait Handler<'a> {
@@ -10,7 +10,7 @@ pub trait Handler<'a> {
         context: &Context,
         record: &'a TES3Object,
         typename: &'static str,
-        id: &String,
+        id: &str,
     ) {
     }
 
@@ -19,8 +19,8 @@ pub trait Handler<'a> {
         context: &Context,
         record: &'a Cell,
         reference: &Reference,
-        id: &String,
-        refs: &Vec<&Reference>,
+        id: &str,
+        refs: &[&Reference],
         i: usize,
     ) {
     }
@@ -35,7 +35,7 @@ pub trait Handler<'a> {
     ) {
     }
 
-    fn on_info(&mut self, context: &Context, record: &'a Info, topic: &Dialogue) {}
+    fn on_info(&mut self, context: &Context, record: &'a DialogueInfo, topic: &Dialogue) {}
 
     fn on_scriptline(
         &mut self,
@@ -90,7 +90,7 @@ impl Handlers<'_> {
                 crate::validators::uniques::UniquesValidator::new()?
             ));
         }
-        return Ok(Handlers { handlers });
+        Ok(Handlers { handlers })
     }
 }
 
@@ -100,10 +100,10 @@ impl<'a> Handler<'a> for Handlers<'a> {
         context: &Context,
         record: &'a TES3Object,
         typename: &'static str,
-        id: &String,
+        id: &str,
     ) {
         for handler in &mut self.handlers {
-            handler.on_record(context, record, typename, &id);
+            handler.on_record(context, record, typename, id);
         }
     }
 
@@ -112,8 +112,8 @@ impl<'a> Handler<'a> for Handlers<'a> {
         context: &Context,
         record: &'a Cell,
         reference: &Reference,
-        id: &String,
-        refs: &Vec<&Reference>,
+        id: &str,
+        refs: &[&Reference],
         i: usize,
     ) {
         for handler in &mut self.handlers {
@@ -121,7 +121,7 @@ impl<'a> Handler<'a> for Handlers<'a> {
         }
     }
 
-    fn on_info(&mut self, context: &Context, record: &'a Info, topic: &Dialogue) {
+    fn on_info(&mut self, context: &Context, record: &'a DialogueInfo, topic: &Dialogue) {
         for handler in &mut self.handlers {
             handler.on_info(context, record, topic);
         }

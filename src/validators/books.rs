@@ -6,14 +6,14 @@ use tes3::esp::{Book, TES3Object};
 pub struct BookValidator {}
 
 impl Handler<'_> for BookValidator {
-    fn on_record(&mut self, _: &Context, record: &TES3Object, _: &str, _: &String) {
+    fn on_record(&mut self, _: &Context, record: &TES3Object, _: &str, _: &str) {
         if let TES3Object::Book(book) = record {
             if is_marker(book) {
                 return;
             }
-            if let Some(text) = &book.text {
+            if !book.text.is_empty() {
                 let mut parser = Parser::new(book);
-                if let Err(e) = parser.parse(text) {
+                if let Err(e) = parser.parse(&book.text) {
                     println!(
                         "Failed to parse HTML in {} {} at index {}",
                         book.id, e.message, e.index
@@ -46,7 +46,7 @@ struct ParseError {
 
 impl fmt::Display for ParseError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        return write!(f, "{} at index {}", self.message, self.index);
+        write!(f, "{} at index {}", self.message, self.index)
     }
 }
 
@@ -58,7 +58,7 @@ impl Error for ParseError {
 
 impl ParseError {
     pub fn new(message: String, index: usize) -> ParseError {
-        return ParseError { message, index };
+        ParseError { message, index }
     }
 }
 
@@ -69,10 +69,10 @@ struct Slice {
 
 impl Slice {
     pub fn new() -> Self {
-        return Self { start: 1, end: 0 };
+        Self { start: 1, end: 0 }
     }
 
-    pub fn get<'a>(&self, string: &'a String) -> Option<&'a str> {
+    pub fn get<'a>(&self, string: &'a str) -> Option<&'a str> {
         if self.end <= self.start {
             return None;
         }
@@ -81,11 +81,8 @@ impl Slice {
         }
     }
 
-    pub fn get_or_empty<'a>(&self, string: &'a String) -> &'a str {
-        return match self.get(string) {
-            Some(s) => s,
-            None => "",
-        };
+    pub fn get_or_empty<'a>(&self, string: &'a str) -> &'a str {
+        return self.get(string).unwrap_or_default();
     }
 
     pub fn clear(&mut self) {
@@ -111,14 +108,14 @@ struct Parser<'a> {
 
 impl<'a> Parser<'a> {
     pub fn new(record: &'a Book) -> Parser<'a> {
-        return Parser {
+        Parser {
             record,
             img: false,
             invisible: "",
-        };
+        }
     }
 
-    fn parse(&mut self, html: &'a String) -> Result<(), ParseError> {
+    fn parse(&mut self, html: &'a str) -> Result<(), ParseError> {
         let mut state = ParseState::None;
         let mut tag = Slice::new();
         let mut text = Slice::new();
@@ -163,7 +160,7 @@ impl<'a> Parser<'a> {
                 }
                 ParseState::Attributes => {
                     if c == '=' {
-                        if let None = attribute.get(html) {
+                        if attribute.get(html).is_none() {
                             return Err(ParseError::new("Unexpected =".to_string(), offset));
                         }
                         state = ParseState::AttributeValue;
@@ -219,7 +216,7 @@ impl<'a> Parser<'a> {
                             state = ParseState::None;
                             stack.push(elem);
                         } else if c.is_whitespace() {
-                            if let None = value.get(html) {
+                            if value.get(html).is_none() {
                                 return Err(ParseError::new(
                                     "Unexpected space".to_string(),
                                     offset,

@@ -19,7 +19,7 @@ impl Handler<'_> for ToDoValidator {
         if self.todo.is_match(comment) {
             if let TES3Object::Script(script) = record {
                 println!("Script {} contains comment {}", script.id, comment);
-            } else if let TES3Object::Info(info) = record {
+            } else if let TES3Object::DialogueInfo(info) = record {
                 println!(
                     "Info {} in topic {} contains comment {}",
                     info.id, topic.id, comment
@@ -34,6 +34,6 @@ impl ToDoValidator {
         let todo = RegexBuilder::new(r"(^(todo|fixme|to do|fix me))|(^|\s)merge")
             .case_insensitive(true)
             .build()?;
-        return Ok(Self { todo });
+        Ok(Self { todo })
     }
 }

@@ -35,20 +35,14 @@ const VANILLA_FACTIONS: [&str; 27] = [
 ];
 
 fn is_female(part: &Bodypart) -> bool {
-    if let Some(data) = &part.data {
-        return (data.female & 1) != 0;
-    }
-    return false;
+    part.data.female
 }
 
 fn is_vampire_head(part: &Bodypart) -> bool {
-    if let Some(data) = &part.data {
-        return data.vampire != 0 && data.part == BodypartId::Head;
-    }
-    return false;
+    part.data.vampire && (part.data.part == BodypartId::Head)
 }
 
-fn check_id(context: &Context, t: &str, id: &String) {
+fn check_id(context: &Context, t: &str, id: &str) {
     let matching = context.projects.iter().find(|p| p.matches(id));
     match matching {
         Some(project) => {
@@ -72,17 +66,17 @@ impl Handler<'_> for IdValidator {
         context: &Context,
         record: &TES3Object,
         typename: &'static str,
-        id: &String,
+        id: &str,
     ) {
         match record {
             TES3Object::Bodypart(part) => {
-                if part.name.is_some() && is_vampire_head(part) {
+                if is_vampire_head(part) {
                     let id = format!(
                         "b_v_{}_{}_head_01",
-                        part.name.as_ref().unwrap(),
+                        part.race,
                         if is_female(part) { "f" } else { "m" }
                     );
-                    if part.id != id {
+                    if !part.id.eq_ignore_ascii_case(&id) {
                         println!("Bodypart {} should have id {}", part.id, id);
                     }
                 } else {
@@ -95,7 +89,7 @@ impl Handler<'_> for IdValidator {
                 self.check_known(typename, id);
             }
             TES3Object::Faction(faction) => {
-                if context.mode != Mode::TD || !VANILLA_FACTIONS.contains(&id.as_str()) {
+                if context.mode != Mode::TD || !VANILLA_FACTIONS.contains(&id) {
                     check_id(context, typename, &faction.id);
                     self.check_known(typename, id);
                 }
@@ -103,7 +97,7 @@ impl Handler<'_> for IdValidator {
             TES3Object::GameSetting(_) => {
                 println!("Found dirty {} {}", typename, id);
             }
-            TES3Object::Info(_) => {}
+            TES3Object::DialogueInfo(_) => {}
             TES3Object::PathGrid(_) => {}
             TES3Object::Region(_) => {
                 self.check_known(typename, id);
@@ -123,12 +117,12 @@ impl Handler<'_> for IdValidator {
 
 impl IdValidator {
     pub fn new() -> Self {
-        return Self {
+        Self {
             known: HashMap::new(),
-        };
+        }
     }
 
-    fn check_known(&mut self, typename: &'static str, id: &String) {
+    fn check_known(&mut self, typename: &'static str, id: &str) {
         if let Some(prev) = self.known.insert(id.to_ascii_lowercase(), typename) {
             println!(
                 "{} {} shares its ID with a record of type {}",
