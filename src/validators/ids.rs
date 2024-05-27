@@ -2,7 +2,7 @@ use std::collections::HashMap;
 
 use super::Context;
 use crate::{context::Mode, handlers::Handler};
-use tes3::esp::{Bodypart, BodypartId, EditorId, TES3Object, TypeInfo};
+use tes3::esp::{Bodypart, BodypartFlags, BodypartId, EditorId, TES3Object, TypeInfo};
 
 const VANILLA_FACTIONS: [&str; 27] = [
     "Ashlanders",
@@ -35,7 +35,7 @@ const VANILLA_FACTIONS: [&str; 27] = [
 ];
 
 fn is_female(part: &Bodypart) -> bool {
-    part.data.female
+    part.data.flags.contains(BodypartFlags::FEMALE)
 }
 
 fn is_vampire_head(part: &Bodypart) -> bool {
