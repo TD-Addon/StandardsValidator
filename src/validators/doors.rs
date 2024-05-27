@@ -22,7 +22,6 @@ impl Handler<'_> for DoorValidator {
         _: &[&Reference],
         _: usize,
     ) {
-        // TODO: G7 verify this makes sense
         if id == "prisonmarker" && reference.destination.is_none() {
             println!(
                 "Cell {} contains an unlinked {}",

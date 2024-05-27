@@ -95,7 +95,6 @@ impl<'a> Handler<'a> for TravelValidator<'a> {
                         .insert(npc.id.to_ascii_lowercase(), Caravaner::new(npc));
                     return;
                 }
-                // TODO: no alloc (use 'uncased' library?)
                 if self
                     .classes
                     .contains(npc.class.to_ascii_lowercase().as_str())

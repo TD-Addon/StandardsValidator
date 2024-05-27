@@ -14,6 +14,10 @@ pub fn fix_oob(plugin: &mut Plugin) {
 
     for (grid, cell) in &exteriors {
         for (key, reference) in &cell.references {
+            if reference.deleted == Some(true) {
+                continue;
+            }
+
             let [x, y, _] = reference.translation;
             let actual_grid = get_cell_grid(x as f64, y as f64);
             let dx = (grid.0 - actual_grid.0).abs();
