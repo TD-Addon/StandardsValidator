@@ -33,9 +33,6 @@ See [this bug](https://github.com/TD-Addon/TD_Addon/issues/110).
 This object contains or creates an object that is supposed to be unique to the vanilla game.
 This includes things like quest rewards and vendor chests.
 
-### Has a fog density of 0
-This can cause [graphical issues](https://en.uesp.net/wiki/Morrowind_Mod:Fogbug).
-
 ### Is not calculated for all levels
 This levelled list does not have `Calculate from all levels <= PC's level` checked, despite containing entries of different levels.
 Any entries in this list set to spawn at levels below the entries with the highest level smaller than or equal to the player's level will not appear.
@@ -125,7 +122,7 @@ This NPC is using upright Khajiit animations despite not being one of the Khajii
 ### Has multiple slave bracers
 Slaves should generally only wear a single slave bracer.
 
-## Knows spell
+### Knows spell
 This NPC knows a spell that is culturally or geographically inappropriate.
 
 ## Keys
@@ -280,6 +277,21 @@ This magic effect needs a magnitude to be useful. Might be fine if the spell is 
 
 ### Uses effect with duration 1
 This magic effect needs a duration to be useful. Might be fine if the spell is only meant to be detected by a script.
+
+## Cells
+
+### Has a fog density of 0
+This can cause [graphical issues](https://en.uesp.net/wiki/Morrowind_Mod:Fogbug).
+
+### PathGrid contains underwater node
+Path grids that are underwater aren't used.
+
+### PathGrid contains duplicate node
+There's two nodes in the same spot. Delete one and fix the connections.
+
+### PathGrid contains unconnected node
+Nodes that aren't connected to any other nodes are useless.
+If you have a single-tile room with a locked door, just omit the path grid instead of adding a single unconnected node.
 
 # The extended validator (`--extended`)
 

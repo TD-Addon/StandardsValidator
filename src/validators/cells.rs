@@ -22,11 +22,12 @@ const BLACK_SQUARES: [&str; 4] = [
 pub struct CellValidator {
     seen: HashSet<String>,
     broken: HashMap<&'static str, &'static str>,
+    water_levels: HashMap<String, f32>,
 }
 
 fn get_point_coords(point: &PathGridPoint, record: &PathGrid) -> String {
-    let [x_pos, y_pos, _] = point.location;
-    let location = format!("[{}, {}]", x_pos, y_pos);
+    let [x_pos, y_pos, z_pos] = point.location;
+    let location = format!("[{}, {}, {}]", x_pos, y_pos, z_pos);
     let (x, y) = record.data.grid;
     if x != 0 || y != 0 {
         let ext_x = x_pos + x * CELL_SIZE as i32;
@@ -58,17 +59,34 @@ impl Handler<'_> for CellValidator {
                 {
                     println!("Cell {} has a fog density of 0", cell.editor_id());
                 }
+                if let Some(height) = get_water_height(cell) {
+                    self.water_levels
+                        .insert(cell.editor_id_ascii_lowercase().into_owned(), height);
+                }
             }
             TES3Object::PathGrid(pathgrid) => {
                 let points = &pathgrid.points;
                 if points.is_empty() {
                     return;
                 }
+                let cell = if pathgrid.data.grid == (0, 0) && !pathgrid.cell.is_empty() {
+                    pathgrid.cell.clone()
+                } else {
+                    pathgrid.editor_id().into_owned()
+                };
+                let water_level = self.water_levels.get(&cell.to_ascii_lowercase());
                 let mut connected: HashSet<u32> = HashSet::new();
                 connected.extend(&pathgrid.connections);
                 for (i, point) in points.iter().enumerate() {
                     if point.connection_count > 0 {
                         connected.insert(i as u32);
+                    }
+                    if water_level.is_some_and(|h| (point.location[2] as f32) < *h) {
+                        println!(
+                            "PathGrid {} contains underwater node at {}",
+                            cell,
+                            get_point_coords(point, pathgrid)
+                        );
                     }
                     for other_point in points[i + 1..].iter() {
                         if point
@@ -79,7 +97,7 @@ impl Handler<'_> for CellValidator {
                         {
                             println!(
                                 "PathGrid {} contains duplicate node at {}",
-                                pathgrid.editor_id(),
+                                cell,
                                 get_point_coords(point, pathgrid)
                             );
                             break;
@@ -91,7 +109,7 @@ impl Handler<'_> for CellValidator {
                         if !connected.contains(&(i as u32)) {
                             println!(
                                 "PathGrid {} contains unconnected node at {}",
-                                pathgrid.editor_id(),
+                                cell,
                                 get_point_coords(point, pathgrid)
                             );
                         }
@@ -195,6 +213,7 @@ impl CellValidator {
         Self {
             seen: HashSet::new(),
             broken: get_broken_data(),
+            water_levels: HashMap::new(),
         }
     }
 }
