@@ -35,11 +35,11 @@ const VANILLA_FACTIONS: [&str; 27] = [
 ];
 
 fn is_female(part: &Bodypart) -> bool {
-    (part.data.female & 1) != 0
+    part.data.female
 }
 
 fn is_vampire_head(part: &Bodypart) -> bool {
-    (part.data.vampire != 0) && (part.data.part == BodypartId::Head)
+    part.data.vampire && (part.data.part == BodypartId::Head)
 }
 
 fn check_id(context: &Context, t: &str, id: &str) {
