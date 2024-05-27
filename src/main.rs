@@ -1,4 +1,4 @@
-use clap::{Arg, ArgGroup, ArgMatches, Command};
+use clap::{crate_version, Arg, ArgGroup, ArgMatches, Command};
 use context::{Context, Mode};
 use extended::ExtendedValidator;
 use oob::fix_oob;
@@ -17,7 +17,7 @@ mod validators;
 static GLOBAL: mimalloc::MiMalloc = mimalloc::MiMalloc;
 
 fn main() -> Result<(), Box<dyn Error>> {
-    let args = Command::new("validator")
+    let args = Command::new("StandardsValidator")
         .args(&[
             Arg::new("ooboutput")
                 .long("fix-out-of-bounds")
@@ -79,6 +79,7 @@ fn main() -> Result<(), Box<dyn Error>> {
                 .arg("ooboutput")
                 .conflicts_with_all(["g_validator", "g_extended"]),
         ])
+        .version(crate_version!())
         .get_matches();
     let mut paths = args.get_many::<String>("path").unwrap();
 
