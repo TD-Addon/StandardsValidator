@@ -12,55 +12,69 @@ pub struct OwnershipValidator {
 }
 
 impl ExtendedHandler for OwnershipValidator {
-    fn on_record(&mut self, record: &TES3Object, _: &str, id: &str, _: &str, last: bool) {
+    fn on_record(&mut self, record: &TES3Object, _: &str, last: bool) {
         match record {
             TES3Object::Activator(activator) => {
                 if !activator.script.is_empty()
                     && activator.script.eq_ignore_ascii_case("bed_standard")
                 {
-                    self.ownable.insert(id.to_ascii_lowercase());
+                    self.ownable
+                        .insert(record.editor_id_ascii_lowercase().into_owned());
                 }
             }
             TES3Object::Alchemy(_) => {
-                self.items.insert(id.to_ascii_lowercase());
+                self.items
+                    .insert(record.editor_id_ascii_lowercase().into_owned());
             }
             TES3Object::Apparatus(_) => {
-                self.items.insert(id.to_ascii_lowercase());
+                self.items
+                    .insert(record.editor_id_ascii_lowercase().into_owned());
             }
             TES3Object::Armor(_) => {
-                self.items.insert(id.to_ascii_lowercase());
+                self.items
+                    .insert(record.editor_id_ascii_lowercase().into_owned());
             }
             TES3Object::Book(_) => {
-                self.items.insert(id.to_ascii_lowercase());
+                self.items
+                    .insert(record.editor_id_ascii_lowercase().into_owned());
             }
             TES3Object::Clothing(_) => {
-                self.items.insert(id.to_ascii_lowercase());
+                self.items
+                    .insert(record.editor_id_ascii_lowercase().into_owned());
             }
             TES3Object::Container(_) => {
-                self.ownable.insert(id.to_ascii_lowercase());
+                self.ownable
+                    .insert(record.editor_id_ascii_lowercase().into_owned());
             }
             TES3Object::Ingredient(_) => {
-                self.items.insert(id.to_ascii_lowercase());
+                self.items
+                    .insert(record.editor_id_ascii_lowercase().into_owned());
             }
             TES3Object::Light(light) => {
                 if light.data.flags.contains(LightFlags::CAN_CARRY) {
-                    self.items.insert(id.to_ascii_lowercase());
+                    self.items
+                        .insert(record.editor_id_ascii_lowercase().into_owned());
                 }
             }
             TES3Object::Lockpick(_) => {
-                self.items.insert(id.to_ascii_lowercase());
+                self.items
+                    .insert(record.editor_id_ascii_lowercase().into_owned());
             }
             TES3Object::MiscItem(_) => {
-                self.items.insert(id.to_ascii_lowercase());
+                self.items
+                    .insert(record.editor_id_ascii_lowercase().into_owned());
             }
             TES3Object::Probe(_) => {
-                self.items.insert(id.to_ascii_lowercase());
+                self.items
+                    .insert(record.editor_id_ascii_lowercase().into_owned());
             }
             TES3Object::RepairItem(_) => {
-                self.items.insert(id.to_ascii_lowercase());
+                self.items
+                    .insert(record.editor_id_ascii_lowercase().into_owned());
             }
             TES3Object::Weapon(_) => {
-                self.items.insert(id.to_ascii_lowercase());
+                self.items
+                    .insert(record.editor_id_ascii_lowercase().into_owned());
             }
             TES3Object::Cell(cell) => {
                 if !last {

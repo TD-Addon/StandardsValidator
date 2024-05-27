@@ -15,7 +15,7 @@ struct BaseWeapon {
 }
 
 impl ExtendedHandler for WeaponValidator {
-    fn on_record(&mut self, record: &TES3Object, _: &str, _: &str, _: &str, last: bool) {
+    fn on_record(&mut self, record: &TES3Object, _: &str, last: bool) {
         if let TES3Object::Weapon(weapon) = record {
             if weapon.name.eq_ignore_ascii_case("<deprecated>") {
                 return;

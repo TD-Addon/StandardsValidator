@@ -17,7 +17,7 @@ pub struct QuestNameValidator {
 }
 
 impl ExtendedHandler for NameValidator {
-    fn on_record(&mut self, record: &TES3Object, _: &str, _: &str, _: &str, _: bool) {
+    fn on_record(&mut self, record: &TES3Object, _: &str, _: bool) {
         if let TES3Object::Npc(npc) = record {
             let min_distance = (npc.name.len() as f32 / DISTANCE_DIV).round() as usize;
             if min_distance < 1 {

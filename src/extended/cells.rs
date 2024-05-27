@@ -15,7 +15,7 @@ pub struct CellValidator {
 }
 
 impl ExtendedHandler for CellValidator {
-    fn on_record(&mut self, record: &TES3Object, _: &str, id: &str, _: &str, last: bool) {
+    fn on_record(&mut self, record: &TES3Object, _: &str, last: bool) {
         match record {
             TES3Object::PathGrid(pathgrid) => {
                 if !pathgrid.cell.is_empty() {
@@ -29,7 +29,7 @@ impl ExtendedHandler for CellValidator {
                     && !cell.name.starts_with("T_")
                 {
                     self.cells
-                        .push((id.to_ascii_lowercase(), cell.editor_id().into()));
+                        .push((cell.name.to_ascii_lowercase(), cell.editor_id().into()));
                     if !cannot_sleep(cell) {
                         let count = cell
                             .references
@@ -47,16 +47,19 @@ impl ExtendedHandler for CellValidator {
                 }
             }
             TES3Object::LeveledCreature(_) => {
-                self.inhabitants.insert(id.to_ascii_lowercase());
+                self.inhabitants
+                    .insert(record.editor_id_ascii_lowercase().into_owned());
             }
             TES3Object::Creature(c) => {
                 if !c.is_dead() {
-                    self.inhabitants.insert(id.to_ascii_lowercase());
+                    self.inhabitants
+                        .insert(record.editor_id_ascii_lowercase().into_owned());
                 }
             }
             TES3Object::Npc(n) => {
                 if !n.is_dead() {
-                    self.inhabitants.insert(id.to_ascii_lowercase());
+                    self.inhabitants
+                        .insert(record.editor_id_ascii_lowercase().into_owned());
                 }
             }
             _ => {}
