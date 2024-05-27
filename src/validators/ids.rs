@@ -2,7 +2,7 @@ use std::collections::HashMap;
 
 use super::Context;
 use crate::{context::Mode, handlers::Handler};
-use tes3::esp::{Bodypart, BodypartId, TES3Object};
+use tes3::esp::{Bodypart, BodypartId, EditorId, TES3Object, TypeInfo};
 
 const VANILLA_FACTIONS: [&str; 27] = [
     "Ashlanders",
@@ -42,16 +42,21 @@ fn is_vampire_head(part: &Bodypart) -> bool {
     part.data.vampire && (part.data.part == BodypartId::Head)
 }
 
-fn check_id(context: &Context, t: &str, id: &str) {
-    let matching = context.projects.iter().find(|p| p.matches(id));
+fn check_id(context: &Context, record: &TES3Object) {
+    let id = record.editor_id();
+    let matching = context.projects.iter().find(|p| p.matches(&id));
     match matching {
         Some(project) => {
             if context.mode != Mode::TD && project.prefix == "T_" {
-                println!("{} {} has a {} ID", t, id, project.name);
+                println!("{} {} has a {} ID", record.type_name(), id, project.name);
             }
         }
         None => {
-            println!("{} {} does not match a known ID scheme", t, id);
+            println!(
+                "{} {} does not match a known ID scheme",
+                record.type_name(),
+                id
+            );
         }
     }
 }
@@ -61,13 +66,7 @@ pub struct IdValidator {
 }
 
 impl Handler<'_> for IdValidator {
-    fn on_record(
-        &mut self,
-        context: &Context,
-        record: &TES3Object,
-        typename: &'static str,
-        id: &str,
-    ) {
+    fn on_record(&mut self, context: &Context, record: &TES3Object) {
         match record {
             TES3Object::Bodypart(part) => {
                 if is_vampire_head(part) {
@@ -80,36 +79,37 @@ impl Handler<'_> for IdValidator {
                         println!("Bodypart {} should have id {}", part.id, id);
                     }
                 } else {
-                    check_id(context, typename, &part.id);
+                    check_id(context, record);
                 }
-                self.check_known(typename, id);
+                self.check_known(record);
             }
             TES3Object::Cell(_) => {}
             TES3Object::Dialogue(_) => {
-                self.check_known(typename, id);
+                self.check_known(record);
             }
-            TES3Object::Faction(faction) => {
+            TES3Object::Faction(_) => {
+                let id: &str = &record.editor_id();
                 if context.mode != Mode::TD || !VANILLA_FACTIONS.contains(&id) {
-                    check_id(context, typename, &faction.id);
-                    self.check_known(typename, id);
+                    check_id(context, record);
+                    self.check_known(record);
                 }
             }
             TES3Object::GameSetting(_) => {
-                println!("Found dirty {} {}", typename, id);
+                println!("Found dirty {} {}", record.type_name(), record.editor_id());
             }
             TES3Object::DialogueInfo(_) => {}
             TES3Object::PathGrid(_) => {}
             TES3Object::Region(_) => {
-                self.check_known(typename, id);
+                self.check_known(record);
             }
             TES3Object::SoundGen(_) => {}
             TES3Object::StartScript(_) => {}
             TES3Object::MagicEffect(mgef) => {
-                println!("Found dirty {} {:?}", typename, mgef.effect_id);
+                println!("Found dirty {} {:?}", record.type_name(), mgef.effect_id);
             }
             _ => {
-                check_id(context, typename, id);
-                self.check_known(typename, id);
+                check_id(context, record);
+                self.check_known(record);
             }
         }
     }
@@ -122,11 +122,17 @@ impl IdValidator {
         }
     }
 
-    fn check_known(&mut self, typename: &'static str, id: &str) {
-        if let Some(prev) = self.known.insert(id.to_ascii_lowercase(), typename) {
+    fn check_known(&mut self, record: &TES3Object) {
+        let typename = record.type_name();
+        if let Some(prev) = self
+            .known
+            .insert(record.editor_id().to_ascii_lowercase(), typename)
+        {
             println!(
                 "{} {} shares its ID with a record of type {}",
-                typename, id, prev
+                typename,
+                record.editor_id(),
+                prev
             );
         }
     }

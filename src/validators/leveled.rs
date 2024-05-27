@@ -2,7 +2,7 @@ use std::collections::HashMap;
 
 use super::Context;
 use crate::handlers::Handler;
-use tes3::esp::{LeveledCreatureFlags, LeveledItemFlags, TES3Object, TypeInfo};
+use tes3::esp::{EditorId, LeveledCreatureFlags, LeveledItemFlags, TES3Object, TypeInfo};
 
 pub struct LeveledValidator<'a> {
     to_check: Vec<&'a TES3Object>,
@@ -22,17 +22,18 @@ fn check_all_levels(t: &str, id: &str, list: &[(String, u16)]) {
 }
 
 impl<'a> Handler<'a> for LeveledValidator<'a> {
-    fn on_record(&mut self, _: &Context, record: &'a TES3Object, typename: &str, id: &str) {
+    fn on_record(&mut self, _: &Context, record: &'a TES3Object) {
         match record {
             TES3Object::LeveledCreature(r) => {
                 if !r
                     .leveled_creature_flags
                     .contains(LeveledCreatureFlags::CALCULATE_FROM_ALL_LEVELS)
                 {
-                    check_all_levels(typename, &r.id, &r.creatures);
+                    check_all_levels(record.type_name(), &r.id, &r.creatures);
                 }
                 if let Some(entry) = &r.creatures.first() {
-                    self.minimum_levels.insert(id.to_ascii_lowercase(), entry.1);
+                    self.minimum_levels
+                        .insert(record.editor_id_ascii_lowercase().into_owned(), entry.1);
                 }
                 self.to_check.push(record);
             }
@@ -41,10 +42,11 @@ impl<'a> Handler<'a> for LeveledValidator<'a> {
                     .leveled_item_flags
                     .contains(LeveledItemFlags::CALCULATE_FROM_ALL_LEVELS)
                 {
-                    check_all_levels(typename, &r.id, &r.items);
+                    check_all_levels(record.type_name(), &r.id, &r.items);
                 }
                 if let Some(entry) = r.items.first() {
-                    self.minimum_levels.insert(id.to_ascii_lowercase(), entry.1);
+                    self.minimum_levels
+                        .insert(record.editor_id_ascii_lowercase().into_owned(), entry.1);
                 }
                 self.to_check.push(record);
             }

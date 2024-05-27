@@ -6,7 +6,7 @@ use crate::{
     handlers::Handler,
     util::{ci_starts_with, Actor},
 };
-use tes3::esp::{Effect, EffectId2, EnchantType, Npc, SpellType, TES3Object};
+use tes3::esp::{EditorId, Effect, EffectId2, EnchantType, Npc, SpellType, TES3Object, TypeInfo};
 
 include!(concat!(env!("OUT_DIR"), "/gen_spells.rs"));
 
@@ -165,7 +165,9 @@ fn get_effect_details(id: EffectId2) -> (bool, Duration, bool) {
     }
 }
 
-fn check_effects(typename: &str, id: &str, effects: &[Effect], constant_effect: bool) {
+fn check_effects(record: &TES3Object, effects: &[Effect], constant_effect: bool) {
+    let typename = record.type_name();
+    let id = record.editor_id();
     for effect in effects {
         let (illegal, duration, magnitude) = get_effect_details(effect.magic_effect);
         if illegal {
@@ -200,7 +202,7 @@ fn check_effects(typename: &str, id: &str, effects: &[Effect], constant_effect: 
 }
 
 impl Handler<'_> for MagicValidator {
-    fn on_record(&mut self, context: &Context, record: &TES3Object, typename: &str, id: &str) {
+    fn on_record(&mut self, context: &Context, record: &TES3Object) {
         match record {
             TES3Object::Npc(npc) => {
                 if !npc.is_dead() {
@@ -239,16 +241,16 @@ impl Handler<'_> for MagicValidator {
                 }
             }
             TES3Object::Alchemy(potion) => {
-                check_effects(typename, id, &potion.effects, false);
+                check_effects(record, &potion.effects, false);
             }
             TES3Object::Enchanting(enchantment) => {
                 let constant_effect = enchantment.data.enchant_type == EnchantType::ConstantEffect;
-                check_effects(typename, id, &enchantment.effects, constant_effect);
+                check_effects(record, &enchantment.effects, constant_effect);
             }
             TES3Object::Spell(spell) => {
                 let temporary =
                     matches!(spell.data.spell_type, SpellType::Power | SpellType::Spell);
-                check_effects(typename, id, &spell.effects, !temporary);
+                check_effects(record, &spell.effects, !temporary);
             }
             _ => {}
         }

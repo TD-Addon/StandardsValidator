@@ -4,7 +4,8 @@ use super::Context;
 use crate::{context::Mode, handlers::Handler, util::update_or_insert};
 use regex::{Error, Regex};
 use tes3::esp::{
-    Cell, Dialogue, DialogueInfo, DialogueType2, FixedString, QuestState, Reference, TES3Object,
+    Cell, Dialogue, DialogueInfo, DialogueType2, EditorId, FixedString, QuestState, Reference,
+    TES3Object, TypeInfo,
 };
 
 pub struct OrphanValidator {
@@ -27,111 +28,109 @@ fn is_journal(dialogue: &Dialogue) -> bool {
 }
 
 impl Handler<'_> for OrphanValidator {
-    fn on_record(
-        &mut self,
-        context: &Context,
-        record: &TES3Object,
-        typename: &'static str,
-        id: &str,
-    ) {
+    fn on_record(&mut self, context: &Context, record: &TES3Object) {
         if context.mode == Mode::TD {
             return;
         }
         match record {
             TES3Object::Dialogue(dialogue) => {
                 if is_journal(dialogue) {
-                    self.journals
-                        .insert(id.to_ascii_lowercase(), HashSet::new());
+                    self.journals.insert(
+                        record.editor_id_ascii_lowercase().into_owned(),
+                        HashSet::new(),
+                    );
                 }
             }
             TES3Object::Enchanting(_) => {
-                self.enchantments.insert(id.to_ascii_lowercase());
+                self.enchantments
+                    .insert(record.editor_id_ascii_lowercase().into_owned());
             }
             TES3Object::Script(_) => {
-                self.script_ids.insert(id.to_ascii_lowercase());
+                self.script_ids
+                    .insert(record.editor_id_ascii_lowercase().into_owned());
             }
             TES3Object::Activator(r) => {
                 self.remove_script(&r.script);
-                self.objects.insert(id.to_ascii_lowercase(), typename);
+                self.insert_object(record);
             }
             TES3Object::Alchemy(r) => {
                 self.remove_script(&r.script);
-                self.objects.insert(id.to_ascii_lowercase(), typename);
+                self.insert_object(record);
             }
             TES3Object::Apparatus(r) => {
                 self.remove_script(&r.script);
-                self.objects.insert(id.to_ascii_lowercase(), typename);
+                self.insert_object(record);
             }
             TES3Object::Armor(r) => {
                 self.remove_script(&r.script);
-                self.objects.insert(id.to_ascii_lowercase(), typename);
+                self.insert_object(record);
                 self.add_enchantment(&r.enchanting);
             }
             TES3Object::Book(r) => {
                 self.remove_script(&r.script);
-                self.objects.insert(id.to_ascii_lowercase(), typename);
+                self.insert_object(record);
                 self.add_enchantment(&r.enchanting);
             }
             TES3Object::Clothing(r) => {
                 self.remove_script(&r.script);
-                self.objects.insert(id.to_ascii_lowercase(), typename);
+                self.insert_object(record);
                 self.add_enchantment(&r.enchanting);
             }
             TES3Object::Container(r) => {
                 self.remove_script(&r.script);
-                self.objects.insert(id.to_ascii_lowercase(), typename);
+                self.insert_object(record);
             }
             TES3Object::Creature(r) => {
                 self.remove_script(&r.script);
-                self.objects.insert(id.to_ascii_lowercase(), typename);
+                self.insert_object(record);
             }
             TES3Object::Door(r) => {
                 self.remove_script(&r.script);
-                self.objects.insert(id.to_ascii_lowercase(), typename);
+                self.insert_object(record);
             }
             TES3Object::Ingredient(r) => {
                 self.remove_script(&r.script);
-                self.objects.insert(id.to_ascii_lowercase(), typename);
+                self.insert_object(record);
             }
             TES3Object::LeveledCreature(_) => {
-                self.objects.insert(id.to_ascii_lowercase(), typename);
+                self.insert_object(record);
             }
             TES3Object::LeveledItem(_) => {
-                self.objects.insert(id.to_ascii_lowercase(), typename);
+                self.insert_object(record);
             }
             TES3Object::Light(r) => {
                 self.remove_script(&r.script);
-                self.objects.insert(id.to_ascii_lowercase(), typename);
+                self.insert_object(record);
             }
             TES3Object::Lockpick(r) => {
                 self.remove_script(&r.script);
-                self.objects.insert(id.to_ascii_lowercase(), typename);
+                self.insert_object(record);
             }
             TES3Object::MiscItem(r) => {
                 self.remove_script(&r.script);
-                self.objects.insert(id.to_ascii_lowercase(), typename);
+                self.insert_object(record);
             }
             TES3Object::Npc(r) => {
                 self.remove_script(&r.script);
-                self.objects.insert(id.to_ascii_lowercase(), typename);
+                self.insert_object(record);
             }
             TES3Object::Probe(r) => {
                 self.remove_script(&r.script);
-                self.objects.insert(id.to_ascii_lowercase(), typename);
+                self.insert_object(record);
             }
             TES3Object::RepairItem(r) => {
                 self.remove_script(&r.script);
-                self.objects.insert(id.to_ascii_lowercase(), typename);
+                self.insert_object(record);
             }
             TES3Object::StartScript(r) => {
                 self.remove_script(&r.script);
             }
             TES3Object::Static(_) => {
-                self.objects.insert(id.to_ascii_lowercase(), typename);
+                self.insert_object(record);
             }
             TES3Object::Weapon(r) => {
                 self.remove_script(&r.script);
-                self.objects.insert(id.to_ascii_lowercase(), typename);
+                self.insert_object(record);
                 self.add_enchantment(&r.enchanting);
             }
             _ => {}
@@ -256,6 +255,13 @@ impl OrphanValidator {
             journal,
             secondarg,
         })
+    }
+
+    fn insert_object(&mut self, record: &TES3Object) {
+        self.objects.insert(
+            record.editor_id_ascii_lowercase().to_string(),
+            record.type_name(),
+        );
     }
 
     fn remove_script(&mut self, script: &str) {

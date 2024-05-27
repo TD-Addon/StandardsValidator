@@ -38,7 +38,7 @@ fn check_khajiit_animations(npc: &Npc) {
 }
 
 impl Handler<'_> for NpcValidator {
-    fn on_record(&mut self, context: &Context, record: &TES3Object, _: &str, _: &str) {
+    fn on_record(&mut self, context: &Context, record: &TES3Object) {
         self.slave_bracers = 0;
         if let TES3Object::Npc(npc) = record {
             self.check_bodyparts(npc);

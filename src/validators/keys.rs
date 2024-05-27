@@ -11,13 +11,13 @@ fn is_key(misc: &MiscItem) -> bool {
 }
 
 impl Handler<'_> for KeyValidator {
-    fn on_record(&mut self, context: &Context, record: &TES3Object, _: &str, id: &str) {
+    fn on_record(&mut self, context: &Context, record: &TES3Object) {
         if let TES3Object::MiscItem(misc) = record {
-            let lower = id.to_ascii_lowercase();
+            let lower = record.editor_id_ascii_lowercase();
             if context.mode != Mode::TD && !is_key(misc) && lower.contains("key") {
                 println!("MiscItem {} is not a key", misc.id)
             }
-            self.miscs.insert(lower);
+            self.miscs.insert(lower.into_owned());
         }
     }
 

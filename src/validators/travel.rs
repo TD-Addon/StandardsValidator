@@ -71,7 +71,7 @@ impl Location<'_> {
 }
 
 impl<'a> Handler<'a> for TravelValidator<'a> {
-    fn on_record(&mut self, _: &Context, record: &'a TES3Object, _: &str, _: &str) {
+    fn on_record(&mut self, _: &Context, record: &'a TES3Object) {
         if is_dead(record) {
             return;
         }

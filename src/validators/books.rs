@@ -6,7 +6,7 @@ use tes3::esp::{Book, TES3Object};
 pub struct BookValidator {}
 
 impl Handler<'_> for BookValidator {
-    fn on_record(&mut self, _: &Context, record: &TES3Object, _: &str, _: &str) {
+    fn on_record(&mut self, _: &Context, record: &TES3Object) {
         if let TES3Object::Book(book) = record {
             if is_marker(book) {
                 return;

@@ -2,20 +2,21 @@ use std::collections::HashMap;
 
 use super::Context;
 use crate::{handlers::Handler, util::is_persistent};
-use tes3::esp::{Cell, Reference, TES3Object};
+use tes3::esp::{Cell, EditorId, Reference, TES3Object};
 
 pub struct PersistentValidator {
     counts: HashMap<String, u32>,
 }
 
 impl Handler<'_> for PersistentValidator {
-    fn on_record(&mut self, _: &Context, record: &TES3Object, _: &str, id: &str) {
+    fn on_record(&mut self, _: &Context, record: &TES3Object) {
         if is_persistent(record) {
             match record {
                 TES3Object::Creature(_) => {}
                 TES3Object::Npc(_) => {}
                 _ => {
-                    self.counts.insert(id.to_ascii_lowercase(), 0);
+                    self.counts
+                        .insert(record.editor_id_ascii_lowercase().into_owned(), 0);
                 }
             }
         }

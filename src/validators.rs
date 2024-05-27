@@ -29,7 +29,7 @@ use crate::{
 };
 use clap::ArgMatches;
 use std::error::Error;
-use tes3::esp::{Dialogue, FixedString, TES3Object, TypeInfo};
+use tes3::esp::{Dialogue, FixedString, TES3Object};
 
 pub struct Validator<'a> {
     handlers: Handlers<'a>,
@@ -49,37 +49,15 @@ impl<'a> Validator<'a> {
         let mut current_topic = &dummy;
         for record in records {
             match record {
-                TES3Object::Activator(r) => {
-                    self.handlers
-                        .on_record(&self.context, record, r.type_name(), &r.id)
-                }
-                TES3Object::Alchemy(r) => {
-                    self.handlers
-                        .on_record(&self.context, record, r.type_name(), &r.id)
-                }
-                TES3Object::Apparatus(r) => {
-                    self.handlers
-                        .on_record(&self.context, record, r.type_name(), &r.id)
-                }
-                TES3Object::Armor(r) => {
-                    self.handlers
-                        .on_record(&self.context, record, r.type_name(), &r.id)
-                }
-                TES3Object::Birthsign(r) => {
-                    self.handlers
-                        .on_record(&self.context, record, r.type_name(), &r.id)
-                }
-                TES3Object::Bodypart(r) => {
-                    self.handlers
-                        .on_record(&self.context, record, r.type_name(), &r.id)
-                }
-                TES3Object::Book(r) => {
-                    self.handlers
-                        .on_record(&self.context, record, r.type_name(), &r.id)
-                }
+                TES3Object::Activator(_) => self.handlers.on_record(&self.context, record),
+                TES3Object::Alchemy(_) => self.handlers.on_record(&self.context, record),
+                TES3Object::Apparatus(_) => self.handlers.on_record(&self.context, record),
+                TES3Object::Armor(_) => self.handlers.on_record(&self.context, record),
+                TES3Object::Birthsign(_) => self.handlers.on_record(&self.context, record),
+                TES3Object::Bodypart(_) => self.handlers.on_record(&self.context, record),
+                TES3Object::Book(_) => self.handlers.on_record(&self.context, record),
                 TES3Object::Cell(r) => {
-                    self.handlers
-                        .on_record(&self.context, record, r.type_name(), &r.name);
+                    self.handlers.on_record(&self.context, record);
                     let refs: Vec<_> = r.references.values().collect();
                     for (i, reference) in refs.iter().enumerate() {
                         self.handlers.on_cellref(
@@ -92,143 +70,66 @@ impl<'a> Validator<'a> {
                         );
                     }
                 }
-                TES3Object::Class(r) => {
-                    self.handlers
-                        .on_record(&self.context, record, r.type_name(), &r.id)
-                }
-                TES3Object::Clothing(r) => {
-                    self.handlers
-                        .on_record(&self.context, record, r.type_name(), &r.id)
-                }
+                TES3Object::Class(_) => self.handlers.on_record(&self.context, record),
+                TES3Object::Clothing(_) => self.handlers.on_record(&self.context, record),
                 TES3Object::Container(r) => {
-                    self.handlers
-                        .on_record(&self.context, record, r.type_name(), &r.id);
+                    self.handlers.on_record(&self.context, record);
                     self.on_inventory(record, &r.inventory);
                 }
                 TES3Object::Creature(r) => {
-                    self.handlers
-                        .on_record(&self.context, record, r.type_name(), &r.id);
+                    self.handlers.on_record(&self.context, record);
                     self.on_inventory(record, &r.inventory);
                 }
                 TES3Object::Dialogue(r) => {
-                    self.handlers
-                        .on_record(&self.context, record, r.type_name(), &r.id);
+                    self.handlers.on_record(&self.context, record);
                     current_topic = r;
                 }
-                TES3Object::Door(r) => {
-                    self.handlers
-                        .on_record(&self.context, record, r.type_name(), &r.id)
-                }
-                TES3Object::Enchanting(r) => {
-                    self.handlers
-                        .on_record(&self.context, record, r.type_name(), &r.id)
-                }
-                TES3Object::Faction(r) => {
-                    self.handlers
-                        .on_record(&self.context, record, r.type_name(), &r.id)
-                }
-                TES3Object::GameSetting(r) => {
-                    self.handlers
-                        .on_record(&self.context, record, r.type_name(), &r.id)
-                }
-                TES3Object::GlobalVariable(r) => {
-                    self.handlers
-                        .on_record(&self.context, record, r.type_name(), &r.id)
-                }
+                TES3Object::Door(_) => self.handlers.on_record(&self.context, record),
+                TES3Object::Enchanting(_) => self.handlers.on_record(&self.context, record),
+                TES3Object::Faction(_) => self.handlers.on_record(&self.context, record),
+                TES3Object::GameSetting(_) => self.handlers.on_record(&self.context, record),
+                TES3Object::GlobalVariable(_) => self.handlers.on_record(&self.context, record),
                 TES3Object::Header(_) => {}
                 TES3Object::DialogueInfo(r) => {
-                    self.handlers
-                        .on_record(&self.context, record, r.type_name(), &r.id);
+                    self.handlers.on_record(&self.context, record);
                     self.handlers.on_info(&self.context, r, current_topic);
                     self.on_script(record, &r.script_text, current_topic);
                 }
-                TES3Object::Ingredient(r) => {
-                    self.handlers
-                        .on_record(&self.context, record, r.type_name(), &r.id)
-                }
+                TES3Object::Ingredient(_) => self.handlers.on_record(&self.context, record),
                 TES3Object::Landscape(_) => {}
                 TES3Object::LandscapeTexture(_) => {}
                 TES3Object::LeveledCreature(r) => {
-                    self.handlers
-                        .on_record(&self.context, record, r.type_name(), &r.id);
+                    self.handlers.on_record(&self.context, record);
                     self.on_leveled(record, &r.creatures);
                 }
                 TES3Object::LeveledItem(r) => {
-                    self.handlers
-                        .on_record(&self.context, record, r.type_name(), &r.id);
+                    self.handlers.on_record(&self.context, record);
                     self.on_leveled(record, &r.items);
                 }
-                TES3Object::Light(r) => {
-                    self.handlers
-                        .on_record(&self.context, record, r.type_name(), &r.id)
-                }
-                TES3Object::Lockpick(r) => {
-                    self.handlers
-                        .on_record(&self.context, record, r.type_name(), &r.id)
-                }
-                TES3Object::MagicEffect(r) => {
-                    self.handlers
-                        .on_record(&self.context, record, r.type_name(), "")
-                }
-                TES3Object::MiscItem(r) => {
-                    self.handlers
-                        .on_record(&self.context, record, r.type_name(), &r.id)
-                }
+                TES3Object::Light(_) => self.handlers.on_record(&self.context, record),
+                TES3Object::Lockpick(_) => self.handlers.on_record(&self.context, record),
+                TES3Object::MagicEffect(_) => self.handlers.on_record(&self.context, record),
+                TES3Object::MiscItem(_) => self.handlers.on_record(&self.context, record),
                 TES3Object::Npc(r) => {
-                    self.handlers
-                        .on_record(&self.context, record, r.type_name(), &r.id);
+                    self.handlers.on_record(&self.context, record);
                     self.on_inventory(record, &r.inventory);
                 }
-                TES3Object::PathGrid(r) => {
-                    self.handlers
-                        .on_record(&self.context, record, r.type_name(), "")
-                }
-                TES3Object::Probe(r) => {
-                    self.handlers
-                        .on_record(&self.context, record, r.type_name(), &r.id)
-                }
-                TES3Object::Race(r) => {
-                    self.handlers
-                        .on_record(&self.context, record, r.type_name(), &r.id)
-                }
-                TES3Object::Region(r) => {
-                    self.handlers
-                        .on_record(&self.context, record, r.type_name(), &r.id)
-                }
-                TES3Object::RepairItem(r) => {
-                    self.handlers
-                        .on_record(&self.context, record, r.type_name(), &r.id)
-                }
+                TES3Object::PathGrid(_) => self.handlers.on_record(&self.context, record),
+                TES3Object::Probe(_) => self.handlers.on_record(&self.context, record),
+                TES3Object::Race(_) => self.handlers.on_record(&self.context, record),
+                TES3Object::Region(_) => self.handlers.on_record(&self.context, record),
+                TES3Object::RepairItem(_) => self.handlers.on_record(&self.context, record),
                 TES3Object::Script(r) => {
-                    self.handlers
-                        .on_record(&self.context, record, r.type_name(), &r.id);
+                    self.handlers.on_record(&self.context, record);
                     self.on_script(record, &r.text, &dummy);
                 }
                 TES3Object::Skill(_) => {}
-                TES3Object::Sound(r) => {
-                    self.handlers
-                        .on_record(&self.context, record, r.type_name(), &r.id)
-                }
-                TES3Object::SoundGen(r) => {
-                    self.handlers
-                        .on_record(&self.context, record, r.type_name(), &r.id)
-                }
-                TES3Object::Spell(r) => {
-                    self.handlers
-                        .on_record(&self.context, record, r.type_name(), &r.id)
-                }
-                TES3Object::StartScript(r) => {
-                    self.handlers
-                        .on_record(&self.context, record, r.type_name(), &r.id)
-                }
-                TES3Object::Static(r) => {
-                    self.handlers
-                        .on_record(&self.context, record, r.type_name(), &r.id)
-                }
-                TES3Object::Weapon(r) => {
-                    self.handlers
-                        .on_record(&self.context, record, r.type_name(), &r.id)
-                }
+                TES3Object::Sound(_) => self.handlers.on_record(&self.context, record),
+                TES3Object::SoundGen(_) => self.handlers.on_record(&self.context, record),
+                TES3Object::Spell(_) => self.handlers.on_record(&self.context, record),
+                TES3Object::StartScript(_) => self.handlers.on_record(&self.context, record),
+                TES3Object::Static(_) => self.handlers.on_record(&self.context, record),
+                TES3Object::Weapon(_) => self.handlers.on_record(&self.context, record),
             }
         }
         self.handlers.on_end(&self.context);

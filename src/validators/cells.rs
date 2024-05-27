@@ -46,7 +46,7 @@ fn get_water_height(cell: &Cell) -> Option<f32> {
 }
 
 impl Handler<'_> for CellValidator {
-    fn on_record(&mut self, context: &Context, record: &TES3Object, _: &str, _: &str) {
+    fn on_record(&mut self, context: &Context, record: &TES3Object) {
         match record {
             TES3Object::Cell(cell) => {
                 if cell.is_interior()

@@ -5,14 +5,7 @@ use tes3::esp::{Cell, Dialogue, DialogueInfo, FixedString, Reference, TES3Object
 
 #[allow(unused_variables)]
 pub trait Handler<'a> {
-    fn on_record(
-        &mut self,
-        context: &Context,
-        record: &'a TES3Object,
-        typename: &'static str,
-        id: &str,
-    ) {
-    }
+    fn on_record(&mut self, context: &Context, record: &'a TES3Object) {}
 
     fn on_cellref(
         &mut self,
@@ -95,15 +88,9 @@ impl Handlers<'_> {
 }
 
 impl<'a> Handler<'a> for Handlers<'a> {
-    fn on_record(
-        &mut self,
-        context: &Context,
-        record: &'a TES3Object,
-        typename: &'static str,
-        id: &str,
-    ) {
+    fn on_record(&mut self, context: &Context, record: &'a TES3Object) {
         for handler in &mut self.handlers {
-            handler.on_record(context, record, typename, id);
+            handler.on_record(context, record);
         }
     }
 

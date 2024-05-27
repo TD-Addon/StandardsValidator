@@ -5,7 +5,7 @@ use tes3::esp::{Cell, EditorId, Reference, TES3Object};
 pub struct DoorValidator {}
 
 impl Handler<'_> for DoorValidator {
-    fn on_record(&mut self, _: &Context, record: &TES3Object, _: &str, _: &str) {
+    fn on_record(&mut self, _: &Context, record: &TES3Object) {
         if let TES3Object::Door(door) = record {
             if door.mesh.eq_ignore_ascii_case("i\\in_lava_blacksquare.nif") {
                 println!("Door {} uses mesh {}", door.id, door.mesh);

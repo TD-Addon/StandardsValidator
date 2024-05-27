@@ -31,19 +31,19 @@ fn check_script_line(
 }
 
 impl Handler<'_> for UniquesValidator {
-    fn on_record(&mut self, _: &Context, record: &TES3Object, typename: &str, id: &str) {
+    fn on_record(&mut self, _: &Context, record: &TES3Object) {
         match record {
             TES3Object::Armor(r) => {
-                self.check(&r.enchanting, id, typename);
+                self.check(&r.enchanting, record);
             }
             TES3Object::Book(r) => {
-                self.check(&r.enchanting, id, typename);
+                self.check(&r.enchanting, record);
             }
             TES3Object::Clothing(r) => {
-                self.check(&r.enchanting, id, typename);
+                self.check(&r.enchanting, record);
             }
             TES3Object::Weapon(r) => {
-                self.check(&r.enchanting, id, typename);
+                self.check(&r.enchanting, record);
             }
             _ => {}
         }
@@ -69,23 +69,23 @@ impl Handler<'_> for UniquesValidator {
     }
 
     fn on_leveled(&mut self, _: &Context, record: &TES3Object, entry: &(String, u16)) {
-        if let TES3Object::LeveledCreature(r) = record {
-            self.check(&entry.0, &r.id, r.type_name());
-        } else if let TES3Object::LeveledItem(r) = record {
-            self.check(&entry.0, &r.id, r.type_name());
+        if let TES3Object::LeveledCreature(_) = record {
+            self.check(&entry.0, record);
+        } else if let TES3Object::LeveledItem(_) = record {
+            self.check(&entry.0, record);
         }
     }
 
     fn on_inventory(&mut self, _: &Context, record: &TES3Object, entry: &(i32, FixedString<32>)) {
         match record {
-            TES3Object::Container(r) => {
-                self.check(&entry.1, &r.id, r.type_name());
+            TES3Object::Container(_) => {
+                self.check(&entry.1, record);
             }
-            TES3Object::Creature(r) => {
-                self.check(&entry.1, &r.id, r.type_name());
+            TES3Object::Creature(_) => {
+                self.check(&entry.1, record);
             }
-            TES3Object::Npc(r) => {
-                self.check(&entry.1, &r.id, r.type_name());
+            TES3Object::Npc(_) => {
+                self.check(&entry.1, record);
             }
             _ => {}
         }
@@ -132,12 +132,14 @@ impl UniquesValidator {
         })
     }
 
-    fn check(&self, value: &str, id: &str, typename: &str) {
-        if id.is_empty() {
-            return;
-        }
+    fn check(&self, value: &str, record: &TES3Object) {
         if self.uniques.contains(value.to_ascii_lowercase().as_str()) {
-            println!("{} {} references {}", typename, id, value);
+            println!(
+                "{} {} references {}",
+                record.type_name(),
+                record.editor_id(),
+                value
+            );
         }
     }
 }

@@ -36,7 +36,7 @@ pub struct ServiceValidator {
 }
 
 impl Handler<'_> for ServiceValidator {
-    fn on_record(&mut self, _: &Context, record: &TES3Object, _: &str, _: &str) {
+    fn on_record(&mut self, _: &Context, record: &TES3Object) {
         match record {
             TES3Object::Class(class) => {
                 if class.data.services.intersects(SERVICE_FLAGS_BARTERS_ANY) {
