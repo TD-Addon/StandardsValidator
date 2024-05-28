@@ -6,9 +6,8 @@ use crate::{
     handlers::Handler,
     util::{is_autocalc, is_dead, update_or_insert},
 };
+use codegen::get_bodypart_data;
 use tes3::esp::{BodypartId, FixedString, Npc, NpcFlags, TES3Object};
-
-include!(concat!(env!("OUT_DIR"), "/gen_bodyparts.rs"));
 
 pub struct NpcValidator {
     slave_bracers: i32,
@@ -244,7 +243,7 @@ impl RulesParser {
 
 impl NpcValidator {
     pub fn new() -> Result<Self, String> {
-        let (rulesets, head, hair) = get_bodypart_data();
+        let (rulesets, head, hair) = get_bodypart_data!();
         let mut parser = RulesParser::new();
         parser.parse_rulesets(rulesets)?;
         parser.parse_part(head, BodypartId::Head)?;

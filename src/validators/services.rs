@@ -2,9 +2,8 @@ use std::collections::HashSet;
 
 use super::Context;
 use crate::{handlers::Handler, util::is_autocalc};
+use codegen::get_barter_classes;
 use tes3::esp::{AiData, ServiceFlags, TES3Object};
-
-include!(concat!(env!("OUT_DIR"), "/gen_services.rs"));
 
 const SERVICE_FLAGS_BARTERS_ANY: ServiceFlags = ServiceFlags::from_bits_truncate(
     ServiceFlags::BARTERS_WEAPONS.bits()
@@ -106,7 +105,7 @@ impl Handler<'_> for ServiceValidator {
 impl ServiceValidator {
     pub fn new() -> Self {
         Self {
-            barter_classes: get_barter_classes(),
+            barter_classes: get_barter_classes!(),
         }
     }
 }

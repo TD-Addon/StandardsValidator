@@ -3,10 +3,9 @@ use crate::{
     handlers::Handler,
     util::{get_cell_grid, CELL_SIZE},
 };
+use codegen::get_broken_data;
 use std::collections::{HashMap, HashSet};
 use tes3::esp::{Cell, CellFlags, EditorId, PathGrid, PathGridPoint, Reference, TES3Object};
-
-include!(concat!(env!("OUT_DIR"), "/gen_broken.rs"));
 
 const MAX_Z: f32 = 64000.;
 const MIN_Z: f32 = -32000.;
@@ -212,7 +211,7 @@ impl CellValidator {
     pub fn new() -> Self {
         Self {
             seen: HashSet::new(),
-            broken: get_broken_data(),
+            broken: get_broken_data!(),
             water_levels: HashMap::new(),
         }
     }

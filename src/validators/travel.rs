@@ -5,9 +5,8 @@ use crate::{
     handlers::Handler,
     util::{get_cell_grid, is_dead, Actor},
 };
+use codegen::get_travel_classes;
 use tes3::esp::{Cell, Dialogue, DialogueInfo, EditorId, Reference, TES3Object, TravelDestination};
-
-include!(concat!(env!("OUT_DIR"), "/gen_travel.rs"));
 
 pub struct TravelValidator<'a> {
     cells: HashMap<(i32, i32), &'a Cell>,
@@ -145,7 +144,7 @@ impl TravelValidator<'_> {
     pub fn new() -> Self {
         Self {
             cells: HashMap::new(),
-            classes: get_travel_classes(),
+            classes: get_travel_classes!(),
             caravaners: HashMap::new(),
         }
     }

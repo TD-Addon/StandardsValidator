@@ -2,10 +2,9 @@ use std::collections::{HashMap, HashSet};
 
 use super::Context;
 use crate::handlers::Handler;
+use codegen::get_uniques;
 use regex::{escape, Regex};
 use tes3::esp::{Cell, Dialogue, EditorId, FixedString, Reference, TES3Object, TypeInfo};
-
-include!(concat!(env!("OUT_DIR"), "/gen_uniques.rs"));
 
 pub struct UniquesValidator {
     uniques: HashSet<&'static str>,
@@ -126,7 +125,7 @@ impl UniquesValidator {
             r"placeatme|addtolevcreature|addtolevitem|addsoulgem|addspell|cast|explodespell|dropsoulgem|additem|equip|drop|placeatpc|placeitem|placeitemcell",
         )?;
         Ok(Self {
-            uniques: get_uniques(),
+            uniques: get_uniques!(),
             create_func,
             regex_cache: HashMap::new(),
         })
