@@ -125,6 +125,10 @@ Slaves should generally only wear a single slave bracer.
 ### Knows spell
 This NPC knows a spell that is culturally or geographically inappropriate.
 
+### Is a vampire but uses head
+This NPC is a vampire but does not use the correct vampire head for its race.
+NPC vampires that do not need to switch to a mortal appearance should use their race's vampire head as their default head to ensure they always look like vampires.
+
 ## Keys
 A misc item is a key if it has the key flag. This is a property of the record and determines if it can be sold to merchants and detected by Detect Key.
 

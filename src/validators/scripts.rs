@@ -4,17 +4,18 @@ use super::Context;
 use crate::{
     context::Mode,
     handlers::Handler,
-    util::{ci_starts_with, Actor},
+    util::{ci_ends_with, ci_starts_with, is_correct_vampire_head, Actor},
 };
 use codegen::{get_joined_commands, get_khajiit_script};
 use regex::{Regex, RegexBuilder};
-use tes3::esp::{Dialogue, Npc, Script, TES3Object};
+use tes3::esp::{Dialogue, Npc, NpcFlags, Script, TES3Object};
 
 pub struct ScriptValidator {
     scripts: HashMap<String, ScriptInfo>,
     npc: Regex,
     khajiit: Regex,
     nolore: Regex,
+    vampire: Regex,
     commands: Regex,
     khajiit_script: Regex,
     projects: Vec<(&'static str, Regex)>,
@@ -29,17 +30,19 @@ struct ScriptInfo {
     npc: bool,
     khajiit: bool,
     nolore: bool,
+    vampire: bool,
     projects: Vec<&'static str>,
 }
 
 impl ScriptInfo {
-    fn new(npc: bool, khajiit: bool, nolore: bool) -> Self {
+    fn new(npc: bool, khajiit: bool, nolore: bool, vampire: bool) -> Self {
         Self {
             used: false,
             used_by_khajiit: false,
             npc,
             khajiit,
             nolore,
+            vampire,
             projects: Vec::new(),
         }
     }
@@ -56,6 +59,7 @@ impl Handler<'_> for ScriptValidator {
                 self.npc.is_match(text),
                 self.khajiit.is_match(text),
                 self.nolore.is_match(text),
+                self.vampire.is_match(text),
             );
             for (local, regex) in &self.projects {
                 if regex.is_match(text) {
@@ -75,12 +79,11 @@ impl Handler<'_> for ScriptValidator {
             }
         } else if let TES3Object::Npc(npc) = record {
             if !npc.is_dead() {
-                if !npc.script.is_empty() {
-                    let id = npc.script.to_ascii_lowercase();
-                    self.check_npc_script(npc, id);
-                    return;
+                if npc.script.is_empty() {
+                    println!("Npc {} does not have a script", npc.id);
+                } else {
+                    self.check_npc_script(npc);
                 }
-                println!("Npc {} does not have a script", npc.id);
             }
         }
     }
@@ -133,6 +136,7 @@ impl ScriptValidator {
         let npc = get_variable("T_Local_NPC", "short")?;
         let khajiit = get_variable("T_Local_Khajiit", "short")?;
         let nolore = get_variable("NoLore", "short")?;
+        let vampire = get_variable("T_Local_Vampire", "short")?;
         let commands = get_variable(get_joined_commands!(), "(short|long|float)")?;
         let khajiit_script = RegexBuilder::new(get_khajiit_script!())
             .case_insensitive(true)
@@ -157,6 +161,7 @@ impl ScriptValidator {
             npc,
             khajiit,
             nolore,
+            vampire,
             commands,
             khajiit_script,
             projects,
@@ -166,19 +171,21 @@ impl ScriptValidator {
         })
     }
 
-    fn check_npc_script(&mut self, npc: &Npc, id: String) {
-        if let Some(script) = self.scripts.get_mut(&id) {
+    fn check_npc_script(&mut self, npc: &Npc) {
+        let vampire;
+        if let Some(script) = self.scripts.get_mut(&npc.script.to_ascii_lowercase()) {
             script.used = true;
+            vampire = script.vampire;
             if !script.npc {
                 println!(
                     "Npc {} uses script {} which does not define T_Local_NPC",
-                    npc.id, id
+                    npc.id, npc.script
                 );
             }
             if !script.nolore {
                 println!(
                     "Npc {} uses script {} which does not define NoLore",
-                    npc.id, id
+                    npc.id, npc.script
                 );
             }
             let race = &npc.race;
@@ -187,17 +194,17 @@ impl ScriptValidator {
                 if !script.khajiit {
                     println!(
                         "Npc {} uses script {} which does not define T_Local_Khajiit",
-                        npc.id, id
+                        npc.id, npc.script
                     );
                 }
             }
             if script.projects.is_empty() {
-                println!("Npc {} uses script {} which does not define any province specific local variables", npc.id, id);
+                println!("Npc {} uses script {} which does not define any province specific local variables", npc.id, npc.script);
             } else if script.projects.len() > 1 {
                 println!(
                     "Npc {} uses script {} which defines {}",
                     npc.id,
-                    id,
+                    npc.script,
                     script
                         .projects
                         .iter()
@@ -206,8 +213,25 @@ impl ScriptValidator {
                         .join(", ")
                 );
             }
-        } else if !ci_starts_with(&id, "t_scnpc_") {
-            println!("Npc {} uses unknown script {}", npc.id, id);
+        } else if ci_starts_with(&npc.script, "t_scvamp_") && ci_ends_with(&npc.script, "_npc") {
+            vampire = true;
+        } else if !ci_starts_with(&npc.script, "t_scnpc_") {
+            println!("Npc {} uses unknown script {}", npc.id, npc.script);
+            return;
+        } else {
+            vampire = npc.script.contains("Vamp");
+        }
+        if vampire {
+            let has_vampire_head = is_correct_vampire_head(
+                &npc.head,
+                &npc.race,
+                npc.npc_flags.contains(NpcFlags::FEMALE),
+            );
+            let is_sneaky = npc.faction.eq_ignore_ascii_case("T_Cyr_VampirumOrder")
+                || ci_starts_with(&npc.script, "T_ScNpc_Cyr_");
+            if !has_vampire_head && !is_sneaky {
+                println!("Npc {} is a vampire but uses head {}", npc.id, npc.head);
+            }
         }
     }
 

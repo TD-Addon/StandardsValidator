@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 
 use super::Context;
-use crate::{context::Mode, handlers::Handler};
+use crate::{context::Mode, handlers::Handler, util::is_correct_vampire_head};
 use tes3::esp::{Bodypart, BodypartFlags, BodypartId, EditorId, TES3Object, TypeInfo};
 
 const VANILLA_FACTIONS: [&str; 27] = [
@@ -70,13 +70,13 @@ impl Handler<'_> for IdValidator {
         match record {
             TES3Object::Bodypart(part) => {
                 if is_vampire_head(part) {
-                    let id = format!(
-                        "b_v_{}_{}_head_01",
-                        part.race,
-                        if is_female(part) { "f" } else { "m" }
-                    );
-                    if !part.id.eq_ignore_ascii_case(&id) {
-                        println!("Bodypart {} should have id {}", part.id, id);
+                    if !is_correct_vampire_head(&part.id, &part.race, is_female(part)) {
+                        println!(
+                            "Bodypart {} should have id b_v_{}_{}_head_01",
+                            part.id,
+                            part.race,
+                            if is_female(part) { "f" } else { "m" }
+                        );
                     }
                 } else {
                     check_id(context, record);

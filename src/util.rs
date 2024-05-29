@@ -111,6 +111,30 @@ pub fn ci_starts_with(s: &str, prefix: &str) -> bool {
     false
 }
 
+pub fn ci_ends_with(s: &str, suffix: &str) -> bool {
+    if s.len() >= suffix.len() {
+        let start = s.len() - suffix.len();
+        return s.as_bytes()[start..].eq_ignore_ascii_case(suffix.as_bytes());
+    }
+    false
+}
+
+pub fn is_correct_vampire_head(head: &str, race: &str, female: bool) -> bool {
+    let prefix = "b_v_";
+    if !ci_starts_with(head, prefix) {
+        return false;
+    }
+    let without_prefix = &head[prefix.len()..];
+    if !ci_starts_with(without_prefix, race) {
+        return false;
+    }
+    let without_race = &without_prefix[race.len()..];
+    if female {
+        return "_f_head_01".eq_ignore_ascii_case(without_race);
+    }
+    "_m_head_01".eq_ignore_ascii_case(without_race)
+}
+
 pub fn update_or_insert<K, V: Default, F>(map: &mut HashMap<K, V>, key: K, f: F)
 where
     K: PartialEq,
