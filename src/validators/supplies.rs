@@ -2,9 +2,8 @@ use std::collections::HashMap;
 
 use super::Context;
 use crate::handlers::Handler;
+use codegen::get_supplies_data;
 use tes3::esp::{Cell, EditorId, Reference};
-
-include!(concat!(env!("OUT_DIR"), "/gen_supplies.rs"));
 
 pub struct SupplyChestValidator {
     chests: HashMap<&'static str, &'static str>,
@@ -52,7 +51,7 @@ impl Handler<'_> for SupplyChestValidator {
 impl SupplyChestValidator {
     pub fn new() -> Self {
         Self {
-            chests: get_supplies_data(),
+            chests: get_supplies_data!(),
         }
     }
 }

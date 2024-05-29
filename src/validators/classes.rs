@@ -2,9 +2,8 @@ use std::collections::HashMap;
 
 use super::Context;
 use crate::{context::Mode, handlers::Handler};
+use codegen::get_class_data;
 use tes3::esp::{Dialogue, DialogueInfo, FilterType, TES3Object};
-
-include!(concat!(env!("OUT_DIR"), "/gen_classes.rs"));
 
 pub struct ClassValidator {
     tr_classes: HashMap<&'static str, &'static str>,
@@ -51,7 +50,7 @@ impl Handler<'_> for ClassValidator {
 
 impl ClassValidator {
     pub fn new() -> Self {
-        let (tr_classes, classes) = get_class_data();
+        let (tr_classes, classes) = get_class_data!();
         Self {
             tr_classes,
             classes,

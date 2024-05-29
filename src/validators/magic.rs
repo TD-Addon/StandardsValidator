@@ -1,4 +1,4 @@
-use std::{collections::HashMap, rc::Rc};
+use std::collections::HashMap;
 
 use super::Context;
 use crate::{
@@ -6,12 +6,11 @@ use crate::{
     handlers::Handler,
     util::{ci_starts_with, Actor},
 };
+use codegen::get_spell_data;
 use tes3::esp::{EditorId, Effect, EffectId2, EnchantType, Npc, SpellType, TES3Object, TypeInfo};
 
-include!(concat!(env!("OUT_DIR"), "/gen_spells.rs"));
-
 pub struct MagicValidator {
-    spells: HashMap<&'static str, (Rc<Rule>, Rc<Vec<&'static str>>)>,
+    spells: HashMap<&'static str, (Rule, Vec<&'static str>)>,
 }
 
 enum Duration {
@@ -279,7 +278,7 @@ impl Rule {
 impl MagicValidator {
     pub fn new() -> Self {
         Self {
-            spells: get_spell_data(),
+            spells: get_spell_data!(),
         }
     }
 }

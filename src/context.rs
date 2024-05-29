@@ -1,4 +1,5 @@
 use crate::util::ci_starts_with;
+use codegen::get_project_data;
 
 #[derive(Clone, PartialEq)]
 pub enum Mode {
@@ -40,8 +41,6 @@ impl Project {
     }
 }
 
-include!(concat!(env!("OUT_DIR"), "/gen_projects.rs"));
-
 pub struct Context {
     pub mode: Mode,
     pub projects: Vec<Project>,
@@ -51,7 +50,7 @@ impl Context {
     pub fn new(mode: Mode) -> Self {
         Context {
             mode,
-            projects: get_project_data(),
+            projects: get_project_data!(),
         }
     }
 }

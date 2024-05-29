@@ -6,10 +6,9 @@ use crate::{
     handlers::Handler,
     util::{ci_starts_with, Actor},
 };
+use codegen::{get_joined_commands, get_khajiit_script};
 use regex::{Regex, RegexBuilder};
 use tes3::esp::{Dialogue, Npc, Script, TES3Object};
-
-include!(concat!(env!("OUT_DIR"), "/gen_mwscript.rs"));
 
 pub struct ScriptValidator {
     scripts: HashMap<String, ScriptInfo>,
@@ -134,8 +133,8 @@ impl ScriptValidator {
         let npc = get_variable("T_Local_NPC", "short")?;
         let khajiit = get_variable("T_Local_Khajiit", "short")?;
         let nolore = get_variable("NoLore", "short")?;
-        let commands = get_variable(get_joined_commands(), "(short|long|float)")?;
-        let khajiit_script = RegexBuilder::new(get_khajiit_script())
+        let commands = get_variable(get_joined_commands!(), "(short|long|float)")?;
+        let khajiit_script = RegexBuilder::new(get_khajiit_script!())
             .case_insensitive(true)
             .build()?;
         let mut projects = Vec::new();

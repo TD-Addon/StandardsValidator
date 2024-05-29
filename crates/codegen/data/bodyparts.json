@@ -1,43 +1,61 @@
 {
 	"rulesets": {
 		"Ashlander F": [
-			{ "class": "Wise Woman" },
-			{ "class": "Wise Woman Service" },
-			{ "class": "Mabrigash" },
-			{ "faction": "Ashlanders" }
+			[{ "class": "Wise Woman" }],
+			[{ "class": "Wise Woman Service" }],
+			[{ "class": "Mabrigash" }],
+			[{ "faction": "Ashlanders" }]
 		],
 		"Ashlander M": [
-			{ "class": "Champion" },
-			{ "faction": "Ashlanders" }
+			[{ "class": "Champion" }],
+			[{ "faction": "Ashlanders" }]
 		],
 		"Dres": [
-			{ "faction": "T_Mw_HouseDres" }
+			[{ "faction": "T_Mw_HouseDres" }]
 		],
 		"Hlaalu": [
-			{ "faction": "Hlaalu" }
+			[{ "faction": "Hlaalu" }]
 		],
 		"Indoril": [
-			{ "faction": "T_Mw_HouseIndoril" }
+			[{ "faction": "T_Mw_HouseIndoril" }]
 		],
 		"Temple": [
-			{ "faction": "Temple" },
-			{ "faction": "T_Mw_HouseIndoril" },
-			{ "faction": "Redoran" },
-			{ "faction": "Hands of Almalexia" },
-			{ "class": "Pilgrim", "faction": { "not": ["Ashlanders", "Imperial Cult"] } },
-			{ "class": "Monk", "faction": { "not": ["Ashlanders", "Imperial Cult"] } }
+			[{ "faction": "Temple" }],
+			[{ "faction": "T_Mw_HouseIndoril" }],
+			[{ "faction": "Redoran" }],
+			[{ "faction": "Hands of Almalexia" }],
+			[
+				{ "class": "Pilgrim"},
+				{ "faction": { "not": ["Ashlanders", "Imperial Cult"] } }
+			],
+			[
+				{ "class": "Monk"},
+				{ "faction": { "not": ["Ashlanders", "Imperial Cult"] } }
+			]
 		]
 	},
 	"head": [
-		{ "model": "B_N_Dark Elf_F_Barenziah", "rules": [
-			{ "id": "barenziah" }
-		] },
-		{ "model": "B_N_Dark Elf_M_Helseth", "rules": [
-			{ "id": "King Hlaalu Helseth" }
-		] },
-		{ "model": "T_B_De_HeadFemTR_09", "rules": [
-			{ "faction": { "not": ["Ashlanders", "Imperial Cult"] }, "class": { "not": ["Mabrigash", "Wise Woman"] } }
-		] },
+		{
+			"model": "B_N_Dark Elf_F_Barenziah",
+			"rules": [
+				[{ "id": "barenziah" }]
+			]
+		},
+		{
+			"model": "B_N_Dark Elf_M_Helseth",
+			"rules": [
+				[{ "id": "King Hlaalu Helseth" }]
+			]
+		},
+		{
+			"model": "T_B_De_HeadFemTR_09",
+			"rules": [
+				[
+					{ "faction": { "not": ["Ashlanders", "Imperial Cult"] } },
+					{ "class": { "not": ["Mabrigash", "Wise Woman"] } }
+				]
+			]
+		},
 		{ "model": "T_B_De_HeadFemTR_14", "ruleset": "Hlaalu" },
 		{ "model": "T_B_De_HeadFemTR_20", "ruleset": "Hlaalu" },
 		{ "model": "T_B_De_HeadFemTR_25", "ruleset": "Hlaalu" },
@@ -51,10 +69,10 @@
 		{ "model": "T_B_De_HeadFemTR_42", "ruleset": "Hlaalu" },
 		{ "model": "T_B_De_HeadFemTR_50", "ruleset": "Temple" },
 		{ "model": "T_B_Arg_UNI_HeadWalkTR", "rules": [
-			{ "id": "TR_m1_Walks-Thru-Shadow" }
+			[{ "id": "TR_m1_Walks-Thru-Shadow" }]
 		] },
 		{ "model": "T_B_Bre_UNI_HeadArnieTR", "rules": [
-			{ "id": "TR_m4_alomon_juspethe" }
+			[{ "id": "TR_m4_alomon_juspethe" }]
 		] },
 		{ "model": "T_B_De_HeadMaleTR_49", "ruleset": "Temple" },
 		{ "model": "T_B_De_HeadMaleTR_51", "ruleset": "Temple" },
@@ -62,87 +80,87 @@
 		{ "model": "T_B_De_HeadMaleTR_55", "ruleset": "Hlaalu" },
 		{ "model": "T_B_De_HeadMaleTR_56", "ruleset": "Hlaalu" },
 		{ "model": "T_B_De_UNI_HeadAimrahTR", "rules": [
-			{ "id": "TR_m3_Ulvo Telvor" }
+			[{ "id": "TR_m3_Ulvo Telvor" }]
 		] },
 		{ "model": "T_B_De_UNI_HeadAlandroSulTR", "rules": [
-			{ "id": "TR_NecMQ_Alandro Sul" }
+			[{ "id": "TR_NecMQ_Alandro Sul" }]
 		] },
 		{ "model": "T_B_De_UNI_HeadArchmatronTR", "rules": [
-			{ "id": "TR_m2_Alvu Sareleth" }
+			[{ "id": "TR_m2_Alvu Sareleth" }]
 		] },
 		{ "model": "T_B_De_UNI_HeadDralTR", "rules": [
-			{ "id": "TR_m1_T_Rilvin_Dral" },
-			{ "id": "TR_m1_T_Rilvin_Dral2" }
+			[{ "id": "TR_m1_T_Rilvin_Dral" }],
+			[{ "id": "TR_m1_T_Rilvin_Dral2" }]
 		] },
 		{ "model": "T_B_De_UNI_HeadFacelessTR", "rules": [
-			{ "id": "TR_m3_TT_FS_body" },
-			{ "id": "TR_m3_TT_FS_faceless_1" },
-			{ "id": "TR_m3_TT_FS_faceless_3" },
-			{ "id": "TR_m3_TT_FS_facest_7" },
-			{ "id": "TR_m3_Vaden_Baro_noface" }
+			[{ "id": "TR_m3_TT_FS_body" }],
+			[{ "id": "TR_m3_TT_FS_faceless_1" }],
+			[{ "id": "TR_m3_TT_FS_faceless_3" }],
+			[{ "id": "TR_m3_TT_FS_facest_7" }],
+			[{ "id": "TR_m3_Vaden_Baro_noface" }]
 		] },
 		{ "model": "T_B_De_UNI_HeadFarunaTR", "rules": [
-			{ "id": "TR_m1_T_Faruna" }
+			[{ "id": "TR_m1_T_Faruna" }]
 		] },
 		{ "model": "T_B_De_UNI_HeadHelnimLordTR", "rules": [
-			{ "id": "TR_m2_Nisa Darythi" }
+			[{ "id": "TR_m2_Nisa Darythi" }]
 		] },
 		{ "model": "T_B_De_UNI_HeadMithrasTR", "rules": [
-			{ "id": "TR_m1_T_Mithras" },
-			{ "id": "TR_m1_q_Mithras_Double" }
+			[{ "id": "TR_m1_T_Mithras" }],
+			[{ "id": "TR_m1_q_Mithras_Double" }]
 		] },
 		{ "model": "T_B_De_UNI_HeadMothrivaGuyTR", "rules": [
-			{ "id": "TR_m2_DralothasOmothran" }
+			[{ "id": "TR_m2_DralothasOmothran" }]
 		] },
 		{ "model": "T_B_De_UNI_HeadOEDresDukeTR", "rules": [
-			{ "id": "TR_m3_Dels Sur-Enaren" }
+			[{ "id": "TR_m3_Dels Sur-Enaren" }]
 		] },
 		{ "model": "T_B_De_UNI_HeadOEGovernorSonTR", "rules": [
-			{ "id": "TR_m3_Potemus Marolus" }
+			[{ "id": "TR_m3_Potemus Marolus" }]
 		] },
 		{ "model": "T_B_De_UNI_HeadOEGovernorWifeTR", "rules": [
-			{ "id": "TR_m3_Llethe Marolus" }
+			[{ "id": "TR_m3_Llethe Marolus" }]
 		] },
 		{ "model": "T_B_De_UNI_HeadOrlukhTR", "rules": [
-			{ "id": "UNUSED TR_m4_varos" }
+			[{ "id": "UNUSED TR_m4_varos" }]
 		] },
 		{ "model": "T_B_De_UNI_HeadRathraTR", "rules": [
-			{ "id": "TR_m1_T_Rathra" }
+			[{ "id": "TR_m1_T_Rathra" }]
 		] },
 		{ "model": "T_B_De_UNI_HeadTelsarenTR", "rules": [
-			{ "id": "TR_m2_Llevari Telsaran" }
+			[{ "id": "TR_m2_Llevari Telsaran" }]
 		] },
 		{ "model": "T_B_De_UNI_HeadVaerinTR", "rules": [
-			{ "id": "TR_m2_Master_Vaerin" }
+			[{ "id": "TR_m2_Master_Vaerin" }]
 		] },
 		{ "model": "T_B_Imp_UNI_HeadDFlaviusTR", "rules": [
-			{ "id": "TR_m2_Darran Flavius" }
+			[{ "id": "TR_m2_Darran Flavius" }]
 		] },
 		{ "model": "T_B_Imp_UNI_HeadDuchessTR", "rules": [
-			{ "id": "TR_m1_Duchess_Jandacia" }
+			[{ "id": "TR_m1_Duchess_Jandacia" }]
 		] },
 		{ "model": "T_B_Imp_UNI_HeadTulnusTR", "rules": [
-			{ "id": "TR_m1_Senillos_Tulnus" }
+			[{ "id": "TR_m1_Senillos_Tulnus" }]
 		] },
 		{ "model": "T_B_Imp_UNI_HeadTunifusTR", "rules": [
-			{ "id": "TR_m1_Vaselius_Tunifus" }
+			[{ "id": "TR_m1_Vaselius_Tunifus" }]
 		] },
 		{ "model": "T_B_Orc_HeadVehkUni", "rules": [
-			{ "id": "TR_m4_TT_OrcVivec" }
+			[{ "id": "TR_m4_TT_OrcVivec" }]
 		] },
 		{ "model": "T_B_Rga_UNI_HeadBarmanTR", "rules": [
-			{ "id": "TR_TBD" }
+			[{ "id": "TR_TBD" }]
 		] },
 		{ "model": "T_B_Rga_UNI_HeadDarnellTR", "rules": [
-			{ "id": "TR_m1_Darnell" }
+			[{ "id": "TR_m1_Darnell" }]
 		] }
 	],
 	"hair": [
 		{ "model": "B_N_Dark Elf_F_BarenziahH", "rules": [
-			{ "id": "barenziah" }
+			[{ "id": "barenziah" }]
 		] },
 		{ "model": "B_N_Dark Elf_M_HelsethHair", "rules": [
-			{ "id": "King Hlaalu Helseth" }
+			[{ "id": "King Hlaalu Helseth" }]
 		] },
 		{ "model": "b_n_dark elf_f_hair_06", "ruleset": "Ashlander F" },
 		{ "model": "b_n_dark elf_f_hair_08", "ruleset": "Ashlander F" },
@@ -152,10 +170,10 @@
 		{ "model": "b_n_dark elf_m_hair_09", "ruleset": "Ashlander M" },
 		{ "model": "b_n_dark elf_m_hair_20", "ruleset": "Ashlander M" },
 		{ "model": "T_B_De_HairFemTR_02", "rules": [
-			{ "class": "Noble" }
+			[{ "class": "Noble" }]
 		] },
 		{ "model": "T_B_De_HairFemTR_03", "rules": [
-			{ "class": "Noble" }
+			[{ "class": "Noble" }]
 		] },
 		{ "model": "T_B_De_HairFemTR_12", "ruleset": "Temple" },
 		{ "model": "T_B_De_HairFemTR_13", "ruleset": "Temple" },
@@ -164,68 +182,70 @@
 		{ "model": "T_B_De_HairFemTR_16", "ruleset": "Temple" },
 		{ "model": "T_B_De_HairFemTR_17", "ruleset": "Temple" },
 		{ "model": "T_B_De_HairFemTR_18", "rules": [
-			{ "class": "Noble" }
+			[{ "class": "Noble" }]
 		] },
 		{ "model": "T_B_De_HairFemTR_19", "rules": [
-			{ "class": "Noble" }
+			[{ "class": "Noble" }]
 		] },
 		{ "model": "T_B_De_HairFemTR_20", "rules": [
-			{ "class": "Noble" }
+			[{ "class": "Noble" }]
 		] },
 		{ "model": "T_B_De_HairFemTR_21", "rules": [
-			{ "class": "Noble" }
+			[{ "class": "Noble" }]
 		] },
 		{ "model": "T_B_De_HairFemTR_22", "rules": [
-			{ "class": "Noble" }
+			[{ "class": "Noble" }]
 		] },
 		{ "model": "T_B_De_HairFemTR_23", "ruleset": "Ashlander F" },
 		{ "model": "T_B_De_HairFemTR_24", "rules": [
-			{ "class": "Noble" }
+			[{ "class": "Noble" }]
 		] },
 		{ "model": "T_B_De_HairFemTR_25", "ruleset": "Indoril" },
 		{ "model": "T_B_De_HairFemTR_26", "rules": [
-			{ "class": "Noble" }
+			[{ "class": "Noble" }]
 		] },
 		{ "model": "T_B_De_HairFemTR_29", "ruleset": "Temple" },
 		{ "model": "T_B_De_HairImpMaleTR_01", "rules": [
-			{ "faction": { "not": [
-				"Ashlanders", "Temple", "T_Mw_HouseDres", "T_Mw_HouseIndoril",
-				"Redoran", "Telvanni", "Camonna Tong", "TR_Fact_SyvvitTong",
-				"Morag Tong", "Hands of Almalexia"
-			] } }
+			[{ "faction": {
+				"not": [
+					"Ashlanders", "Temple", "T_Mw_HouseDres", "T_Mw_HouseIndoril",
+					"Redoran", "Telvanni", "Camonna Tong", "TR_Fact_SyvvitTong",
+					"Morag Tong", "Hands of Almalexia"
+				]
+			}}]
 		] },
 		{ "model": "T_B_De_HairMaleTR_08", "ruleset": "Dres" },
 		{ "model": "T_B_De_HairMaleTR_09", "ruleset": "Indoril" },
 		{ "model": "T_B_De_HairMaleTR_31", "rules": [
-			{ "class": "Noble" }
+			[{ "class": "Noble" }]
 		] },
 		{ "model": "T_B_De_HairMaleTR_32", "rules": [
-			{ "class": "Noble" }
+			[{ "class": "Noble" }]
 		] },
 		{ "model": "T_B_De_HairMaleTR_38", "ruleset": "Ashlander M" },
 		{ "model": "T_B_De_HairMaleTR_39", "ruleset": "Ashlander M" },
 		{ "model": "T_B_De_HairMaleTR_40", "ruleset": "Ashlander M" },
 		{ "model": "T_B_De_HairMaleTR_41", "ruleset": "Ashlander M" },
 		{ "model": "T_B_Bre_UNI_HairArnieTR", "rules": [
-			{ "id": "TR_m4_alomon_juspethe" }
+			[{ "id": "TR_m4_alomon_juspethe" }]
 		] },
 		{ "model": "T_B_De_UNI_HairAlandroSulTR", "rules": [
-			{ "id": "TR_NecMQ_Alandro Sul" }
+			[{ "id": "TR_NecMQ_Alandro Sul" }]
 		] },
 		{ "model": "T_B_De_UNI_HairArchmatronTR", "rules": [
-			{ "id": "TR_m2_Alvu Sareleth" }
+			[{ "id": "TR_m2_Alvu Sareleth" }]
 		] },
 		{ "model": "T_B_De_UNI_HairOEGovernorSonTR", "rules": [
-			{ "id": "TR_m3_Potemus Marolus" }
+			[{ "id": "TR_m3_Potemus Marolus" }]
 		] },
 		{ "model": "T_B_De_UNI_HairOrlukhTR", "rules": [
-			{ "id": "TR_m4_varos" }
+			[{ "id": "TR_m4_varos" }]
 		] },
 		{ "model": "T_B_Imp_UNI_HairOEGovernorTR", "rules": [
-			{ "id": "TR_m3_Aramius Marolus" }
+			[{ "id": "TR_m3_Aramius Marolus" }]
 		] },
 		{ "model": "T_B_Imp_UNI_HairCountessAnvilPC", "rules": [
-			{ "id": "PC_i2-Anv_Millona" }
+			[{ "id": "PC_i2-Anv_Millona" }]
 		] }
 	]
 }
