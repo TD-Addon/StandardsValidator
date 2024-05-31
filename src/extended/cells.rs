@@ -3,7 +3,10 @@ use std::collections::HashSet;
 use clap::ArgMatches;
 use tes3::esp::{EditorId, TES3Object};
 
-use crate::util::{cannot_sleep, Actor};
+use crate::{
+    context::Context,
+    util::{cannot_sleep, Actor},
+};
 
 use super::ExtendedHandler;
 
@@ -15,7 +18,7 @@ pub struct CellValidator {
 }
 
 impl ExtendedHandler for CellValidator {
-    fn on_record(&mut self, record: &TES3Object, _: &str, last: bool) {
+    fn on_record(&mut self, _: &Context, record: &TES3Object, _: &str, last: bool) {
         match record {
             TES3Object::PathGrid(pathgrid) => {
                 if !pathgrid.cell.is_empty() {

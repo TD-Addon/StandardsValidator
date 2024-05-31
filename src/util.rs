@@ -165,3 +165,14 @@ pub fn is_marker(book: &Book) -> bool {
         || mesh.eq_ignore_ascii_case("tr\\tr_editormarker_npc.nif")
         || mesh.eq_ignore_ascii_case("editormarker.nif")
 }
+
+pub fn iter_script(script_text: &str) -> impl Iterator<Item = (&str, &str)> {
+    script_text
+        .trim()
+        .split('\n')
+        .map(|line| match line.split_once(';') {
+            Some((code, comment)) => (code.trim(), comment.trim()),
+            None => (line.trim(), ""),
+        })
+        .filter(|(code, comment)| !code.is_empty() || !comment.is_empty())
+}

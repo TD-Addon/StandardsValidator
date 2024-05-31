@@ -121,7 +121,7 @@ impl Handler<'_> for CellValidator {
 
     fn on_cellref(
         &mut self,
-        _: &Context,
+        context: &Context,
         record: &Cell,
         reference: &Reference,
         id: &str,
@@ -183,6 +183,12 @@ impl Handler<'_> for CellValidator {
                     replacement
                 );
             }
+        } else if context.deprecated.contains(id) {
+            println!(
+                "Cell {} contains deprecated reference {}",
+                record.editor_id(),
+                reference.id,
+            );
         }
         if let Some(height) = get_water_height(record) {
             let [x, y, _] = reference.rotation;

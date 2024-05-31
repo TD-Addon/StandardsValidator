@@ -26,6 +26,7 @@ pub mod uniques;
 use crate::{
     context::Context,
     handlers::{Handler, Handlers},
+    util::iter_script,
 };
 use clap::ArgMatches;
 use std::error::Error;
@@ -148,20 +149,14 @@ impl<'a> Validator<'a> {
     }
 
     fn on_script(&mut self, record: &TES3Object, script_text: &str, topic: &Dialogue) {
-        for line in script_text.trim().split('\n') {
-            let (code, comment) = match line.split_once(';') {
-                Some((code, comment)) => (code.trim(), comment.trim()),
-                None => (line.trim(), ""),
-            };
-            if !code.is_empty() || !comment.is_empty() {
-                self.handlers.on_scriptline(
-                    &self.context,
-                    record,
-                    &code.to_ascii_lowercase(),
-                    comment,
-                    topic,
-                );
-            }
+        for (code, comment) in iter_script(script_text) {
+            self.handlers.on_scriptline(
+                &self.context,
+                record,
+                &code.to_ascii_lowercase(),
+                comment,
+                topic,
+            );
         }
     }
 }

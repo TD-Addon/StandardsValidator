@@ -73,7 +73,7 @@ impl Handlers<'_> {
             Box::new(crate::validators::travel::TravelValidator::new()),
             Box::new(crate::validators::unicode::UnicodeValidator::new()?),
         ];
-        if context.mode == Mode::PT || context.mode == Mode::TR {
+        if context.mode.uses_td() {
             handlers.push(Box::new(crate::validators::classes::ClassValidator::new()));
         }
         if context.mode != Mode::Vanilla {

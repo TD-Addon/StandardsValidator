@@ -4,6 +4,8 @@ use levenshtein::levenshtein;
 use rayon::prelude::*;
 use tes3::esp::{Dialogue, DialogueInfo, QuestState, TES3Object};
 
+use crate::context::Context;
+
 use super::ExtendedHandler;
 
 const DISTANCE_DIV: f32 = 7.;
@@ -17,7 +19,7 @@ pub struct QuestNameValidator {
 }
 
 impl ExtendedHandler for NameValidator {
-    fn on_record(&mut self, record: &TES3Object, _: &str, _: bool) {
+    fn on_record(&mut self, _: &Context, record: &TES3Object, _: &str, _: bool) {
         if let TES3Object::Npc(npc) = record {
             let min_distance = (npc.name.len() as f32 / DISTANCE_DIV).round() as usize;
             if min_distance < 1 {
@@ -47,7 +49,14 @@ impl ExtendedHandler for NameValidator {
 }
 
 impl ExtendedHandler for QuestNameValidator {
-    fn on_info(&mut self, record: &DialogueInfo, topic: &Dialogue, file: &str, last: bool) {
+    fn on_info(
+        &mut self,
+        _: &Context,
+        record: &DialogueInfo,
+        topic: &Dialogue,
+        file: &str,
+        last: bool,
+    ) {
         if record.quest_state == Some(QuestState::Name) {
             if record.text.is_empty() {
                 return;

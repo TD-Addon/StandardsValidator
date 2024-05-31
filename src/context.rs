@@ -1,3 +1,5 @@
+use std::collections::HashSet;
+
 use crate::util::ci_starts_with;
 use codegen::get_project_data;
 
@@ -25,6 +27,12 @@ where
     }
 }
 
+impl Mode {
+    pub fn uses_td(&self) -> bool {
+        *self == Mode::PT || *self == Mode::TR
+    }
+}
+
 pub struct Project {
     pub name: &'static str,
     pub prefix: &'static str,
@@ -44,6 +52,7 @@ impl Project {
 pub struct Context {
     pub mode: Mode,
     pub projects: Vec<Project>,
+    pub deprecated: HashSet<String>,
 }
 
 impl Context {
@@ -51,6 +60,7 @@ impl Context {
         Context {
             mode,
             projects: get_project_data!(),
+            deprecated: HashSet::new(),
         }
     }
 }

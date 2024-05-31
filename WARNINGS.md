@@ -63,6 +63,9 @@ This exterior cell contains a reference that, by its position, should be part of
 ### Contains broken reference
 There is something wrong with this object and it should not be used.
 
+### Contains deprecated reference
+This reference is deprecated and should not be used.
+
 ### Contains above water black square
 Black squares are used to hide things on the minimap (as black blends in with the fog of war's color as well as the there-is-nothing-here-background's color.)
 This doesn't work very well in cells with water as those get a water texture for a background instead of the usual black.
@@ -316,3 +319,7 @@ Given that players can Command or Summon other actors into any cell, this is onl
 
 ## Scale check
 Items the player can pick up should not be resized in the CS as picking them up resets their size.
+
+## Deprecated objects
+The extended validator scans cells, inventories, scripts, dialogue filters, and leveled lists for deprecated objects, factions, and classes.
+Taking into account objects marked as deprecated in the CSSE toml file, as well as objects set up to use the deprecated cube, and objects with "deprecated" in their name.
