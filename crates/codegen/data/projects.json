@@ -1,6 +1,6 @@
 [
 	{ "name": "Tamriel Data", "prefix": "T_" },
-	{ "name": "High Rock 427", "prefix": "HR_" },
+	{ "name": "High Rock 427", "prefix": "HR_", "local": "HR_Map" },
 	{ "name": "Province Cyrodiil", "prefix": "PC_", "local": "PC_County" },
 	{ "name": "Skyrim: Home of the Nords", "prefix": "Sky_", "local": "Sky_Hold" },
 	{ "name": "Tamriel Rebuilt", "prefix": "TR_", "local": "TR_Map" }
