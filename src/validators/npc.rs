@@ -1,4 +1,7 @@
-use std::{collections::HashMap, rc::Rc};
+use std::{
+    collections::{HashMap, HashSet},
+    rc::Rc,
+};
 
 use super::Context;
 use crate::{
@@ -287,5 +290,15 @@ impl NpcValidator {
             }
             println!("Npc {} is not using unique {} {}", npc.id, name, expid);
         }
+    }
+
+    pub fn get_unique_heads(&self) -> HashSet<&'static str> {
+        let mut set = HashSet::new();
+        for (id, unique) in &self.uniques {
+            if unique.head.is_some() {
+                set.insert(*id);
+            }
+        }
+        set
     }
 }

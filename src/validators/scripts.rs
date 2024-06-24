@@ -1,4 +1,4 @@
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 
 use super::Context;
 use crate::{
@@ -11,6 +11,7 @@ use regex::{Regex, RegexBuilder};
 use tes3::esp::{Dialogue, Npc, NpcFlags, Script, TES3Object};
 
 pub struct ScriptValidator {
+    unique_heads: HashSet<&'static str>,
     scripts: HashMap<String, ScriptInfo>,
     npc: Regex,
     khajiit: Regex,
@@ -132,7 +133,10 @@ fn get_variable(name: &str, types: &str) -> Result<Regex, regex::Error> {
 }
 
 impl ScriptValidator {
-    pub fn new(context: &Context) -> Result<Self, regex::Error> {
+    pub fn new(
+        context: &Context,
+        unique_heads: HashSet<&'static str>,
+    ) -> Result<Self, regex::Error> {
         let npc = get_variable("T_Local_NPC", "short")?;
         let khajiit = get_variable("T_Local_Khajiit", "short")?;
         let nolore = get_variable("NoLore", "short")?;
@@ -157,6 +161,7 @@ impl ScriptValidator {
                 .build()?;
         let position = Regex::new(r"^([,\s]*|.*?->[,\s]*)position[,\s]+")?;
         Ok(Self {
+            unique_heads,
             scripts: HashMap::new(),
             npc,
             khajiit,
@@ -229,7 +234,12 @@ impl ScriptValidator {
             );
             let is_sneaky = npc.faction.eq_ignore_ascii_case("T_Cyr_VampirumOrder")
                 || ci_starts_with(&npc.script, "T_ScNpc_Cyr_");
-            if !has_vampire_head && !is_sneaky {
+            if !has_vampire_head
+                && !is_sneaky
+                && !self
+                    .unique_heads
+                    .contains(npc.id.to_ascii_lowercase().as_str())
+            {
                 println!("Npc {} is a vampire but uses head {}", npc.id, npc.head);
             }
         }

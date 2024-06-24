@@ -49,6 +49,8 @@ pub struct Handlers<'a> {
 
 impl Handlers<'_> {
     pub fn new<'a>(context: &Context, args: &ArgMatches) -> Result<Handlers<'a>, Box<dyn Error>> {
+        let npc_validator = Box::new(crate::validators::npc::NpcValidator::new()?);
+        let unique_heads = npc_validator.get_unique_heads();
         let mut handlers: Vec<Box<dyn Handler<'a> + 'a>> = vec![
             Box::new(crate::validators::books::BookValidator {}),
             Box::new(crate::validators::cells::CellValidator::new()),
@@ -62,10 +64,13 @@ impl Handlers<'_> {
             Box::new(crate::validators::dialogue::DialogueValidator::new()?),
             Box::new(crate::validators::magic::MagicValidator::new()),
             Box::new(crate::validators::missing::FieldValidator {}),
-            Box::new(crate::validators::npc::NpcValidator::new()?),
+            npc_validator,
             Box::new(crate::validators::orphans::OrphanValidator::new()?),
             Box::new(crate::validators::persistent::PersistentValidator::new()),
-            Box::new(crate::validators::scripts::ScriptValidator::new(context)?),
+            Box::new(crate::validators::scripts::ScriptValidator::new(
+                context,
+                unique_heads,
+            )?),
             Box::new(crate::validators::services::ServiceValidator::new()),
             Box::new(crate::validators::soundgens::SoundGenValidator::new()),
             Box::new(crate::validators::supplies::SupplyChestValidator::new()),
