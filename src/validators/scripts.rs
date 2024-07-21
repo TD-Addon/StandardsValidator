@@ -4,7 +4,7 @@ use super::Context;
 use crate::{
     context::Mode,
     handlers::Handler,
-    util::{ci_ends_with, ci_starts_with, is_correct_vampire_head, Actor},
+    util::{ci_ends_with, ci_starts_with, is_correct_vampire_head, is_khajiit, Actor},
 };
 use codegen::{get_joined_commands, get_khajiit_script};
 use regex::{Regex, RegexBuilder};
@@ -193,8 +193,7 @@ impl ScriptValidator {
                     npc.id, npc.script
                 );
             }
-            let race = &npc.race;
-            if race.eq_ignore_ascii_case("khajiit") || ci_starts_with(race, "t_els_") {
+            if is_khajiit(&npc.race) {
                 script.used_by_khajiit = true;
                 if !script.khajiit {
                     println!(

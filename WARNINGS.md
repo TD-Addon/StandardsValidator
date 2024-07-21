@@ -248,6 +248,10 @@ If this line is meant to override a vanilla line that does not have a NoLore fil
 ### Checks for Dead = X
 This line only fires if the death count is exactly X. Which means it can break if players use `resurrect` or the NPC gets cloned.
 
+### Has a Khajiit related Same Race filter
+Because there are multiple Khajiit races, Same Race cannot be relied on to detect if the player is or isn't one.
+Use `Global PCRace (= or !=) 6` instead.
+
 ### Has no text
 So why does it exist?
 

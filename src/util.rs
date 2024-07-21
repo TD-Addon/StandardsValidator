@@ -176,3 +176,7 @@ pub fn iter_script(script_text: &str) -> impl Iterator<Item = (&str, &str)> {
         })
         .filter(|(code, comment)| !code.is_empty() || !comment.is_empty())
 }
+
+pub fn is_khajiit(race: &str) -> bool {
+    race.eq_ignore_ascii_case("khajiit") || ci_starts_with(race, "t_els_")
+}

@@ -1,9 +1,11 @@
+use std::collections::HashSet;
+
 use super::Context;
-use crate::{context::Mode, handlers::Handler};
+use crate::{context::Mode, handlers::Handler, util::is_khajiit};
 use regex::{Error, Regex, RegexBuilder};
 use tes3::esp::{
     Dialogue, DialogueInfo, DialogueType, FilterComparison, FilterFunction, FilterType,
-    FilterValue, Sex,
+    FilterValue, Sex, TES3Object,
 };
 
 const HIGH_RANK: i8 = 7;
@@ -16,6 +18,7 @@ pub struct DialogueValidator {
     punctuation_double: Regex,
     article_pc: Regex,
     overrides: Regex,
+    khajiit: HashSet<String>,
 }
 
 fn get_int(value: FilterValue) -> i32 {
@@ -37,6 +40,14 @@ fn to_op(comp: FilterComparison) -> &'static str {
 }
 
 impl Handler<'_> for DialogueValidator {
+    fn on_record(&mut self, _: &Context, record: &TES3Object) {
+        if let TES3Object::Npc(npc) = record {
+            if is_khajiit(&npc.race) {
+                self.khajiit.insert(npc.id.to_ascii_lowercase());
+            }
+        }
+    }
+
     fn on_info(&mut self, context: &Context, record: &DialogueInfo, topic: &Dialogue) {
         if record.speaker_id.eq_ignore_ascii_case("dialog placeholder") {
             return;
@@ -134,6 +145,7 @@ impl Handler<'_> for DialogueValidator {
                     );
                 }
             }
+            let mut has_samerace_filter = false;
             for filter in &record.filters {
                 if filter.filter_type == FilterType::Local
                     || filter.filter_type == FilterType::NotLocal
@@ -153,6 +165,10 @@ impl Handler<'_> for DialogueValidator {
                         "Info {} in topic {} has an unnecessary Not ID filter",
                         record.id, topic.id
                     );
+                } else if filter.filter_type == FilterType::Function
+                    && filter.function == FilterFunction::SameRace
+                {
+                    has_samerace_filter = true;
                 } else if !is_player {
                     if filter.filter_type == FilterType::NotFaction {
                         println!(
@@ -172,6 +188,12 @@ impl Handler<'_> for DialogueValidator {
                     }
                 }
             }
+            if has_samerace_filter && self.khajiit.contains(&speaker.to_ascii_lowercase()) {
+                println!(
+                    "Info {} in topic {} has a Khajiit related Same Race filter",
+                    record.id, topic.id
+                );
+            }
         } else if record.data.dialogue_type == DialogueType::Voice {
             if context.mode == Mode::TD {
                 let race = &record.speaker_race;
@@ -180,17 +202,31 @@ impl Handler<'_> for DialogueValidator {
                 }
             }
             if context.mode != Mode::Vanilla {
-                let project = record.filters.iter().any(|filter| {
-                    if filter.filter_type == FilterType::Local && !filter.id.is_empty() {
-                        return filter.id.eq_ignore_ascii_case("t_local_npc")
-                            || filter.id.eq_ignore_ascii_case("t_local_khajiit")
+                let mut khajiit = is_khajiit(&record.speaker_race);
+                let mut has_samerace_filter = false;
+                let mut project = false;
+                for filter in &record.filters {
+                    if filter.filter_type == FilterType::Function
+                        && filter.function == FilterFunction::SameRace
+                    {
+                        has_samerace_filter = true;
+                    } else if filter.filter_type == FilterType::Local && !filter.id.is_empty() {
+                        let khajiit_local = filter.id.eq_ignore_ascii_case("t_local_khajiit");
+                        khajiit |= khajiit_local;
+                        project |= khajiit_local
+                            || filter.id.eq_ignore_ascii_case("t_local_npc")
                             || context
                                 .projects
                                 .iter()
                                 .any(|p| p.has_local(&filter.id) || p.matches(&filter.id));
                     }
-                    false
-                });
+                }
+                if khajiit && has_samerace_filter {
+                    println!(
+                        "Info {} in topic {} has a Khajiit related Same Race filter",
+                        record.id, topic.id
+                    );
+                }
                 if !project {
                     println!(
                         "Info {} in topic {} does not have a known project specific local filter",
@@ -207,8 +243,12 @@ impl Handler<'_> for DialogueValidator {
             let mut nolore = false;
             let mut vanilla_nolore = false;
             let mut choice = false;
+            let mut khajiit = is_khajiit(&record.speaker_race);
+            let mut has_samerace_filter = false;
             for filter in &record.filters {
                 if filter.filter_type == FilterType::Local {
+                    let khajiit_local = filter.id.eq_ignore_ascii_case("t_local_khajiit");
+                    khajiit |= khajiit_local;
                     if filter.id.eq_ignore_ascii_case("t_local_nolore")
                         || filter.id.eq_ignore_ascii_case("nolore")
                     {
@@ -218,7 +258,7 @@ impl Handler<'_> for DialogueValidator {
                         );
                     } else if !project || !nolore {
                         if filter.id.eq_ignore_ascii_case("t_local_npc")
-                            || filter.id.eq_ignore_ascii_case("t_local_khajiit")
+                            || khajiit_local
                             || context.projects.iter().any(|p| p.has_local(&filter.id))
                         {
                             project = true;
@@ -232,7 +272,7 @@ impl Handler<'_> for DialogueValidator {
                     let value = get_int(filter.value);
                     if filter.id.eq_ignore_ascii_case("t_local_npc")
                         && (filter.comparison != FilterComparison::Equal || value != 0)
-                        || filter.id.eq_ignore_ascii_case("t_local_khajiit")
+                        || khajiit_local
                             && (filter.comparison != FilterComparison::Equal || value != 1)
                     {
                         println!(
@@ -276,11 +316,16 @@ impl Handler<'_> for DialogueValidator {
                             value
                         );
                     }
-                } else if filter.filter_type == FilterType::Function
-                    && filter.function == FilterFunction::Choice
-                {
-                    choice = true;
+                } else if filter.filter_type == FilterType::Function {
+                    choice |= filter.function == FilterFunction::Choice;
+                    has_samerace_filter = filter.function == FilterFunction::SameRace;
                 }
+            }
+            if khajiit && has_samerace_filter {
+                println!(
+                    "Info {} in topic {} has a Khajiit related Same Race filter",
+                    record.id, topic.id
+                );
             }
             if !project {
                 project = !record.speaker_faction.is_empty()
@@ -352,6 +397,7 @@ impl DialogueValidator {
             punctuation_double,
             article_pc,
             overrides,
+            khajiit: HashSet::new(),
         })
     }
 
