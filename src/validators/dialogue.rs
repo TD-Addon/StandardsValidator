@@ -412,7 +412,8 @@ impl DialogueValidator {
     fn needs_nolore(&self, record: &DialogueInfo, topic: &Dialogue, context: &Context) -> bool {
         if context.mode == Mode::TD
             && (record.data.dialogue_type == DialogueType::Greeting
-                || !record.speaker_faction.is_empty())
+                || record.data.dialogue_type == DialogueType::Voice
+                || !record.speaker_faction.is_empty() && record.data.speaker_rank > 0)
         {
             return false;
         }
