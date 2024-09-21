@@ -48,6 +48,56 @@
 			]
 		},
 		{
+			"model": "B_N_Breton_M_Head_08",
+			"rules": [
+				[{ "id": "ken" }],
+				[{ "id": "chargen class" }]
+			]
+		},
+		{
+			"model": "B_N_Nord_F_head_09",
+			"rules": []
+		},
+		{
+			"model": "B_N_Nord_F_head_10",
+			"rules": []
+		},
+		{
+			"model": "B_N_Nord_F_head_11",
+			"rules": []
+		},
+		{
+			"model": "B_N_Nord_F_head_12",
+			"rules": []
+		},
+		{
+			"model": "B_N_Nord_F_head_13",
+			"rules": []
+		},
+		{
+			"model": "B_N_Nord_M_head_09",
+			"rules": []
+		},
+		{
+			"model": "B_N_Nord_M_head_10",
+			"rules": []
+		},
+		{
+			"model": "B_N_Nord_M_head_11",
+			"rules": []
+		},
+		{
+			"model": "B_N_Nord_M_head_12",
+			"rules": []
+		},
+		{
+			"model": "B_N_Nord_M_head_13",
+			"rules": [
+				[{ "id": "tharsten heart-fang" }],
+				[{ "id": "tharsten heart-fang2" }]
+			]
+		},
+		{
 			"model": "T_B_De_HeadFemTR_09",
 			"rules": [
 				[
