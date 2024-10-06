@@ -321,6 +321,9 @@ It is legal to sleep in this cell, yet it does not contain any enemies. This sug
 This interior cell does not have a path grid.
 Given that players can Command or Summon other actors into any cell, this is only correct if the entire cell is underwater or especially small.
 
+## Cell had its region changed to
+This may have been an unintentional edit.
+
 ## Scale check
 Items the player can pick up should not be resized in the CS as picking them up resets their size.
 

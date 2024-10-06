@@ -1,4 +1,4 @@
-use std::collections::HashSet;
+use std::collections::{HashMap, HashSet};
 
 use clap::ArgMatches;
 use tes3::esp::{EditorId, TES3Object};
@@ -15,6 +15,26 @@ pub struct CellValidator {
     pathgrids: HashSet<String>,
     cells: Vec<(String, String)>,
     min_inhabitants: usize,
+    regions: HashMap<(i32, i32), String>,
+    changed: HashSet<(i32, i32)>,
+}
+
+fn is_region_change(x: i32, y: i32, changed: &HashSet<(i32, i32)>) -> bool {
+    let mut surrounding = 0;
+    for dx in -1..=1 {
+        for dy in -1..=1 {
+            if dx == 0 && dy == 0 {
+                continue;
+            }
+            if changed.contains(&(x + dx, y + dy)) {
+                surrounding += 1;
+                if surrounding > 1 || changed.contains(&(x + dx * 2, y + dy * 2)) {
+                    return false;
+                }
+            }
+        }
+    }
+    true
 }
 
 impl ExtendedHandler for CellValidator {
@@ -48,6 +68,29 @@ impl ExtendedHandler for CellValidator {
                         }
                     }
                 }
+                if cell.is_exterior() {
+                    if last {
+                        let current = self.regions.get(&cell.data.grid);
+                        if let Some(region) = current {
+                            if !cell
+                                .region
+                                .as_ref()
+                                .is_some_and(|r| r.eq_ignore_ascii_case(region))
+                            {
+                                self.changed.insert(cell.data.grid);
+                            } else {
+                                return;
+                            }
+                        } else {
+                            return;
+                        }
+                    }
+                    if let Some(region) = &cell.region {
+                        self.regions.insert(cell.data.grid, region.clone());
+                    } else {
+                        self.regions.remove(&cell.data.grid);
+                    }
+                }
             }
             TES3Object::LeveledCreature(_) => {
                 self.inhabitants
@@ -75,6 +118,15 @@ impl ExtendedHandler for CellValidator {
                 println!("Cell {} is missing a path grid", name);
             }
         }
+        for grid in &self.changed {
+            if is_region_change(grid.0, grid.1, &self.changed) {
+                let region = self.regions.get(grid).map_or("None", String::as_ref);
+                println!(
+                    "Cell ({}, {}) had its region changed to {}",
+                    grid.0, grid.1, region
+                );
+            }
+        }
     }
 }
 
@@ -86,6 +138,8 @@ impl CellValidator {
             pathgrids: HashSet::new(),
             cells: Vec::new(),
             min_inhabitants,
+            regions: HashMap::new(),
+            changed: HashSet::new(),
         }
     }
 }
