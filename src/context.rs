@@ -17,11 +17,11 @@ where
     T: AsRef<str>,
 {
     fn from(value: T) -> Self {
-        match value.as_ref() {
+        match value.as_ref().to_ascii_uppercase().as_str() {
             "PT" => Mode::PT,
             "TD" => Mode::TD,
             "TR" => Mode::TR,
-            "Vanilla" => Mode::Vanilla,
+            "VANILLA" => Mode::Vanilla,
             _ => Mode::None,
         }
     }

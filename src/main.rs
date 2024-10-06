@@ -62,7 +62,8 @@ fn main() -> Result<(), Box<dyn Error>> {
                 ),
             Arg::new("mode")
                 .required(true)
-                .value_parser(["PT", "TD", "TR", "Vanilla"]),
+                .value_parser(["PT", "TD", "TR", "Vanilla"])
+                .ignore_case(true),
             Arg::new("path")
                 .num_args(1..)
                 .required(true)
