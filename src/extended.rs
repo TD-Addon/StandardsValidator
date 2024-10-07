@@ -2,7 +2,7 @@ use clap::ArgMatches;
 use deprecated::DeprecationValidator;
 use tes3::esp::{Cell, Dialogue, DialogueInfo, Reference, TES3Object};
 
-use crate::context::Context;
+use crate::{context::Context, util::is_deleted};
 
 use self::{
     cells::CellValidator,
@@ -68,6 +68,9 @@ impl ExtendedValidator {
         let dummy = Dialogue::default();
         let mut current_topic = &dummy;
         for record in records {
+            if is_deleted(record) {
+                continue;
+            }
             match record {
                 TES3Object::Cell(cell) => {
                     self.on_record(context, record, file, last);
@@ -106,6 +109,9 @@ impl ExtendedValidator {
     }
 
     fn on_cellref(&mut self, context: &Context, record: &Cell, reference: &Reference) {
+        if reference.deleted.unwrap_or(false) {
+            return;
+        }
         let id = reference.id.to_ascii_lowercase();
         for handler in &mut self.handlers {
             handler.on_cellref(context, record, reference, &id);

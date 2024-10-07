@@ -97,6 +97,49 @@ pub fn is_persistent(record: &TES3Object) -> bool {
     }
 }
 
+pub fn is_deleted(record: &TES3Object) -> bool {
+    match record {
+        TES3Object::Activator(r) => r.flags.contains(ObjectFlags::DELETED),
+        TES3Object::Alchemy(r) => r.flags.contains(ObjectFlags::DELETED),
+        TES3Object::Apparatus(r) => r.flags.contains(ObjectFlags::DELETED),
+        TES3Object::Armor(r) => r.flags.contains(ObjectFlags::DELETED),
+        TES3Object::Birthsign(r) => r.flags.contains(ObjectFlags::DELETED),
+        TES3Object::Bodypart(r) => r.flags.contains(ObjectFlags::DELETED),
+        TES3Object::Book(r) => r.flags.contains(ObjectFlags::DELETED),
+        TES3Object::Cell(r) => r.flags.contains(ObjectFlags::DELETED),
+        TES3Object::Class(r) => r.flags.contains(ObjectFlags::DELETED),
+        TES3Object::Clothing(r) => r.flags.contains(ObjectFlags::DELETED),
+        TES3Object::Container(r) => r.flags.contains(ObjectFlags::DELETED),
+        TES3Object::Creature(r) => r.flags.contains(ObjectFlags::DELETED),
+        TES3Object::Dialogue(r) => r.flags.contains(ObjectFlags::DELETED),
+        TES3Object::DialogueInfo(r) => r.flags.contains(ObjectFlags::DELETED),
+        TES3Object::Door(r) => r.flags.contains(ObjectFlags::DELETED),
+        TES3Object::Enchanting(r) => r.flags.contains(ObjectFlags::DELETED),
+        TES3Object::Faction(r) => r.flags.contains(ObjectFlags::DELETED),
+        TES3Object::GlobalVariable(r) => r.flags.contains(ObjectFlags::DELETED),
+        TES3Object::Ingredient(r) => r.flags.contains(ObjectFlags::DELETED),
+        TES3Object::LeveledCreature(r) => r.flags.contains(ObjectFlags::DELETED),
+        TES3Object::LeveledItem(r) => r.flags.contains(ObjectFlags::DELETED),
+        TES3Object::Light(r) => r.flags.contains(ObjectFlags::DELETED),
+        TES3Object::Lockpick(r) => r.flags.contains(ObjectFlags::DELETED),
+        TES3Object::MiscItem(r) => r.flags.contains(ObjectFlags::DELETED),
+        TES3Object::Npc(r) => r.flags.contains(ObjectFlags::DELETED),
+        TES3Object::PathGrid(r) => r.flags.contains(ObjectFlags::DELETED),
+        TES3Object::Probe(r) => r.flags.contains(ObjectFlags::DELETED),
+        TES3Object::Race(r) => r.flags.contains(ObjectFlags::DELETED),
+        TES3Object::Region(r) => r.flags.contains(ObjectFlags::DELETED),
+        TES3Object::RepairItem(r) => r.flags.contains(ObjectFlags::DELETED),
+        TES3Object::Script(r) => r.flags.contains(ObjectFlags::DELETED),
+        TES3Object::Sound(r) => r.flags.contains(ObjectFlags::DELETED),
+        TES3Object::SoundGen(r) => r.flags.contains(ObjectFlags::DELETED),
+        TES3Object::Spell(r) => r.flags.contains(ObjectFlags::DELETED),
+        TES3Object::StartScript(r) => r.flags.contains(ObjectFlags::DELETED),
+        TES3Object::Static(r) => r.flags.contains(ObjectFlags::DELETED),
+        TES3Object::Weapon(r) => r.flags.contains(ObjectFlags::DELETED),
+        _ => false,
+    }
+}
+
 pub fn get_cell_grid(x: f64, y: f64) -> (i32, i32) {
     (
         f64::floor(x / CELL_SIZE) as i32,

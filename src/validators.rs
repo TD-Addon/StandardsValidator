@@ -26,7 +26,7 @@ pub mod uniques;
 use crate::{
     context::Context,
     handlers::{Handler, Handlers},
-    util::iter_script,
+    util::{is_deleted, iter_script},
 };
 use clap::ArgMatches;
 use std::error::Error;
@@ -49,6 +49,9 @@ impl<'a> Validator<'a> {
         let dummy = Dialogue::default();
         let mut current_topic = &dummy;
         for record in records {
+            if is_deleted(record) {
+                continue;
+            }
             match record {
                 TES3Object::Activator(_) => self.handlers.on_record(&self.context, record),
                 TES3Object::Alchemy(_) => self.handlers.on_record(&self.context, record),
@@ -61,6 +64,9 @@ impl<'a> Validator<'a> {
                     self.handlers.on_record(&self.context, record);
                     let refs: Vec<_> = r.references.values().collect();
                     for (i, reference) in refs.iter().enumerate() {
+                        if reference.deleted.unwrap_or(false) {
+                            continue;
+                        }
                         self.handlers.on_cellref(
                             &self.context,
                             r,
