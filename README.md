@@ -2,7 +2,7 @@
 Tamriel Data and the projects using it set various standards for themselves.
 Modders are unfortunately fallible creatures, so it pays to validate files once in a while.
 
-All standards should be documented in the [PT Wiki](https://wiki.project-tamriel.com/wiki/Modding_guidelines) or the [TR Handbook](https://www.tamriel-rebuilt.org/tr-handbook).
+All standards should be documented in the [PT Wiki](https://wiki.project-tamriel.com/wiki/Modding_guidelines).
 
 ## Usage
 The validator is a command line tool. Run with `--help` for up to date information.
