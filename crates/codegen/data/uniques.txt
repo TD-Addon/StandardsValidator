@@ -1171,6 +1171,7 @@ ingred_gold_kanet_unique
 ingred_guar_hide_girith
 ingred_guar_hide_marsus
 ingred_innocent_heart
+ingred_scrib_jelly_02
 ingred_treated_bittergreen_uniq
 ingred_udyrfrykte_heart
 ingred_wolf_heart
