@@ -21,7 +21,7 @@ fn check_script_line(
         if let Some(regex) = regex_cache.get(item) {
             return regex.is_match(line);
         }
-        let regex = Regex::new(&format!(r#"[ ,"]{}($|[ ,"])"#, escape(item))).unwrap();
+        let regex = Regex::new(&format!(r#"[\s,"]{}($|[\s,".-])"#, escape(item))).unwrap();
         let matches = regex.is_match(line);
         regex_cache.insert(item, regex);
         return matches;

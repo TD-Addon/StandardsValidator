@@ -33,8 +33,16 @@ fn check_script_line(regex_cache: &mut HashMap<String, Regex>, line: &str, id: &
     if let Some(regex) = regex_cache.get(id) {
         return regex.is_match(line);
     }
-    let escaped = r#"[ ,"]"#.to_owned() + &escape(id) + r#"($|[ ,"])"#;
-    if let Ok(regex) = RegexBuilder::new(&escaped).case_insensitive(true).build() {
+    let escaped_id = if id.contains(' ') {
+        format!("\"{}\"", escape(id))
+    } else {
+        r#"[\s,"]"#.to_owned() + &escape(id)
+    };
+    let functions_taking_ids = "aiactivate|ai(escort|follow)(cell)?|getdetected|startcombat|get(lineofsight|los)|gettarget|getitemcount|equip|has(itemequipped|soulgem)|journal|(set|get)journalindex|(mod|set|get)factionreaction|scriptrunning|(start|stop)script|cast|explodespell|(add|remove)(soulgem|item|spell)|drop(soulgem)?|hit(attempt)?onme|(addto|removefrom)lev(creature|item)|repairedonme|modregion|play(loop)?sound(3d)?(vp)?|stopsound|getsoundplaying|removespelleffects|getspell(effects)?|pc(raise|lower)rank|pcjoinfaction|getpcrank|getdeadcount|(get|set|mod)pcfacrep|getrace|pcexpell|pc(clear)?expelled|getdistance|placeitem(cell)?|placeat(pc|me)";
+    let pattern = format!(
+        r#"^[\s,]*(set[\s,]+.*?{escaped_id}([\s,".]|$)|.*?{escaped_id}"*->|({functions_taking_ids})[\s,]+.*?{escaped_id})"#
+    );
+    if let Ok(regex) = RegexBuilder::new(&pattern).case_insensitive(true).build() {
         let matches = regex.is_match(line);
         regex_cache.insert(id.to_string(), regex);
         return matches;
