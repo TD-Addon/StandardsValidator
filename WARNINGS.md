@@ -3,6 +3,9 @@ False positives are a possibility. Consult the [glossary](https://wiki.project-t
 
 # The primary validator (without `--extended`, `--names`, or `--fix-out-of-bounds`)
 
+## Plugin depends on X.esm
+You're running in TD mode, but your file depends on more than just the vanilla ESMs and Tamriel_Data.esm.
+
 ## Records
 
 ### Does not match a known ID scheme
@@ -305,6 +308,9 @@ Nodes that aren't connected to any other nodes are useless.
 If you have a single-tile room with a locked door, just omit the path grid instead of adding a single unconnected node.
 
 # The extended validator (`--extended`)
+
+## Plugin depends on X.esm
+You're running in TD mode, but your file depends on more than just the vanilla ESMs and Tamriel_Data.esm.
 
 ## Ownership checks
 Items in dungeons should not have owners. Items in towns should.

@@ -105,6 +105,22 @@ fn create_context(args: &ArgMatches) -> Context {
     Context::new(mode)
 }
 
+fn check_masters(mode: &Mode, plugin: &Plugin) {
+    if *mode == Mode::TD {
+        if let Some(header) = plugin.header() {
+            for (file, _) in &header.masters {
+                if !file.eq_ignore_ascii_case("Morrowind.esm")
+                    && !file.eq_ignore_ascii_case("Tribunal.esm")
+                    && !file.eq_ignore_ascii_case("Bloodmoon.esm")
+                    && !file.eq_ignore_ascii_case("Tamriel_Data.esm")
+                {
+                    println!("Plugin depends on {}", file);
+                }
+            }
+        }
+    }
+}
+
 fn validate(path: &str, args: &ArgMatches) -> Result<(), Box<dyn Error>> {
     let mut context = create_context(args);
     let plugin = load_plugin(path, Some(&mut context))?;
@@ -112,6 +128,7 @@ fn validate(path: &str, args: &ArgMatches) -> Result<(), Box<dyn Error>> {
         let p: &Path = path.as_ref();
         let _ = load_metadata(&p.parent().unwrap().join("Tamriel_Data.esm"), &mut context);
     }
+    check_masters(&context.mode, &plugin);
     let mut validator = Validator::new(context, args)?;
     validator.validate(&plugin.objects);
     Ok(())
@@ -166,6 +183,7 @@ fn run_extended(paths: Vec<&String>, args: &ArgMatches) -> Result<(), String> {
             }
         }
     }
+    check_masters(&context.mode, &plugin);
     for master_path in master_paths {
         let path: &Path = plugin_path.as_ref();
         let master = load_plugin(master_path, Some(&mut context))?;
