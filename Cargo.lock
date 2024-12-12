@@ -4,7 +4,7 @@ version = 3
 
 [[package]]
 name = "StandardsValidator"
-version = "2.9.0"
+version = "2.10.0"
 dependencies = [
  "clap",
  "codegen",
