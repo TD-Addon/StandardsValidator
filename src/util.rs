@@ -206,6 +206,7 @@ pub fn is_marker(book: &Book) -> bool {
     let mesh = &book.mesh;
     mesh.eq_ignore_ascii_case("tr\\tr_note_pin.nif")
         || mesh.eq_ignore_ascii_case("tr\\tr_editormarker_npc.nif")
+        || mesh.eq_ignore_ascii_case("tr\\tr_editormarker_landmark.nif")
         || mesh.eq_ignore_ascii_case("editormarker.nif")
 }
 
