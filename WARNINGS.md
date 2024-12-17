@@ -51,6 +51,9 @@ This field should exist.
 ### Has invalid icon/mesh
 The path is missing a `.` and is therefore probably not correct.
 
+### Lasts for X seconds
+This light has a very long duration. It might have been intended to last forever (duration -1.) Note that this cannot be done inside the CS.
+
 ## References
 
 ### Persistent object used multiple times

@@ -9,6 +9,7 @@ pub mod duplicates;
 pub mod ids;
 pub mod keys;
 pub mod leveled;
+pub mod lights;
 pub mod magic;
 pub mod missing;
 pub mod npc;

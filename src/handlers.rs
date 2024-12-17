@@ -61,6 +61,7 @@ impl Handlers<'_> {
             Box::new(crate::validators::doors::DoorValidator {}),
             Box::new(crate::validators::keys::KeyValidator::new()),
             Box::new(crate::validators::leveled::LeveledValidator::new()),
+            Box::new(crate::validators::lights::LightValidator {}),
             Box::new(crate::validators::dialogue::DialogueValidator::new()?),
             Box::new(crate::validators::magic::MagicValidator::new()),
             Box::new(crate::validators::missing::FieldValidator {}),
