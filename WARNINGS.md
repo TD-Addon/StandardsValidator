@@ -225,6 +225,9 @@ Common in certain languages, but not in English.
 `%PCName`, `%PCRace`, `%PCRank`, and `%PCClass` can be anything (although the latter two require 3rd party mods to be wholly unknowable)
 which means it's impossible to determine which indefinite article (a/an) to use. It is possible to do the latter two correctly (mods aside) but mistakes are common.
 
+### Contains leading/trailing whitespace
+Leading whitespace is visible in game. Trailing whitespace is bloat.
+
 ## Dialogue
 
 ### Has an unnecessary (Not) class/faction/race/sex/id filter

@@ -103,6 +103,20 @@ impl Handler<'_> for DialogueValidator {
                     record.id, topic.id
                 );
             }
+            let start_trimmed = text.trim_start();
+            if start_trimmed.len() != text.len() && !start_trimmed.is_empty() {
+                println!(
+                    "Info {} in topic {} contains leading whitespace",
+                    record.id, topic.id
+                );
+            }
+            let end_trimmed = start_trimmed.trim_end();
+            if end_trimmed.len() != start_trimmed.len() {
+                println!(
+                    "Info {} in topic {} contains trailing whitespace",
+                    record.id, topic.id
+                );
+            }
         }
         for filter in &record.filters {
             let value = get_int(filter.value);
