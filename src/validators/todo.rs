@@ -31,9 +31,10 @@ impl Handler<'_> for ToDoValidator {
 
 impl ToDoValidator {
     pub fn new() -> Result<Self, Error> {
-        let todo = RegexBuilder::new(r"(^(todo|fixme|fillmein|to do|fix me|fill me in))|(^|\s)merge")
-            .case_insensitive(true)
-            .build()?;
+        let todo =
+            RegexBuilder::new(r"(^(todo|fixme|fillmein|to do|fix me|fill me in))|(^|\s)merge")
+                .case_insensitive(true)
+                .build()?;
         Ok(Self { todo })
     }
 }

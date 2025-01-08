@@ -298,6 +298,10 @@ This magic effect needs a magnitude to be useful. Might be fine if the spell is 
 ### Uses effect with duration 1
 This magic effect needs a duration to be useful. Might be fine if the spell is only meant to be detected by a script.
 
+### Uses effect before weakness to effect
+This magic effect is ordered before its weakness effect. Reordering the effects would allow the weakness effect to increase the potency of the other effect.
+For example, Weakness to Fire before Fire Damage will end up dealing more damage than vice versa.
+
 ## Cells
 
 ### Has a fog density of 0
