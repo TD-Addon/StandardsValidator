@@ -302,6 +302,12 @@ This magic effect needs a duration to be useful. Might be fine if the spell is o
 This magic effect is ordered before its weakness effect. Reordering the effects would allow the weakness effect to increase the potency of the other effect.
 For example, Weakness to Fire before Fire Damage will end up dealing more damage than vice versa.
 
+### Has a maximum charge of 0
+This enchantment cannot be used.
+
+### Costs X but has a charge of Y
+This enchantment costs more than its maximum charge. It might still be usable at a high enough skill level.
+
 ## Cells
 
 ### Has a fog density of 0

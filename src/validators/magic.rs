@@ -8,7 +8,8 @@ use crate::{
 };
 use codegen::get_spell_data;
 use tes3::esp::{
-    EditorId, Effect, EffectId2, EffectRange, EnchantType, Npc, SpellType, TES3Object, TypeInfo,
+    EditorId, Effect, EffectId2, EffectRange, EnchantType, EnchantingFlags, Npc, SpellType,
+    TES3Object, TypeInfo,
 };
 
 pub struct MagicValidator {
@@ -483,6 +484,30 @@ impl Handler<'_> for MagicValidator {
             TES3Object::Enchanting(enchantment) => {
                 let constant_effect = enchantment.data.enchant_type == EnchantType::ConstantEffect;
                 check_effects(record, &enchantment.effects, constant_effect);
+                if matches!(
+                    enchantment.data.enchant_type,
+                    EnchantType::CastOnStrike | EnchantType::CastWhenUsed
+                ) && !enchantment
+                    .data
+                    .flags
+                    .contains(EnchantingFlags::AUTO_CALCULATE)
+                {
+                    if enchantment.data.max_charge == 0 {
+                        println!(
+                            "{} {} has a maximum charge of 0",
+                            enchantment.type_name(),
+                            enchantment.id
+                        );
+                    } else if enchantment.data.cost > enchantment.data.max_charge {
+                        println!(
+                            "{} {} costs {} but has a charge of {}",
+                            enchantment.type_name(),
+                            enchantment.id,
+                            enchantment.data.cost,
+                            enchantment.data.max_charge
+                        );
+                    }
+                }
             }
             TES3Object::Spell(spell) => {
                 let temporary =
