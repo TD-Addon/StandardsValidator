@@ -287,6 +287,19 @@ This script doesn't implement the standardized Khajiit script, but does set the 
 ### Contains unexpected line set T_Local_Khajiit to X
 This script sets the variable to an unexpected value.
 
+### Lacks a comment
+`PlaceItem[Cell]`, `Position[Cell]`, `AiEscort[Cell]`, `AiTravel[Cell]`, and `AiFollow[Cell]` to places other than (0, 0, 0) require a comment explaining the destination.
+This comment can include a marker ID (an ID containing `_MARK_`) if so, the marker needs to be a used NPC marker.
+
+### Refers to marker which is not a book
+No book matching the detected marker ID exists.
+
+### Refers to book which is not a(n NPC) marker
+A book matching the detected marker ID exists, but it's not using the correct mesh.
+
+### Refers to marker which has no references
+No instances of the detected marker exist in this file.
+
 ## Magic
 
 ### Uses effect

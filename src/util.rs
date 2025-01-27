@@ -202,10 +202,12 @@ pub fn cannot_sleep(cell: &Cell) -> bool {
     cell.data.flags.contains(CellFlags::RESTING_IS_ILLEGAL)
 }
 
+pub const NPC_MARKER: &str = "tr\\tr_editormarker_npc.nif";
+
 pub fn is_marker(book: &Book) -> bool {
     let mesh = &book.mesh;
     mesh.eq_ignore_ascii_case("tr\\tr_note_pin.nif")
-        || mesh.eq_ignore_ascii_case("tr\\tr_editormarker_npc.nif")
+        || mesh.eq_ignore_ascii_case(NPC_MARKER)
         || mesh.eq_ignore_ascii_case("tr\\tr_editormarker_landmark.nif")
         || mesh.eq_ignore_ascii_case("editormarker.nif")
 }

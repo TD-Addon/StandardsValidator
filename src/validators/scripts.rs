@@ -4,11 +4,21 @@ use super::Context;
 use crate::{
     context::Mode,
     handlers::Handler,
-    util::{ci_ends_with, ci_starts_with, is_correct_vampire_head, is_khajiit, Actor},
+    util::{
+        ci_ends_with, ci_starts_with, is_correct_vampire_head, is_khajiit, is_marker, Actor,
+        NPC_MARKER,
+    },
 };
 use codegen::{get_joined_commands, get_khajiit_script};
 use regex::{Regex, RegexBuilder};
-use tes3::esp::{Dialogue, Npc, NpcFlags, Script, TES3Object};
+use tes3::esp::{Cell, Dialogue, Npc, NpcFlags, Reference, Script, TES3Object};
+
+enum PositionMarkerType {
+    Unknown,
+    Book,
+    Marker,
+    NpcMarker,
+}
 
 pub struct ScriptValidator {
     unique_heads: HashSet<&'static str>,
@@ -23,6 +33,9 @@ pub struct ScriptValidator {
     set_khajiit_neg1: Regex,
     set_khajiit_var: Regex,
     position: Regex,
+    markers: HashMap<String, (String, PositionMarkerType, bool, i32)>,
+    needs_marker: Regex,
+    marker_id: Regex,
 }
 
 struct ScriptInfo {
@@ -86,15 +99,31 @@ impl Handler<'_> for ScriptValidator {
                     self.check_npc_script(npc);
                 }
             }
+        } else if let TES3Object::Book(book) = record {
+            let id = book.id.to_ascii_lowercase();
+            let marker = if book.mesh.eq_ignore_ascii_case(NPC_MARKER) {
+                PositionMarkerType::NpcMarker
+            } else if is_marker(book) {
+                PositionMarkerType::Marker
+            } else {
+                PositionMarkerType::Book
+            };
+            if let Some((_, marker_type, _, _)) = self.markers.get_mut(&id) {
+                *marker_type = marker;
+            } else if let Some(found) = self.marker_id.find(&book.id) {
+                if found.len() == book.id.len() {
+                    self.markers.insert(id, (String::new(), marker, false, 0));
+                }
+            }
         }
     }
 
     fn on_scriptline(
         &mut self,
-        _: &Context,
+        context: &Context,
         record: &TES3Object,
         code: &str,
-        _: &str,
+        comment: &str,
         topic: &Dialogue,
     ) {
         if !code.is_empty() && self.position.is_match(code) {
@@ -107,6 +136,50 @@ impl Handler<'_> for ScriptValidator {
                 println!("Script {} uses Position instead of PositionCell", script.id);
             }
         }
+        if context.mode != Mode::Vanilla && self.needs_marker.is_match(code) {
+            if comment.is_empty() {
+                if let TES3Object::DialogueInfo(info) = record {
+                    println!(
+                        "Info {} in topic {} lacks a comment for {}",
+                        info.id, topic.id, code
+                    );
+                } else if let TES3Object::Script(script) = record {
+                    println!("Script {} lacks a comment for {}", script.id, code);
+                }
+            } else if let Some(capture) = self.marker_id.captures(comment) {
+                if let Some(group) = capture.get(2) {
+                    let description = if let TES3Object::DialogueInfo(info) = record {
+                        format!("Info {} in topic {}", info.id, topic.id)
+                    } else if let TES3Object::Script(script) = record {
+                        format!("Script {}", script.id)
+                    } else {
+                        String::new()
+                    };
+                    let id = group.as_str().to_ascii_lowercase();
+                    if let Some((desc, _, used, _)) = self.markers.get_mut(&id) {
+                        *desc = description;
+                        *used = true;
+                    } else {
+                        self.markers
+                            .insert(id, (description, PositionMarkerType::Unknown, false, 0));
+                    }
+                }
+            }
+        }
+    }
+
+    fn on_cellref(
+        &mut self,
+        _: &Context,
+        _: &'_ Cell,
+        _: &Reference,
+        id: &str,
+        _: &[&Reference],
+        _: usize,
+    ) {
+        if let Some((_, _, _, count)) = self.markers.get_mut(id) {
+            *count += 1;
+        }
     }
 
     fn on_end(&mut self, context: &Context) {
@@ -118,6 +191,38 @@ impl Handler<'_> for ScriptValidator {
                         id
                     );
                 }
+            }
+        }
+        for (id, (description, is_book, used, count)) in &self.markers {
+            if !used {
+                continue;
+            }
+            match *is_book {
+                PositionMarkerType::Unknown => {
+                    println!(
+                        "{} refers to marker {} which is not a book",
+                        description, id
+                    );
+                }
+                PositionMarkerType::Book => {
+                    println!(
+                        "{} refers to book {} which is not a marker",
+                        description, id
+                    );
+                }
+                PositionMarkerType::Marker => {
+                    println!(
+                        "{} refers to book {} which is not an NPC marker",
+                        description, id
+                    );
+                }
+                _ => {}
+            }
+            if *count == 0 {
+                println!(
+                    "{} refers to marker {} which has no references",
+                    description, id
+                );
             }
         }
     }
@@ -160,6 +265,20 @@ impl ScriptValidator {
                 .case_insensitive(true)
                 .build()?;
         let position = Regex::new(r"^([,\s]*|.*?->[,\s]*)position[,\s]+")?;
+        let needs_marker = Regex::new(
+            r#"^([,\s]*|.*?->[,\s]*)((position|aitravel|aiescort|placeitem)(cell)?[,\s])|(aifollow(cell[,\s]+("[^"]+"|[^,\s]+))?[,\s]+("[^"]+"|[^,\s]+)[,\s]+[0-9]+([,\s][0.]+){3,})"#,
+        )?;
+        let marker_id_pattern = r"(^|[,\s])((".to_string()
+            + &context
+                .projects
+                .iter()
+                .map(|project| project.prefix)
+                .collect::<Vec<_>>()
+                .join("|")
+            + r#")[a-z0-9-_']*_mark_[a-z0-9-_']*)"#;
+        let marker_id = RegexBuilder::new(&marker_id_pattern)
+            .case_insensitive(true)
+            .build()?;
         Ok(Self {
             unique_heads,
             scripts: HashMap::new(),
@@ -173,6 +292,9 @@ impl ScriptValidator {
             set_khajiit_neg1,
             set_khajiit_var,
             position,
+            needs_marker,
+            marker_id,
+            markers: HashMap::new(),
         })
     }
 
