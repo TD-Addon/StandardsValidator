@@ -34,6 +34,7 @@ pub struct ScriptValidator {
     set_khajiit_var: Regex,
     position: Regex,
     markers: HashMap<String, (String, PositionMarkerType, bool, i32)>,
+    aifollow: Regex,
     needs_marker: Regex,
     marker_id: Regex,
 }
@@ -136,7 +137,10 @@ impl Handler<'_> for ScriptValidator {
                 println!("Script {} uses Position instead of PositionCell", script.id);
             }
         }
-        if context.mode != Mode::Vanilla && self.needs_marker.is_match(code) {
+        if context.mode != Mode::Vanilla
+            && self.needs_marker.is_match(code)
+            && !self.aifollow.is_match(code)
+        {
             if comment.is_empty() {
                 if let TES3Object::DialogueInfo(info) = record {
                     println!(
@@ -266,7 +270,10 @@ impl ScriptValidator {
                 .build()?;
         let position = Regex::new(r"^([,\s]*|.*?->[,\s]*)position[,\s]+")?;
         let needs_marker = Regex::new(
-            r#"^([,\s]*|.*?->[,\s]*)((position|aitravel|aiescort|placeitem)(cell)?[,\s])|(aifollow(cell[,\s]+("[^"]+"|[^,\s]+))?[,\s]+("[^"]+"|[^,\s]+)[,\s]+[0-9]+([,\s][0.]+){3,})"#,
+            r"^([,\s]*|.*?->[,\s]*)(position|aitravel|aiescort|placeitem|aifollow)(cell)?[,\s]",
+        )?;
+        let aifollow = Regex::new(
+            r#"aifollow(cell[,\s]+("[^"]+"|[^,\s]+))?[,\s]+("[^"]+"|[^,\s]+)[,\s]+[0-9]+([,\s]+[0.]+){3,}"#,
         )?;
         let marker_id_pattern = r"(^|[,\s])((".to_string()
             + &context
@@ -293,6 +300,7 @@ impl ScriptValidator {
             set_khajiit_var,
             position,
             needs_marker,
+            aifollow,
             marker_id,
             markers: HashMap::new(),
         })
