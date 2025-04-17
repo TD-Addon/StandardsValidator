@@ -24,8 +24,15 @@ const HOSTILE: i8 = 70;
 const KHAJIIT_ANIMATIONS: [&str; 2] = ["t_els_ohmes-raht", "t_els_suthay"];
 const KHAJIIT_F: &str = "epos_kha_upr_anim_f.nif";
 const KHAJIIT_M: &str = "epos_kha_upr_anim_m.nif";
+const TSAESCI: &str = "pi_tsa_base_anim.nif";
 
-fn check_khajiit_animations(npc: &Npc) {
+fn check_racial_animations(npc: &Npc) {
+    if npc.race.eq_ignore_ascii_case("T_Aka_Tsaesci") {
+        if !npc.mesh.eq_ignore_ascii_case(TSAESCI) {
+            println!("Npc {} is not using animation {}", npc.id, TSAESCI);
+        }
+        return;
+    }
     let requires_animations = KHAJIIT_ANIMATIONS.contains(&npc.race.to_ascii_lowercase().as_str());
     let mesh = &npc.mesh;
     if requires_animations {
@@ -62,7 +69,7 @@ impl Handler<'_> for NpcValidator {
                     );
                 }
             }
-            check_khajiit_animations(npc);
+            check_racial_animations(npc);
         }
     }
 
