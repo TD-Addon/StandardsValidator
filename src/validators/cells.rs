@@ -128,7 +128,19 @@ impl Handler<'_> for CellValidator {
         _: &[&Reference],
         _: usize,
     ) {
-        if !reference.deleted.unwrap_or(false) && !record.is_interior() {
+        if reference.deleted.unwrap_or(false) {
+            return;
+        }
+        let invalid_coords = reference.translation.iter().any(|coord| !coord.is_finite())
+            || reference.rotation.iter().any(|coord| !coord.is_finite());
+        if invalid_coords {
+            println!(
+                "Cell {} contains reference {} which has a non-real position or rotation",
+                record.editor_id(),
+                reference.id
+            )
+        }
+        if !invalid_coords && !record.is_interior() {
             let (x, y) = record.data.grid;
             let x_bound = CELL_SIZE * x as f64;
             let y_bound = CELL_SIZE * y as f64;

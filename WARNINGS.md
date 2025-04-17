@@ -80,6 +80,9 @@ Which makes the black squares stand out like a sore thumb if placed above the wa
 ### Contains an unlinked PrisonMarker
 This cell contains a `PrisonMarker` that doesn't link to an interior cell. `PrisonMarker`s need to link to interiors containing `stolen_goods` to prevent crashes.
 
+### Contains non-real position or rotation
+This reference's position or rotation is not a real number (NaN or Infinity) which breaks things.
+
 ## Supply chests
 
 ### Not available to all ranks
