@@ -203,6 +203,43 @@
 		] },
 		{ "model": "T_B_Rga_UNI_HeadDarnellTR", "rules": [
 			[{ "id": "TR_m1_Darnell" }]
+		] },
+		{ "model": "T_B_De_UNI_HeadAthiresTR", "rules": [
+			[{ "id": "TR_m7_FatFuckFrank" }]
+		] },
+		{ "model": "T_B_De_UNI_HeadFacelessFTR", "rules": [
+			[{ "id": "TR_m3_TT_FS_faceless_2" }]
+		] },
+		{ "model": "T_B_De_UNI_HairFethasTR", "rules": [
+			[{ "id": "T_B_De_UNI_HeadFethasTR" }],
+			[{ "id": "T_B_De_UNI_HeadFethasTR" }]
+		] },
+		{ "model": "T_B_Imp_UNI_HeadAkaterinaPC", "rules": [
+			[{ "id": "PC_m1_AkaterinaQueen" }],
+			[{ "id": "PC_m1_AkaterinaHadrach" }],
+			[{ "id": "PC_m1_AkaterinaPrisoner" }]
+		] },
+		{ "model": "T_B_Imp_UNI_HeadConomorusPC", "rules": [
+			[{ "id": "PC_m1_MasquedCaptain" }]
+		] },
+		{ "model": "T_B_Imp_UNI_HeadEnmanPC", "rules": [
+			[{ "id": "PC_m1_EnmanEumaeus" }],
+			[{ "id": "PC_m1_EnmanSeptim" }]
+		] },
+		{ "model": "T_B_Imp_UNI_HeadHerrius2PC", "rules": [
+			[{ "id": "PC_m1_HerriusBoss" }]
+		] },
+		{ "model": "T_B_Imp_UNI_HeadHerriusPC", "rules": [
+			[{ "id": "PC_m1_HerriusThimistrel" }]
+		] },
+		{ "model": "T_B_Mo_HeadMale_Vehk_UNI", "rules": [
+			[{ "id": "TR_TBD" }]
+		] },
+		{ "model": "T_B_Nor_UNI_HeadBardaSHOTN", "rules": [
+			[{ "id": "Sky_iRe_MK_Barda" }]
+		] },
+		{ "model": "T_B_Rga_UNI_HeadIsodiPC", "rules": [
+			[{ "id": "PC_m1_Isodi" }]
 		] }
 	],
 	"hair": [
@@ -295,7 +332,40 @@
 			[{ "id": "TR_m3_Aramius Marolus" }]
 		] },
 		{ "model": "T_B_Imp_UNI_HairCountessAnvilPC", "rules": [
-			[{ "id": "PC_i2-Anv_Millona" }]
+			[{ "id": "PC_m1_MillonaConomorus" }]
+		] },
+		{ "model": "T_B_De_UNI_HairAthiresTR", "rules": [
+			[{ "id": "TR_m7_FatFuckFrank" }]
+		] },
+		{ "model": "T_B_De_UNI_HairFethasTR", "rules": [
+			[{ "id": "TR_m7_Fethas Hlaalu" }],
+			[{ "id": "TR_m7_Fethas Hlaalu_A" }]
+		] },
+		{ "model": "T_B_Imp_UNI_HairAkaterina2PC", "rules": [
+			[{ "id": "PC_m1_AkaterinaQueen" }]
+		] },
+		{ "model": "T_B_Imp_UNI_HairAkaterinaPC", "rules": [
+			[{ "id": "PC_m1_AkaterinaHadrach" }],
+			[{ "id": "PC_m1_AkaterinaPrisoner" }]
+		] },
+		{ "model": "T_B_Imp_UNI_HairConomorusPC", "rules": [
+			[{ "id": "PC_m1_MasquedCaptain" }]
+		] },
+		{ "model": "T_B_Imp_UNI_HairEnmanPC", "rules": [
+			[{ "id": "PC_m1_EnmanEumaeus" }],
+			[{ "id": "PC_m1_EnmanSeptim" }]
+		] },
+		{ "model": "T_B_Imp_UNI_HairHerrius2PC", "rules": [
+			[{ "id": "PC_m1_HerriusBoss" }]
+		] },
+		{ "model": "T_B_Imp_UNI_HairHerriusPC", "rules": [
+			[{ "id": "PC_m1_HerriusThimistrel" }]
+		] },
+		{ "model": "T_B_Nor_UNI_HairBardaSHOTN", "rules": [
+			[{ "id": "Sky_iRe_MK_Barda" }]
+		] },
+		{ "model": "T_B_Rga_UNI_HairIsodiPC", "rules": [
+			[{ "id": "PC_m1_Isodi" }]
 		] }
 	]
 }
