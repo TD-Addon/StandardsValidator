@@ -303,6 +303,9 @@ A book matching the detected marker ID exists, but it's not using the correct me
 ### Refers to marker which has no references
 No instances of the detected marker exist in this file.
 
+### Uses ModReputation without an explicit target
+This script is probably changing an NPC's reputation instead of the player's.
+
 ## Magic
 
 ### Uses effect

@@ -37,6 +37,7 @@ pub struct ScriptValidator {
     aifollow: Regex,
     needs_marker: Regex,
     marker_id: Regex,
+    mod_reputation: Regex,
 }
 
 struct ScriptInfo {
@@ -170,6 +171,19 @@ impl Handler<'_> for ScriptValidator {
                 }
             }
         }
+        if self.mod_reputation.is_match(code) {
+            if let TES3Object::DialogueInfo(info) = record {
+                println!(
+                    "Info {} in topic {} uses ModReputation without an explicit target",
+                    info.id, topic.id
+                );
+            } else if let TES3Object::Script(script) = record {
+                println!(
+                    "Script {} uses ModReputation without an explicit target",
+                    script.id
+                );
+            }
+        }
     }
 
     fn on_cellref(
@@ -286,6 +300,7 @@ impl ScriptValidator {
         let marker_id = RegexBuilder::new(&marker_id_pattern)
             .case_insensitive(true)
             .build()?;
+        let mod_reputation = Regex::new(r"^[,\s]*modreputation[,\s]")?;
         Ok(Self {
             unique_heads,
             scripts: HashMap::new(),
@@ -303,6 +318,7 @@ impl ScriptValidator {
             aifollow,
             marker_id,
             markers: HashMap::new(),
+            mod_reputation,
         })
     }
 
