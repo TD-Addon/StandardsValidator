@@ -306,6 +306,12 @@ No instances of the detected marker exist in this file.
 ### Uses ModReputation without an explicit target
 This script is probably changing an NPC's reputation instead of the player's.
 
+### Uses ModPCFacRep without specifying a faction
+The faction argument is optional because it defaults to the speaker's faction, but this makes it hard to find these lines in the CS.
+
+### Contains superfluous characters in a ModPCFacRep call
+This line includes commas or puts quotes around the reputation amount. This is pointless and makes it harder to find this line in the CS.
+
 ## Magic
 
 ### Uses effect

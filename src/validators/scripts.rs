@@ -38,6 +38,7 @@ pub struct ScriptValidator {
     needs_marker: Regex,
     marker_id: Regex,
     mod_reputation: Regex,
+    mod_facrep: Regex,
 }
 
 struct ScriptInfo {
@@ -184,6 +185,40 @@ impl Handler<'_> for ScriptValidator {
                 );
             }
         }
+        if let Some(captures) = self.mod_facrep.captures(code) {
+            if captures.get(3).is_none() {
+                if let TES3Object::DialogueInfo(info) = record {
+                    println!(
+                        "Info {} in topic {} uses ModPCFacRep without specifying a faction",
+                        info.id, topic.id
+                    );
+                } else if let TES3Object::Script(script) = record {
+                    println!(
+                        "Script {} uses ModReputation without specifying a faction",
+                        script.id
+                    );
+                }
+            }
+            let mut garbage = code.contains(',');
+            if !garbage {
+                if let Some(capture) = captures.get(1) {
+                    garbage = capture.as_str().contains('"');
+                }
+            }
+            if garbage {
+                if let TES3Object::DialogueInfo(info) = record {
+                    println!(
+                        "Info {} in topic {} contains superfluous characters in a ModPCFacRep call",
+                        info.id, topic.id
+                    );
+                } else if let TES3Object::Script(script) = record {
+                    println!(
+                        "Script {} contains superfluous characters in a ModPCFacRep call",
+                        script.id
+                    );
+                }
+            }
+        }
     }
 
     fn on_cellref(
@@ -301,6 +336,7 @@ impl ScriptValidator {
             .case_insensitive(true)
             .build()?;
         let mod_reputation = Regex::new(r"^[,\s]*modreputation[,\s]")?;
+        let mod_facrep = Regex::new(r#"modpcfacrep[,\s]+([0-9"-]+)([,\s]+([^,\s]+))?[,\s]*$"#)?;
         Ok(Self {
             unique_heads,
             scripts: HashMap::new(),
@@ -319,6 +355,7 @@ impl ScriptValidator {
             marker_id,
             markers: HashMap::new(),
             mod_reputation,
+            mod_facrep,
         })
     }
 
