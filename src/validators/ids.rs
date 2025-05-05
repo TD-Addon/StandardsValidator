@@ -97,6 +97,13 @@ impl Handler<'_> for IdValidator {
             TES3Object::GameSetting(_) => {
                 println!("Found dirty {} {}", record.type_name(), record.editor_id());
             }
+            TES3Object::GlobalVariable(_) => {
+                if context.mode != Mode::TD || !record.editor_id().eq_ignore_ascii_case("MWSE_BUILD")
+                {
+                    check_id(context, record);
+                    self.check_known(record);
+                }
+            }
             TES3Object::DialogueInfo(_) => {}
             TES3Object::PathGrid(_) => {}
             TES3Object::Region(_) => {
