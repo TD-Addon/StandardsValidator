@@ -5,13 +5,12 @@ use serde::Deserialize;
 #[derive(Deserialize)]
 pub struct Services {
     barter: Vec<String>,
+    spells: Vec<String>,
 }
 
-pub fn generate_barter_classes() -> TokenStream {
-    let data: Services = serde_json::from_str(include_str!("../data/services.json")).unwrap();
-
-    let len = data.barter.len();
-    let values = data.barter.iter().map(|id| id.to_ascii_lowercase());
+fn get_class_tokens(classes: Vec<String>) -> TokenStream {
+    let len = classes.len();
+    let values = classes.iter().map(|id| id.to_ascii_lowercase());
 
     quote! {
         {
@@ -23,4 +22,14 @@ pub fn generate_barter_classes() -> TokenStream {
         }
     }
     .into_token_stream()
+}
+
+pub fn generate_barter_classes() -> TokenStream {
+    let data: Services = serde_json::from_str(include_str!("../data/services.json")).unwrap();
+    get_class_tokens(data.barter)
+}
+
+pub fn generate_spell_vendor_classes() -> TokenStream {
+    let data: Services = serde_json::from_str(include_str!("../data/services.json")).unwrap();
+    get_class_tokens(data.spells)
 }

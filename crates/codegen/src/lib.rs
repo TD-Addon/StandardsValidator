@@ -49,6 +49,11 @@ pub fn get_barter_classes(_: TokenStream) -> TokenStream {
 }
 
 #[proc_macro]
+pub fn get_spell_vendor_classes(_: TokenStream) -> TokenStream {
+    services_data::generate_spell_vendor_classes().into()
+}
+
+#[proc_macro]
 pub fn get_spell_data(_: TokenStream) -> TokenStream {
     spells_data::generate().into()
 }

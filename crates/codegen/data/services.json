@@ -20,5 +20,14 @@
 		"Trader Service",
 		"T_Glb_TraderService",
 		"Wise Woman Service"
+	],
+	"spells": [
+		"Battlemage Service",
+		"T_Sky_Clever-Man",
+		"Healer Service",
+		"Mage Service",
+		"Nightblade Service",
+		"Priest Service",
+		"Sorcerer Service"
 	]
 }

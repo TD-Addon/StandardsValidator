@@ -113,6 +113,9 @@ This NPC has a class that is not suitable for use in this province.
 Spells have names that are visible to the player (either when buying them or when being affected by them.)
 These names imply a certain culture, meaning NPCs outside of Morrowind should not receive vanilla spells.
 
+### Is a spell vendor with auto calculated spells
+Auto calculated spell lists tend to be trash.
+
 ### Is not using unique head/hair
 This NPC should be using the asset designed for it.
 

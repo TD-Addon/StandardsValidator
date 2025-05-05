@@ -2,7 +2,7 @@ use std::collections::HashSet;
 
 use super::Context;
 use crate::{handlers::Handler, util::is_autocalc};
-use codegen::get_barter_classes;
+use codegen::{get_barter_classes, get_spell_vendor_classes};
 use tes3::esp::{AiData, ServiceFlags, TES3Object};
 
 const SERVICE_FLAGS_BARTERS_ANY: ServiceFlags = ServiceFlags::from_bits_truncate(
@@ -32,6 +32,7 @@ fn buy_magic_items(ai_data: &AiData) -> bool {
 
 pub struct ServiceValidator {
     barter_classes: HashSet<String>,
+    spell_vendor_classes: HashSet<String>,
 }
 
 impl Handler<'_> for ServiceValidator {
@@ -68,9 +69,14 @@ impl Handler<'_> for ServiceValidator {
                 let mut barter_menu = false;
                 if is_autocalc(npc) {
                     if !npc.class.is_empty() {
-                        barter_menu = self
-                            .barter_classes
-                            .contains(&npc.class.to_ascii_lowercase());
+                        let lower = npc.class.to_ascii_lowercase();
+                        barter_menu = self.barter_classes.contains(&lower);
+                        if self.spell_vendor_classes.contains(&lower) {
+                            println!(
+                                "Npc {} is a spell vendor with auto calculated spells",
+                                npc.id
+                            );
+                        }
                     }
                 } else {
                     barter_menu = barters(&npc.ai_data);
@@ -106,6 +112,7 @@ impl ServiceValidator {
     pub fn new() -> Self {
         Self {
             barter_classes: get_barter_classes!(),
+            spell_vendor_classes: get_spell_vendor_classes!(),
         }
     }
 }
