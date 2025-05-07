@@ -68,6 +68,9 @@ impl Handler<'_> for NpcValidator {
                         npc.id
                     );
                 }
+                if npc.ai_packages.is_empty() {
+                    println!("Npc {} does not have any AI packages", npc.id);
+                }
             }
             check_racial_animations(npc);
         }
