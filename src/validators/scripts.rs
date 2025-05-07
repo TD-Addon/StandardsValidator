@@ -11,7 +11,7 @@ use crate::{
 };
 use codegen::{get_joined_commands, get_khajiit_script};
 use regex::{Regex, RegexBuilder};
-use tes3::esp::{Cell, Dialogue, Npc, NpcFlags, Reference, Script, TES3Object};
+use tes3::esp::{Cell, Dialogue, DialogueType2, Npc, NpcFlags, Reference, Script, TES3Object};
 
 enum PositionMarkerType {
     Unknown,
@@ -39,6 +39,9 @@ pub struct ScriptValidator {
     marker_id: Regex,
     mod_reputation: Regex,
     mod_facrep: Regex,
+    add_topic: Regex,
+    added_topics: HashMap<String, Vec<String>>,
+    topics: HashSet<String>,
 }
 
 struct ScriptInfo {
@@ -70,54 +73,64 @@ impl Handler<'_> for ScriptValidator {
         if context.mode == Mode::Vanilla {
             return;
         }
-        if let TES3Object::Script(script) = record {
-            let text = &script.text;
-            let mut info = ScriptInfo::new(
-                self.npc.is_match(text),
-                self.khajiit.is_match(text),
-                self.nolore.is_match(text),
-                self.vampire.is_match(text),
-            );
-            for (local, regex) in &self.projects {
-                if regex.is_match(text) {
-                    info.projects.push(local);
-                }
-            }
-            if info.khajiit && !self.has_correct_khajiit_check(script, text) {
-                println!("Script {} contains non-standard khajiit check", script.id);
-            }
-            self.scripts.insert(script.id.to_ascii_lowercase(), info);
-            if let Some(captures) = self.commands.captures(text) {
-                println!(
-                    "Script {} contains line {}",
-                    script.id,
-                    captures.get(0).unwrap().as_str()
+        match record {
+            TES3Object::Script(script) => {
+                let text = &script.text;
+                let mut info = ScriptInfo::new(
+                    self.npc.is_match(text),
+                    self.khajiit.is_match(text),
+                    self.nolore.is_match(text),
+                    self.vampire.is_match(text),
                 );
+                for (local, regex) in &self.projects {
+                    if regex.is_match(text) {
+                        info.projects.push(local);
+                    }
+                }
+                if info.khajiit && !self.has_correct_khajiit_check(script, text) {
+                    println!("Script {} contains non-standard khajiit check", script.id);
+                }
+                self.scripts.insert(script.id.to_ascii_lowercase(), info);
+                if let Some(captures) = self.commands.captures(text) {
+                    println!(
+                        "Script {} contains line {}",
+                        script.id,
+                        captures.get(0).unwrap().as_str()
+                    );
+                }
             }
-        } else if let TES3Object::Npc(npc) = record {
-            if !npc.is_dead() {
-                if npc.script.is_empty() {
-                    println!("Npc {} does not have a script", npc.id);
+            TES3Object::Npc(npc) => {
+                if !npc.is_dead() {
+                    if npc.script.is_empty() {
+                        println!("Npc {} does not have a script", npc.id);
+                    } else {
+                        self.check_npc_script(npc);
+                    }
+                }
+            }
+            TES3Object::Book(book) => {
+                let id = book.id.to_ascii_lowercase();
+                let marker = if book.mesh.eq_ignore_ascii_case(NPC_MARKER) {
+                    PositionMarkerType::NpcMarker
+                } else if is_marker(book) {
+                    PositionMarkerType::Marker
                 } else {
-                    self.check_npc_script(npc);
+                    PositionMarkerType::Book
+                };
+                if let Some((_, marker_type, _, _)) = self.markers.get_mut(&id) {
+                    *marker_type = marker;
+                } else if let Some(found) = self.marker_id.find(&book.id) {
+                    if found.len() == book.id.len() {
+                        self.markers.insert(id, (String::new(), marker, false, 0));
+                    }
                 }
             }
-        } else if let TES3Object::Book(book) = record {
-            let id = book.id.to_ascii_lowercase();
-            let marker = if book.mesh.eq_ignore_ascii_case(NPC_MARKER) {
-                PositionMarkerType::NpcMarker
-            } else if is_marker(book) {
-                PositionMarkerType::Marker
-            } else {
-                PositionMarkerType::Book
-            };
-            if let Some((_, marker_type, _, _)) = self.markers.get_mut(&id) {
-                *marker_type = marker;
-            } else if let Some(found) = self.marker_id.find(&book.id) {
-                if found.len() == book.id.len() {
-                    self.markers.insert(id, (String::new(), marker, false, 0));
+            TES3Object::Dialogue(dial) => {
+                if dial.dialogue_type == DialogueType2::Topic {
+                    self.topics.insert(dial.id.to_ascii_lowercase());
                 }
             }
+            _ => {}
         }
     }
 
@@ -219,6 +232,28 @@ impl Handler<'_> for ScriptValidator {
                 }
             }
         }
+        if let Some(captures) = self.add_topic.captures(code) {
+            let mut capture = captures.get(3);
+            if capture.is_none() {
+                capture = captures.get(4);
+            }
+            if let Some(string) = capture {
+                let id = string.as_str().to_ascii_lowercase();
+                let description = if let TES3Object::DialogueInfo(info) = record {
+                    format!("Info {} in topic {}", info.id, topic.id)
+                } else if let TES3Object::Script(script) = record {
+                    format!("Script {}", script.id)
+                } else {
+                    String::new()
+                };
+                let entry = self.added_topics.get_mut(&id);
+                if let Some(sources) = entry {
+                    sources.push(description);
+                } else {
+                    self.added_topics.insert(id, vec![description]);
+                }
+            }
+        }
     }
 
     fn on_cellref(
@@ -275,6 +310,17 @@ impl Handler<'_> for ScriptValidator {
                 println!(
                     "{} refers to marker {} which has no references",
                     description, id
+                );
+            }
+        }
+        for (topic, sources) in &self.added_topics {
+            if self.topics.contains(topic) {
+                continue;
+            }
+            for source in sources {
+                println!(
+                    "{} adds topic {} which is not defined in this file",
+                    source, topic
                 );
             }
         }
@@ -337,6 +383,7 @@ impl ScriptValidator {
             .build()?;
         let mod_reputation = Regex::new(r"^[,\s]*modreputation[,\s]")?;
         let mod_facrep = Regex::new(r#"modpcfacrep[,\s]+([0-9"-]+)([,\s]+([^,\s]+))?[,\s]*$"#)?;
+        let add_topic = Regex::new(r#"^([,\s]*|.*?->[,\s]*)addtopic[,\s]+("([^"]+)"|([^\s"]+))"#)?;
         Ok(Self {
             unique_heads,
             scripts: HashMap::new(),
@@ -356,6 +403,9 @@ impl ScriptValidator {
             markers: HashMap::new(),
             mod_reputation,
             mod_facrep,
+            add_topic,
+            added_topics: HashMap::new(),
+            topics: HashSet::new(),
         })
     }
 

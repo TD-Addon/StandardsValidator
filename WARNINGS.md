@@ -315,6 +315,9 @@ The faction argument is optional because it defaults to the speaker's faction, b
 ### Contains superfluous characters in a ModPCFacRep call
 This line includes commas or puts quotes around the reputation amount. This is pointless and makes it harder to find this line in the CS.
 
+### Adds topic which is not defined in this file
+`AddTopic X` crashes Morrowind.exe if topic `X` does not exist. If the topic is defined in a master file, all is well.
+
 ## Magic
 
 ### Uses effect
