@@ -8,8 +8,8 @@ use crate::{
 };
 use codegen::get_spell_data;
 use tes3::esp::{
-    EditorId, Effect, EffectId2, EffectRange, EnchantType, EnchantingFlags, Npc, SpellType,
-    TES3Object, TypeInfo,
+    EditorId, Effect, EffectId2, EffectRange, EnchantType, EnchantingFlags, Npc, ServiceFlags,
+    SpellType, TES3Object, TypeInfo,
 };
 
 pub struct MagicValidator {
@@ -522,6 +522,7 @@ impl Handler<'_> for MagicValidator {
 struct Rule {
     prefix: Option<&'static str>,
     race: Option<&'static str>,
+    vendor: Option<bool>,
 }
 
 impl Rule {
@@ -533,6 +534,9 @@ impl Rule {
         }
         if let Some(race) = &self.race {
             return race.eq_ignore_ascii_case(&npc.race);
+        }
+        if let Some(vendor) = &self.vendor {
+            return npc.ai_data.services.contains(ServiceFlags::OFFERS_SPELLS) == *vendor;
         }
         false
     }

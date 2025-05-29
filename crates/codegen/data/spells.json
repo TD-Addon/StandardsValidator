@@ -139,5 +139,10 @@
 		"vivec's humility",
 		"weakness to corpus disease",
 		"weakness to corprus disease"
+	],
+	"vendor_blacklist": [
+		"absorb spell points",
+		"absorb spell points [ranged]",
+		"T_Com_Cnj_SummonDevourer"
 	]
 }

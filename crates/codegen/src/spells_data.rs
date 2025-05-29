@@ -10,6 +10,7 @@ use crate::common::_Option;
 struct SpellRule {
     prefix: _Option<String>,
     race: _Option<String>,
+    vendor: _Option<bool>,
 }
 
 #[derive(Deserialize)]
@@ -17,16 +18,19 @@ struct SpellData {
     alternatives: Vec<HashMap<String, String>>,
     races: HashMap<String, SpellRule>,
     blacklist: Vec<String>,
+    vendor_blacklist: Vec<String>,
 }
 
 impl ToTokens for SpellRule {
     fn to_tokens(&self, tokens: &mut TokenStream) {
         let prefix = &self.prefix;
         let race = &self.race;
+        let vendor = &self.vendor;
         quote! {
             Rule {
                 prefix: #prefix,
                 race: #race,
+                vendor: #vendor,
             }
         }
         .to_tokens(tokens)
@@ -55,6 +59,14 @@ pub fn generate() -> TokenStream {
     let rule_never = SpellRule::default();
     for id in data.blacklist {
         spells.insert(id.to_ascii_lowercase(), (&rule_never, vec![]));
+    }
+    let rule_never_sold = SpellRule {
+        prefix: _Option(Option::None),
+        race: _Option(Option::None),
+        vendor: _Option(Option::Some(false)),
+    };
+    for id in data.vendor_blacklist {
+        spells.insert(id.to_ascii_lowercase(), (&rule_never_sold, vec![]));
     }
 
     let len = spells.len();
