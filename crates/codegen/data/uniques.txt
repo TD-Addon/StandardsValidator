@@ -574,6 +574,7 @@ contain_corpse_saloth10
 contain_corpse_sandas00
 contain_corpse_sandas10
 contain_corpse_teran
+contain_corpse_thief2
 contain_dead_mehrunes00
 contain_linus_iulus
 contain_releth_corpse00
@@ -1426,6 +1427,7 @@ sarandas_shirt_2
 sarandas_shoes_2
 sc_chappy_sniper_test
 sc_fiercelyroastthyenemy_unique
+sc_frosselnote
 sc_hiddenkiller
 sc_jeleen
 sc_lycanthropycure
