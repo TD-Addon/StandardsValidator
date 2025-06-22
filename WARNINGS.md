@@ -321,6 +321,9 @@ This line includes commas or puts quotes around the reputation amount. This is p
 ### Adds topic which is not defined in this file
 `AddTopic X` crashes Morrowind.exe if topic `X` does not exist. If the topic is defined in a master file, all is well.
 
+### Uses global variable quantity which is not defined in this file
+`AddItem X Y` and `RemoveItem X Y` don't work in Morrowind.exe if `Y` is a local variable.
+
 ## Magic
 
 ### Uses effect

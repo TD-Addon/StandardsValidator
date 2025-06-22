@@ -42,6 +42,9 @@ pub struct ScriptValidator {
     add_topic: Regex,
     added_topics: HashMap<String, Vec<String>>,
     topics: HashSet<String>,
+    globals: HashSet<String>,
+    add_remove_item: Regex,
+    quantity_globals: HashMap<String, Vec<String>>,
 }
 
 struct ScriptInfo {
@@ -129,6 +132,9 @@ impl Handler<'_> for ScriptValidator {
                 if dial.dialogue_type == DialogueType2::Topic {
                     self.topics.insert(dial.id.to_ascii_lowercase());
                 }
+            }
+            TES3Object::GlobalVariable(global) => {
+                self.globals.insert(global.id.to_ascii_lowercase());
             }
             _ => {}
         }
@@ -254,6 +260,30 @@ impl Handler<'_> for ScriptValidator {
                 }
             }
         }
+        if let Some(captures) = self.add_remove_item.captures(code) {
+            let mut capture = captures.get(7);
+            if capture.is_none() {
+                capture = captures.get(8);
+            }
+            if let Some(string) = capture {
+                if string.as_str() != "getpccrimelevel" {
+                    let id = string.as_str().to_ascii_lowercase();
+                    let description = if let TES3Object::DialogueInfo(info) = record {
+                        format!("Info {} in topic {}", info.id, topic.id)
+                    } else if let TES3Object::Script(script) = record {
+                        format!("Script {}", script.id)
+                    } else {
+                        String::new()
+                    };
+                    let entry = self.quantity_globals.get_mut(&id);
+                    if let Some(sources) = entry {
+                        sources.push(description);
+                    } else {
+                        self.quantity_globals.insert(id, vec![description]);
+                    }
+                }
+            }
+        }
     }
 
     fn on_cellref(
@@ -324,6 +354,17 @@ impl Handler<'_> for ScriptValidator {
                 );
             }
         }
+        for (global, sources) in &self.quantity_globals {
+            if self.globals.contains(global) {
+                continue;
+            }
+            for source in sources {
+                println!(
+                    "{} uses global variable quantity {} which is not defined in this file",
+                    source, global
+                );
+            }
+        }
     }
 }
 
@@ -384,6 +425,9 @@ impl ScriptValidator {
         let mod_reputation = Regex::new(r"^[,\s]*modreputation[,\s]")?;
         let mod_facrep = Regex::new(r#"modpcfacrep[,\s]+([0-9"-]+)([,\s]+([^,\s]+))?[,\s]*$"#)?;
         let add_topic = Regex::new(r#"^([,\s]*|.*?->[,\s]*)addtopic[,\s]+("([^"]+)"|([^\s"]+))"#)?;
+        let add_remove_item = Regex::new(
+            r#"^([,\s]*|.*?->[,\s]*)(add|remove)item[,\s]+("([^"]+)"|([^\s"]+))[,\s]+([+-]?[0-9]+|"([^"]+)"|([^\s"]+))"#,
+        )?;
         Ok(Self {
             unique_heads,
             scripts: HashMap::new(),
@@ -406,6 +450,9 @@ impl ScriptValidator {
             add_topic,
             added_topics: HashMap::new(),
             topics: HashSet::new(),
+            globals: HashSet::new(),
+            add_remove_item,
+            quantity_globals: HashMap::new(),
         })
     }
 
