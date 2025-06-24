@@ -527,6 +527,7 @@ com_chest_02_v_indalen
 com_chest_02_v_saetring
 com_chest_02_v_shadbak
 com_chest_02_v_sosia
+com_chest_02_v_weapon01
 com_chest_02_valius
 com_chest_02_vendu
 com_chest_11_aldsotha

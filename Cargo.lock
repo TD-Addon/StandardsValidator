@@ -4,7 +4,7 @@ version = 3
 
 [[package]]
 name = "StandardsValidator"
-version = "2.20.0"
+version = "2.21.0"
 dependencies = [
  "clap",
  "codegen",
@@ -12,6 +12,7 @@ dependencies = [
  "mimalloc",
  "rayon",
  "regex",
+ "serde_json",
  "tes3",
  "toml",
 ]

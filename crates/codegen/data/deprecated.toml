@@ -1,0 +1,15 @@
+[package]
+name = "PTR StandardsValidator"
+description = "Vanilla items to be avoided in PTR development."
+homepage = "https://github.com/TD-Addon/StandardsValidator"
+repository = "https://github.com/TD-Addon/StandardsValidator"
+authors = [
+	"Evil Eye",
+    "Rakanishu"
+]
+
+[dependencies.mwse]
+buildnumber = 3074
+
+[tools.csse]
+deprecated = []
