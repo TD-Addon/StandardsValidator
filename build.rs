@@ -13,6 +13,7 @@ fn main() -> Result<(), Box<dyn Error>> {
     // Add deprecated objects
     let mut unique_ids: Vec<Value> = include_str!("./crates/codegen/data/uniques.txt")
         .split('\n')
+        .map(str::trim)
         .filter(|id| !id.is_empty())
         .map(|id| Value::String(id.into()))
         .collect();
