@@ -187,6 +187,7 @@ ane_teria_mace_unique
 arkn_door00
 arkn_door01
 arobar_amulet_en_uniq
+artifact_bittercup_01
 aryongloveleft
 aryongloveleft_en_unique
 aryongloveright
@@ -195,6 +196,7 @@ ash_ghoul_fgr
 ash_ghoul_ganel
 ash_ghoul_mulyn
 ash_zombie_fgaz
+ashes_dwemer
 atronach_flame_az
 atronach_flame_summon
 atronach_flame_ttmk
@@ -218,10 +220,12 @@ barrel_01_ahnassi_food
 barrel_01_cheapfood_co
 barrel_01_empty_co1
 barrel_01_manicky
+barrel_01_todd
 barrel_02_cheapfood_co
 barrel_ic25_jon_hawker
 belt of the armor of god
 belt_goval
+bipolar blade
 bipolar blade_x
 bitter_hand
 bk_a1_2_introtocadiusus
@@ -259,10 +263,12 @@ bladepiece_03
 blight cloud
 bloodworm_helm_unique
 bloodworm_helm_unique_x
+blue candle bulb_177
 bm bear helmet eddard
 bm bear helmet_ber
 bm frostgore
 bm ice longsword_fg_unique
+bm nord leg
 bm nordic silver axe_spurius
 bm nordic silver longsword_cft
 bm nordic_longsword_tracker
@@ -383,6 +389,12 @@ boots of blinding speed_x
 boots_apostle_unique
 boots_apostle_unique_x
 bottle_unique
+bound_boots
+bound_cuirass
+bound_gauntlet_left
+bound_gauntlet_right
+bound_helm
+bound_shield
 caius_pants
 caius_ring
 caius_shirt
@@ -412,6 +424,8 @@ cephalopod_helm_htnk
 chargen barrel fatigue
 chargen boat
 chargen cavern talker
+chargen customs door
+chargen dagger
 chargen door captain
 chargen door exit
 chargen door hall
@@ -483,8 +497,10 @@ claymore_chrysamere_unique
 claymore_chrysamere_unique_x
 claymore_iceblade_unique
 claymore_iceblade_unique_x
+cleaverstfelms
 cliff racer_blighted
 cloudcleaver_unique
+clutterbane
 colony_torch_1
 colony_torch_2
 colony_torch_3
@@ -604,6 +620,7 @@ crate_01_limeware_uniqu
 crate_01_medernulen1
 crate_01_medernulen2
 crate_01_mevelfererus
+crate_01_random_pos_co
 crate_01_sirollus_01
 crate_01_sirollus_02
 crate_01_syloreia
@@ -622,6 +639,7 @@ crate_02_thorek_longswo
 crate_02_thorek_shortsw
 crate_andren_uni
 crate_malar_uni
+crosierstllothis
 cuirass_savior_unique
 cuirass_savior_unique_x
 daedric dagger_bar
@@ -629,9 +647,11 @@ daedric dagger_mtas
 daedric wakizashi_hhst
 daedric warhammer_ttgd
 daedric warhammer_ttgd_x
+daedric_club_tgdc
 daedric_crescent_unique
 daedric_cuirass_htab
 daedric_greaves_htab
+daedric_helm_clavicusvile
 daedric_scourge_unique
 daedric_special
 daedric_special01
@@ -640,6 +660,7 @@ daedroth_baladas
 daedroth_fg_nchur
 daedroth_menta_unique
 daedroth_summon
+dagger of judgement
 dagger_fang_unique
 dagger_fang_unique_x
 dagoth aladus
@@ -812,11 +833,16 @@ dead de male_berandas
 dead de ship capt11-12
 dead ordinator_key
 devil_tanto_tgamg
+devote_bone_pop00
+devote_brinne_dust_00
+devote_lyngas_dust_00
+devote_nan_dust_00
 divayth_fyr_closet
 door_cavern_doors00_velas
 door_cavern_vassir_un
 door_ravenrock_mine
 door_sotha_imp_door
+door_sotha_mach_door2
 dragonbone_cuirass_unique
 dragonbone_cuirass_unique_x
 drakespride_en_uniq
@@ -838,7 +864,9 @@ dwarven ghost_radac
 dwarven halberd_soultrap
 dwarven mace_salandas
 dwarven war axe_redas
+dwarven_hammer_volendrung
 dwe_jinksword_curse_unique
+dwemer_satchel00
 dwemer_shield_battle_unique
 dwrv_barrel10_quarra_un
 dwrv_chest00_areas
@@ -872,9 +900,11 @@ ebony spear_blessed_unique
 ebony spear_hrce_unique
 ebony staff caper
 ebony war axe_elanande
+ebony_bow_auriel
 ebony_bow_auriel_x
 ebony_closed_helm_fghl
 ebony_cuirass_soscean
+ebony_shield_auriel
 ebony_shield_auriel_x
 ebony_staff_tges
 ebony_staff_trebonius
@@ -916,6 +946,7 @@ ex_colony_door05c_4
 ex_colony_minedoor
 ex_colony_pier01
 ex_dae_boethiah_fixed
+ex_dae_door_static
 ex_dae_r_platform_01_boe
 ex_de_scaffold_01_boe
 ex_de_scaffold_01a_boe
@@ -940,16 +971,23 @@ ex_grazelands_sleep
 ex_h_pcfort_exdoor_ 01
 ex_h_pcfort_exdoor_ 02
 ex_h_pcfort_exdoor_ 03
+ex_h_pcfort_exdoor_ 03-3
 ex_h_pcfort_trapdoor_01-2
 ex_mh_door_02_ignatius
 ex_mh_door_02_sadri
+ex_mh_door_02_velas
 ex_mh_pav_ladder_01
 ex_mh_sewer_trapdoor_sadri
 ex_mh_swr_trapdr_blkd
+ex_mh_temple_door_01_ch
 ex_molagmar_lev+0
 ex_molagmar_lev+2
 ex_molagmar_lev-1
 ex_molagmar_sleep
+ex_nord_door_01-back
+ex_nord_door_01_ignatius
+ex_nord_door_01_ignatius1
+ex_nord_door_gyldenhul
 ex_nord_door_lair
 ex_nord_door_wolf
 ex_r_pcfort_d_01
@@ -1016,6 +1054,7 @@ fabricant_verm_attack
 fabricant_verminous_c
 fabricant_verminousdead
 fallguy_collision_unique
+false_sunder
 fevela_dralor_chest
 fire_fathasa_unique
 fire_fathasa_unique_en
@@ -1105,6 +1144,7 @@ imperfect
 imperial shortsword severio
 imperial_helm_frald_uniq
 in_akulakhan00
+in_ashl_door_02_sha
 in_cave_alit_lev+0
 in_cave_alit_lev+2
 in_cave_alit_lev-1
@@ -1117,6 +1157,7 @@ in_cave_kagouti_lev-1
 in_cave_nix_lev+0
 in_cave_nix_lev+2
 in_cave_nix_lev-1
+in_ci_door_01
 in_dagoth_bridge00
 in_db_door_oval_relvel
 in_dwrv_wall_nchuleftingth1
@@ -1130,6 +1171,7 @@ in_egg_scrib_lev+0
 in_egg_scrib_lev+2
 in_egg_scrib_lev-1
 in_hlaalu_door_uni
+in_impsmall_door_01_shrine
 in_m_sewer_drain_uni
 in_m_sewer_trapdoor_01_blkd
 in_mh_door_01_velas
@@ -1137,6 +1179,7 @@ in_mh_door_02_bar1_uni
 in_mh_door_02_bar2_uni
 in_mh_door_02_bar3_uni
 in_mh_door_02_bar4_uni
+in_mh_door_02_chapel
 in_mh_door_02_hels_uni
 in_mh_door_02_play
 in_mh_door_02_throne1
@@ -1165,6 +1208,17 @@ in_v_s_jaildoor_frelene
 in_velothi_platform_shishi
 in_velothismall_ndoor_01_jeanne
 in_velothismall_ndoor_agrippina
+indalen_closet_door
+index_andra
+index_beran
+index_falas
+index_falen
+index_hlor
+index_indo
+index_maran
+index_roth
+index_telas
+index_valen
 ingred_blood_innocent_unique
 ingred_bread_01_uni2
 ingred_bread_01_uni3
@@ -1188,6 +1242,7 @@ inviso_wall_7
 inviso_wall_8
 inviso_wall_9
 iron dagger_telasero_unique
+iron fork
 iron_arrow_uniq_judgement
 jobasha_book_chest
 julielle_aumines_amulet
@@ -1197,11 +1252,345 @@ karpal's friend
 katana_bluebrand_unique
 katana_goldbrand_unique
 katana_goldbrand_unique_x
+keening
+key_abebaalslaves_01
+key_addamasartusslaves_01
+key_adibael
+key_aharunartusslaves_01
+key_ahnassi
+key_ald_redaynia
+key_aldruhn_underground
+key_aldsotha
+key_aleft_chest
+key_alvur
+key_andalen_chest
+key_andalen_tomb
+key_andas_tomb
+key_andavel_tomb
+key_andrethi_chest
+key_andules_chest
+key_anja
+key_aralen
+key_aran_tomb
+key_arano_chest
+key_arano_door
+key_archcanon_private
+key_arenim
+key_arenim_chest
+key_arkngthunch_chest
+key_armigers_stronghold
+key_arobarmanor_01
+key_arobarmanorguard_01
+key_arrile
+key_arvs-drelen_cell
+key_aryon_chest
+key_ashalmawia_prisoncell
+key_ashirbadon
+key_ashmelech
+key_ashmelech_chest
+key_ashurninibi
+key_ashurninibi_lost
+key_assarnud
+key_assarnudslaves_01
+key_assemanu_01
+key_assemanu_02
+key_assi
+key_assi_serimilk
+key_aurane1
+key_balmorag_tong_01
+key_balmorag_tong_02
+key_baram_tomb
+key_berandas
+key_bivaleteneran_01
+key_bolayn
+key_bols
+key_brallion
+key_brinne_chest
+key_bthanchend_chest
+key_bthuand
+key_cabin
+key_caius_cosades
+key_calderaslaves_01
+key_camp
+key_caryarel
+key_cell_buckmoth_01
+key_cell_ebonheart_01
+key_chest_aryniorethi_01
+key_chest_avonravel_01
+key_chest_brilnosullarys_01
+key_chest_coduscallonus_01
+key_chest_drinarvaryon_01
+key_ciennesintieve_01
+key_dareleth_tomb
+key_dawnvault
+key_desele
+key_divayth00
+key_divayth01
+key_divayth02
+key_divayth03
+key_divayth04
+key_divayth05
+key_divayth06
+key_divayth07
+key_divayth_fyr
+key_door_mudan00
+key_dralas_chest
+key_dralas_tomb
+key_dralor
+key_draramu
+key_drarayne_thelas
+key_dreloth_tomb
+key_dren_manor
+key_dren_storage
+key_drenplantationslaves_01
+key_dreynos
+key_dubdilla
+key_dulnea_ralaal
+key_dumbuk_strongbox
+key_dura_gra-bol
+key_durgok
+key_duskvault
+key_dwe_satchel00
+key_ebon_tomb
+key_eldafire
+key_eldrar
+key_elmussadamori
+key_erich
+key_fadathram_tomb
+key_falaanamo
+key_falas tomb keepers
+key_falas tomb keepers_2
+key_falas_chest
+key_falas_tomb
+key_fals
+key_farusea_salas
+key_favel_chest
+key_fedar
+key_fetid_dreugh_grotto
+key_fg_nchur
+key_forge of rolamus
+key_fqt
+key_galmis
+key_galom_daeus
+key_gatekeeper
+key_gatewayinnslaves_01
+key_gen_tomb
+key_gimothran
+key_gimothran_chest
+key_gimothran_tomb
+key_gindrala
+key_gnisis_eggmine
+key_gro-bagrat
+key_gshipwreck
+key_gustav_chest
+key_gyldenhul
+key_habinbaesslaves_01
+key_hanarai_assutlanipal
+key_hasphat_antabolis
+key_hasphat_antabolis2
+key_helas_tomb
+key_helvi
+key_heran
+key_hinnabi
+key_hinnabislaves_01
 key_hircine1
 key_hircine2
+key_hircine3
+key_hlaalo_manor
+key_hlormarenslaves_01
+key_hodlismod
+key_huleen's_hut
+key_hvaults1
+key_hvaults2
+key_ibardad
+key_ibardad_tomb
+key_ienasa
+key_ienith_chest
+key_ienith_tomb
+key_impcomsecrdoor
+key_indalen
+key_indalen_tomb
+key_indaren
+key_irgola
+key_itar
+key_ivrosa
+key_j'zhirr
+key_jeanne
+key_kagouti_colony
+key_keelraniur
+key_kind
+key_kogoruhn_sewer
+key_kudanatslaves_01
+key_lassnr_well
+key_lleran_tomb
+key_llervu
+key_llethervari_01
+key_llethri
+key_llethrimanor_01
+key_madach_room
+key_malpenixblonia_01
+key_maren_tomb
+key_marvani_tomb
+key_maryn
+key_mebastien
+key_menta_na
+key_mette
+key_miles
+key_minabi
+key_minabislaves_01
+key_ministry_cells
+key_ministry_ext
+key_ministry_sectors
+key_miun_gei
+key_molagmarslaves_01
+key_morvaynmanor
+key_mudan_dragon
+key_murudius_01
+key_mzahnch_chest
+key_mzanchend_chest
+key_mzuleft
+key_nchardahrk
+key_nchardahrk_chest
+key_nchuleftingth
+key_nchuleftingth_chest
+key_nedhelas
+key_nelas_chest
+key_nelothtelnaga
+key_nelothtelnaga2
+key_nelothtelnaga3
+key_nelothtelnaga4
+key_nerano_chest
+key_neranomanor
+key_nileno_dorvayn
+key_norvayn_chest
+key_norvayn_tomb
 key_nuncius
 key_nuncius2
+key_nund
+key_obscure_alit_warren
+key_odibaal
+key_odirniran
+key_odral_helvi
+key_odros
+key_olms_storage
+key_omalen_tomb
+key_omani_01
+key_omaren_chest
+key_orethi_tomb
+key_oritius
+key_orvas_dren
+key_othrelas_door
+key_palansour
+key_panatslaves_01
+key_pellecia aurrus
+key_persius mercius
+key_pirate
 key_private quarters
+key_punsabanit
+key_ra'zhid
+key_ralen_hlaalo
+key_ravel_chest
+key_ravel_tomb
+key_raviro_tomb
+key_redoran_basic
+key_redoran_treasury
+key_relien_rirne
+key_rethandus_chest
+key_rethandus_tomb
+key_rothan_tomb
+key_rotheranslaves_01
+key_rothran
+key_rufinus_alleius
+key_rvaults1
+key_sadrithmoraslaves_01
+key_sadryon_tomb
+key_saetring
+key_salvel_chest
+key_salvel_tomb
+key_sandas
+key_sandas_tomb
+key_sarano_chest
+key_sarano_tomb
+key_saren_chest
+key_saren_tomb
+key_sarethi_tomb
+key_sarethimanor_01
+key_saryoni
+key_sarys_chest
+key_saturanslaves_01
+key_savel_tomb
+key_savilecagekey
+key_savilecagekey02
+key_senim_chest
+key_senim_tomb
+key_sethan
+key_shaadnius
+key_shaadniusslaves_01
+key_shashev
+key_shilipuran
+key_shipwreck9-11
+key_shushanslaves_01
+key_shushishi
+key_shushishislaves
+key_sinsibadonslaves_01
+key_sirilonwe
+key_skeleton
+key_slave_addamasartus
+key_sn_warehouse
+key_standard_01_darvam hlaren
+key_standard_01_hassour zainsub
+key_standard_01_pel_fort_prison
+key_standard_01_pel_guard_tower
+key_standard_darius_chest
+key_summoning_room
+key_suran_slave
+key_suranslaves_01
+key_table_mudan00
+key_tel_aruhn_slave1
+key_telaruhnslaves_01
+key_telbranoraslaves_01
+key_telbranoratower
+key_telvosjailslaves_01
+key_tgbt
+key_thalas_tomb
+key_tharys_chest
+key_thelas_chest
+key_thendas
+key_thiralas_tomb
+key_thorek
+key_trib_dwe00
+key_trib_dwe01
+key_trib_dwe02
+key_tukushapal_1
+key_tureynul
+key_tuvesobeleth_01
+key_tv_ct
+key_tvault
+key_ulvil
+key_vandus_tomb
+key_varoprivate
+key_varostorage
+key_velas
+key_venim
+key_venimmanor
+key_verelnim_tomb
+key_vivec_arena_cell
+key_vivec_hlaalu_cell
+key_vivec_redoran_cell
+key_vivec_secret
+key_vivec_telvanni_cell
+key_viveclizardheadslave_01
+key_vivectelvannislaves_01
+key_volrina_01
+key_vorarhelas
+key_widow_vabdas
+key_wormlord_tomb
+key_yagram
+key_yakanalitslaves_01
+key_yinglingbasement
+key_zainsipiluslaves_01
+key_zebabislaves_01
+king's_oath
 king's_oath_pc
 kwama forager blighted
 kwama forager_tb
@@ -1251,6 +1640,11 @@ light_bm_tomb_wind
 light_com_lantern_bm_unique
 light_com_torch_01_uni
 light_com_torch_burnedout_uni
+light_de_streetlight_01_hold_a
+light_de_streetlight_01_hold_b
+light_h_pcfort__01
+light_h_pcfort__01-2
+light_h_pcfort__01-3
 light_logpile_uni
 light_sotha_fire_unique1
 light_sotha_fire_unique2
@@ -1267,12 +1661,17 @@ lords_cuirass_unique
 lords_cuirass_unique_x
 lucan_scriptholder
 lucky_break
+lucky_coin
 lugrub's axe
 lustidrike
 mace of molag bal_unique
 mace of molag bal_unique_x
+mace of slurring
 mace of slurring_x
+magic_bolt
 malipu_ataman's_belt
+mamaea cell key
+mamaea quarters key
 mantle of woe
 maran amulet
 maras_blouse
@@ -1280,8 +1679,10 @@ maras_skirt
 mavon_drenim_closet
 mazed_band_end
 mehrunes'_razor_unique
+ministry_truth_ext
 misc_6th_ash_hrcs
 misc_6th_ash_hrmm
+misc_argonianhead_01
 misc_beluelle_silver_bowl
 misc_bm_clawfang_unique
 misc_clothbolt_02_uni
@@ -1291,6 +1692,8 @@ misc_com_bucket_boe_unib
 misc_com_metal_plate_03_uni
 misc_com_metal_plate_07_uni1
 misc_com_metal_plate_07_uni2
+misc_com_plate_02_tgrc
+misc_com_plate_06_tgrc
 misc_com_silverware_fork_uni
 misc_com_silverware_knife_uni
 misc_com_silverware_spoon_uni
@@ -1301,28 +1704,36 @@ misc_com_wood_knife_uni2
 misc_com_wood_spoon_01_uni1
 misc_com_wood_spoon_01_uni2
 misc_de_goblet_01_redas
+misc_de_goblet_04_dagoth
 misc_de_pot_redware_04_uni
 misc_dwarfbone_unique
 misc_dwrv_ark_cube00
+misc_dwrv_ark_key00
 misc_dwrv_artifact_ils
 misc_dwrv_bowl00_uni
 misc_dwrv_goblet00_uni
+misc_dwrv_goblet10_tgcp
 misc_dwrv_goblet10_uni
 misc_dwrv_mug00_uni
 misc_dwrv_pitcher00_uni
 misc_dwrv_weather
 misc_dwrv_weather2
 misc_fakesoulgem
+misc_flask_grease
 misc_goblet_dagoth
 misc_imp_silverware_pitcher_uni
 misc_lw_bowl_chapel
+misc_potion_cheap_01
 misc_skull_griss
 misc_skull_griss_floor
 misc_skull_llevule
 misc_skull_oddfrid
 misc_skull_skaal
+misc_soulgem_azura
 misc_uni_pillow_unique
 misc_uniq_egg_of_gold
+misc_vivec_ashmask_01
+misc_vivec_ashmask_01_fake
 misc_wraithguard_no_equip
 mountain spirit
 mudan_door00
@@ -1387,6 +1798,7 @@ rent_mh_guar_door
 rent_vivec_black_door
 rent_vivec_flower_door
 rent_vivec_lizard_door
+repair_secretmaster_01
 right_hand_of_zenithar
 ring of azura
 ring of telekinesis_unique
@@ -1447,6 +1859,8 @@ shalk_blighted
 shalk_diseased_hram
 sheogorath's signet ring
 shield of the undaunted
+shield_bolt
+shock_bolt
 shoes_of_conviction
 shortbow of sanguine sureflight
 shrine cleanse
@@ -1464,6 +1878,7 @@ silver arrow_thirsk_9
 silver axe of paralysis
 silver dagger_droth_unique
 silver dagger_droth_unique_a
+silver dagger_hanin cursed
 silver dagger_iryon_unique
 silver dagger_othril_unique
 silver dagger_rathalas_unique
@@ -1476,6 +1891,7 @@ silverdawn_en_uniq
 skeleton champ_sandas00
 skeleton champ_sandas10
 skeleton_aldredaynia
+skeleton_key
 skeleton_stahl_uni
 skeleton_vemynal
 slaughterfish_hr_sfavd
@@ -1491,6 +1907,7 @@ staff_hasedoki_unique
 staff_hasedoki_unique_x
 staff_magnus_unique
 staff_magnus_unique_x
+staff_of_llevule
 steam_nchuleftingth_01
 steam_nchuleftingth_02
 steel arrow_carnius
@@ -1512,6 +1929,8 @@ stendar_hammer_unique_x
 stendarran belt
 stormkiss
 summon_centurion_unique
+sunder
+sunder_fake
 surefeet_en_unique
 sword of almalexia
 tailored_trousers
@@ -1524,6 +1943,7 @@ talker_dae_mephala
 talker_dae_molagbal
 talker_dae_molagbal2
 talker_dae_sheogorath
+tenpaceboots
 tenpaceboots_x
 terrain_bm_ice_unique
 terrain_rock_wg_unique
@@ -1547,7 +1967,24 @@ urn_ash_lyngas00_unique
 urn_ash_nan00_unique
 variner's ring
 veloth's judgement_unique
+vfx_alterationbolt
+vfx_conjurebolt
+vfx_defaultbolt
+vfx_destructbolt
+vfx_frostbolt
+vfx_illusionbolt
+vfx_multiple2
+vfx_multiple3
+vfx_multiple4
+vfx_multiple5
+vfx_multiple6
+vfx_multiple7
+vfx_multiple8
+vfx_mysticismbolt
+vfx_poisonbolt
+vfx_restorebolt"
 vivec_god
+vivec_grate_door_02
 war_axe_airan_ammu
 warhammer_crusher_unique
 warhammer_crusher_unique_x
@@ -1566,6 +2003,8 @@ winged twilight_summon
 wolfwalkers
 worm lord
 wraith_sul_senipul
+wraithguard
+wraithguard_jury_rig
 yagrum bagarn
 zenithar's_warning
 zenithar's_wiles
