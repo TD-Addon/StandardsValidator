@@ -140,7 +140,7 @@ impl Handler<'_> for CellValidator {
                 reference.id
             )
         }
-        if !invalid_coords && !record.is_interior() {
+        if !invalid_coords && !record.is_interior() && reference.moved_cell.is_none() {
             let (x, y) = record.data.grid;
             let x_bound = CELL_SIZE * x as f64;
             let y_bound = CELL_SIZE * y as f64;

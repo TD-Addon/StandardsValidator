@@ -14,7 +14,7 @@ pub fn fix_oob(plugin: &mut Plugin) {
 
     for (grid, cell) in &exteriors {
         for (key, reference) in &cell.references {
-            if reference.deleted == Some(true) {
+            if reference.deleted == Some(true) || reference.moved_cell.is_some() {
                 continue;
             }
 
