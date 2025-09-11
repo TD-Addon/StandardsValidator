@@ -237,6 +237,9 @@ which means it's impossible to determine which indefinite article (a/an) to use.
 ### Contains leading/trailing whitespace
 Leading whitespace is visible in game. Trailing whitespace is bloat.
 
+## Contains odd orc name
+Orc surnames start with `gro-` or `gra-`. With a lower case G and a capital after the hyphen.
+
 ## Dialogue
 
 ### Has an unnecessary (Not) class/faction/race/sex/id filter
