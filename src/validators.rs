@@ -163,6 +163,7 @@ impl<'a> Validator<'a> {
                 &code.to_ascii_lowercase(),
                 comment,
                 topic,
+                code,
             );
         }
     }

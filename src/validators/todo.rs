@@ -15,6 +15,7 @@ impl Handler<'_> for ToDoValidator {
         _: &str,
         comment: &str,
         topic: &Dialogue,
+        _: &str,
     ) {
         if self.todo.is_match(comment) {
             if let TES3Object::Script(script) = record {

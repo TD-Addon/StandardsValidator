@@ -165,7 +165,15 @@ impl Handler<'_> for OrphanValidator {
         self.used_objects.insert(entry.1.to_ascii_lowercase());
     }
 
-    fn on_scriptline(&mut self, _: &Context, _: &TES3Object, code: &str, _: &str, _: &Dialogue) {
+    fn on_scriptline(
+        &mut self,
+        _: &Context,
+        _: &TES3Object,
+        code: &str,
+        _: &str,
+        _: &Dialogue,
+        _: &str,
+    ) {
         if code.is_empty() {
             return;
         }

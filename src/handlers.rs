@@ -37,6 +37,7 @@ pub trait Handler<'a> {
         code: &str,
         comment: &str,
         topic: &Dialogue,
+        code_original: &str,
     ) {
     }
 
@@ -144,9 +145,10 @@ impl<'a> Handler<'a> for Handlers<'a> {
         code: &str,
         comment: &str,
         topic: &Dialogue,
+        code_original: &str,
     ) {
         for handler in &mut self.handlers {
-            handler.on_scriptline(context, record, code, comment, topic);
+            handler.on_scriptline(context, record, code, comment, topic, code_original);
         }
     }
 

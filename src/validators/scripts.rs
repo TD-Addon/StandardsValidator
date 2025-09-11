@@ -147,6 +147,7 @@ impl Handler<'_> for ScriptValidator {
         code: &str,
         comment: &str,
         topic: &Dialogue,
+        _: &str,
     ) {
         if !code.is_empty() && self.position.is_match(code) {
             if let TES3Object::DialogueInfo(info) = record {

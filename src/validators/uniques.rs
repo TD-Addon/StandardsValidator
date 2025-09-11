@@ -97,6 +97,7 @@ impl Handler<'_> for UniquesValidator {
         code: &str,
         _: &str,
         topic: &Dialogue,
+        _: &str,
     ) {
         if self.create_func.is_match(code) {
             for uni in &self.uniques {
