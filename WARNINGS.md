@@ -237,6 +237,9 @@ which means it's impossible to determine which indefinite article (a/an) to use.
 ### Contains leading/trailing whitespace
 Leading whitespace is visible in game. Trailing whitespace is bloat.
 
+### Starts with an asterisk
+The CS marks modified dialogue with `*` and lets you jump to it by pressing that key. Starting responses with `*` makes it harder to jump to any modified dialogue.
+
 ## Contains odd orc name
 Orc surnames start with `gro-` or `gra-`. With a lower case G and a capital after the hyphen.
 

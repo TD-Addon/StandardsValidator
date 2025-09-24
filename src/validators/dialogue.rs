@@ -117,6 +117,12 @@ impl Handler<'_> for DialogueValidator {
                     record.id, topic.id
                 );
             }
+            if text.starts_with('*') {
+                println!(
+                    "Info {} in topic {} starts with an asterisk",
+                    record.id, topic.id
+                );
+            }
         }
         for filter in &record.filters {
             let value = get_int(filter.value);
