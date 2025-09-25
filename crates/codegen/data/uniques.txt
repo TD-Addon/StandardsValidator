@@ -238,6 +238,7 @@ bk_carniusnote
 bk_clientlist
 bk_dbcontract
 bk_falljournal_unique
+bk_fishystick
 bk_fryssajournal
 bk_leggejournal
 bk_letterfromgadayn
