@@ -1,15 +1,18 @@
-use clap::{crate_version, Arg, ArgGroup, ArgMatches, Command};
+use clap::{crate_version, Arg, ArgAction, ArgGroup, ArgMatches, Command};
 use context::{Context, Mode};
 use extended::ExtendedValidator;
 use oob::fix_oob;
-use std::{error::Error, fs, path::Path};
+use std::{collections::HashMap, error::Error, fs, path::Path};
 use tes3::esp::Plugin;
 use toml::{Table, Value};
 use validators::Validator;
 
+use crate::ltex::deduplicate_ltex;
+
 mod context;
 mod extended;
 mod handlers;
+mod ltex;
 mod oob;
 mod util;
 mod validators;
@@ -20,6 +23,10 @@ static GLOBAL: mimalloc::MiMalloc = mimalloc::MiMalloc;
 fn main() -> Result<(), Box<dyn Error>> {
     let args = Command::new("StandardsValidator")
         .args(&[
+            Arg::new("ltexdedup")
+                .long("trim-ltex")
+                .value_name("output file")
+                .help("Remove unused landscape textures and save the trimmed output to a new file. Warning: overwrites the output file!"),
             Arg::new("ooboutput")
                 .long("fix-out-of-bounds")
                 .value_name("output file")
@@ -60,6 +67,13 @@ fn main() -> Result<(), Box<dyn Error>> {
                     "Squared distance at which two objects with the same id, \
                 scale, and orientation are considered duplicates.",
                 ),
+            Arg::new("replaceltex")
+                .long("replace-ltex")
+                .num_args(2)
+                .action(ArgAction::Append)
+                .requires("ltexdedup")
+                .value_names(["original", "new"])
+                .help("Replaces all uses of landscape textures with the original id with the new one"),
             Arg::new("mode")
                 .required(true)
                 .value_parser(["PT", "TD", "TR", "Vanilla"])
@@ -70,16 +84,22 @@ fn main() -> Result<(), Box<dyn Error>> {
                 .help("C:/path/to/plugin.esp"),
         ])
         .groups([
-            ArgGroup::new("g_validator").args(["duplicatethreshold"]),
+            ArgGroup::new("g_ltex").args(["ltexdedup"]),
+            ArgGroup::new("g_ltexreplace")
+                .args(["replaceltex"])
+                .requires("g_ltex"),
+            ArgGroup::new("g_validator")
+                .args(["duplicatethreshold"])
+                .conflicts_with("g_ltex"),
             ArgGroup::new("g_extended")
                 .args(["extended", "names"])
-                .conflicts_with("g_validator"),
+                .conflicts_with_all(["g_validator", "g_ltex"]),
             ArgGroup::new("g_autoload")
                 .arg("dontautoload")
                 .requires("g_extended"),
             ArgGroup::new("g_oob")
                 .arg("ooboutput")
-                .conflicts_with_all(["g_validator", "g_extended"]),
+                .conflicts_with_all(["g_validator", "g_extended", "g_ltex"]),
         ])
         .version(crate_version!())
         .get_matches();
@@ -93,6 +113,9 @@ fn main() -> Result<(), Box<dyn Error>> {
     }
     if let Some(output) = args.get_one::<String>("ooboutput") {
         return run_oob_fixes(paths.next().unwrap(), output);
+    }
+    if let Some(output) = args.get_one::<String>("ltexdedup") {
+        return run_ltex_dedup(paths.next().unwrap(), output, &args);
     }
 
     validate(paths.next().unwrap(), &args)
@@ -209,6 +232,24 @@ fn run_extended(paths: Vec<&String>, args: &ArgMatches) -> Result<(), String> {
 fn run_oob_fixes(input: &str, output: &str) -> Result<(), Box<dyn Error>> {
     let mut plugin = load_plugin(input, None)?;
     fix_oob(&mut plugin);
+    plugin.save_path(output)?;
+    Ok(())
+}
+
+fn run_ltex_dedup(input: &str, output: &str, args: &ArgMatches) -> Result<(), Box<dyn Error>> {
+    let mut replacements = HashMap::new();
+    if args.contains_id("replaceltex") {
+        let vals: Vec<Vec<&String>> = args
+            .get_occurrences("replaceltex")
+            .unwrap()
+            .map(Iterator::collect)
+            .collect();
+        for pair in vals {
+            replacements.insert(pair[0].clone(), pair[1].clone());
+        }
+    }
+    let mut plugin = load_plugin(input, None)?;
+    deduplicate_ltex(&mut plugin, replacements)?;
     plugin.save_path(output)?;
     Ok(())
 }

@@ -39,3 +39,12 @@ This check computes the Levenshtein distance between NPC names. It also checks i
 `StandardsValidator.exe --names [mode] Morrowind.esm Tribunal.esm Bloodmoon.esm Tamriel_Data.esm file.esp`
 
 Like `--extended` above, this mode attempts to load master files automatically.
+
+# Land texture cleaner
+To remove unused LTEX from a plugin:
+
+`StandardsValidator.exe [mode] inputfile.esp --trim-ltex outputfile.esp`
+
+To also replace all uses of the `daedric stone` texture with the `ma_lavaridge` texture and all uses of `gl_grass_05` with `daedric stone`:
+
+`StandardsValidator.exe [mode] inputfile.esp --trim-ltex outputfile.esp --replace-ltex "daedric stone" "ma_lavaridge" --replace-ltex gl_grass_05 "daedric stone"`
