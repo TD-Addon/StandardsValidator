@@ -395,3 +395,7 @@ Items the player can pick up should not be resized in the CS as picking them up 
 ## Deprecated objects
 The extended validator scans cells, inventories, scripts, dialogue filters, and leveled lists for deprecated objects, factions, and classes.
 Taking into account objects marked as deprecated in the CSSE toml file, as well as objects set up to use the deprecated cube, and objects with "deprecated" in their name.
+
+## NPC has equipment they cannot wear
+Certain TD races are not meant to wear certain kinds of equipment, but are technically capable of wearing it.
+This check reports Imga wearing shoes, male Imga wearing helmets, and Tsaesci wearing items that require legs.

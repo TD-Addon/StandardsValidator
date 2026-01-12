@@ -1,8 +1,8 @@
 use clap::ArgMatches;
 use deprecated::DeprecationValidator;
-use tes3::esp::{Cell, Dialogue, DialogueInfo, Reference, TES3Object};
+use tes3::esp::{Cell, Dialogue, DialogueInfo, FixedString, Reference, TES3Object};
 
-use crate::{context::Context, util::is_deleted};
+use crate::{context::Context, extended::equipment::EquipmentValidator, util::is_deleted};
 
 use self::{
     cells::CellValidator,
@@ -13,6 +13,7 @@ use self::{
 
 mod cells;
 mod deprecated;
+mod equipment;
 mod items;
 mod names;
 mod weapons;
@@ -26,6 +27,15 @@ trait ExtendedHandler {
     fn on_record(&mut self, context: &Context, record: &TES3Object, file: &str, last: bool) {}
 
     fn on_cellref(&mut self, context: &Context, record: &Cell, reference: &Reference, id: &str) {}
+
+    fn on_inventory(
+        &mut self,
+        context: &Context,
+        record: &TES3Object,
+        entry: &(i32, FixedString<32>),
+        file: &str,
+    ) {
+    }
 
     fn on_info(
         &mut self,
@@ -50,6 +60,7 @@ impl ExtendedValidator {
             handlers.push(Box::new(OwnershipValidator::new()));
             handlers.push(Box::new(WeaponValidator::new()));
             handlers.push(Box::new(DeprecationValidator::new()));
+            handlers.push(Box::new(EquipmentValidator::new()));
         }
         if names {
             handlers.push(Box::new(NameValidator::new()));
@@ -80,6 +91,19 @@ impl ExtendedValidator {
                         }
                     }
                 }
+                TES3Object::Container(r) => {
+                    self.on_record(context, record, file, last);
+                    if last {
+                        self.on_inventory(context, record, &r.inventory, file);
+                    }
+                }
+                TES3Object::Creature(r) => {
+                    self.on_record(context, record, file, last);
+                    self.on_record(context, record, file, last);
+                    if last {
+                        self.on_inventory(context, record, &r.inventory, file);
+                    }
+                }
                 TES3Object::Dialogue(r) => {
                     self.on_record(context, record, file, last);
                     current_topic = r;
@@ -91,6 +115,13 @@ impl ExtendedValidator {
                 }
                 TES3Object::Landscape(_) => {}
                 TES3Object::LandscapeTexture(_) => {}
+                TES3Object::Npc(r) => {
+                    self.on_record(context, record, file, last);
+                    self.on_record(context, record, file, last);
+                    if last {
+                        self.on_inventory(context, record, &r.inventory, file);
+                    }
+                }
                 TES3Object::Skill(_) => {}
                 _ => self.on_record(context, record, file, last),
             }
@@ -115,6 +146,20 @@ impl ExtendedValidator {
         let id = reference.id.to_ascii_lowercase();
         for handler in &mut self.handlers {
             handler.on_cellref(context, record, reference, &id);
+        }
+    }
+
+    fn on_inventory(
+        &mut self,
+        context: &Context,
+        record: &TES3Object,
+        inventory: &[(i32, FixedString<32>)],
+        file: &str,
+    ) {
+        for entry in inventory {
+            for handler in &mut self.handlers {
+                handler.on_inventory(context, record, entry, file);
+            }
         }
     }
 

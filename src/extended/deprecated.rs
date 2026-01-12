@@ -1,7 +1,9 @@
 use std::collections::{HashMap, HashSet};
 
 use regex::{escape, Regex, RegexBuilder};
-use tes3::esp::{Cell, Dialogue, DialogueInfo, EditorId, Reference, TES3Object, TypeInfo};
+use tes3::esp::{
+    Cell, Dialogue, DialogueInfo, EditorId, FixedString, Reference, TES3Object, TypeInfo,
+};
 
 use crate::{context::Context, util::iter_script};
 
@@ -66,22 +68,8 @@ impl ExtendedHandler for DeprecationValidator {
             TES3Object::Book(r) => is_deprecated(&r.mesh, &r.name),
             TES3Object::Class(r) => is_deprecated("", &r.name),
             TES3Object::Clothing(r) => is_deprecated(&r.mesh, &r.name),
-            TES3Object::Container(r) => {
-                if last {
-                    for (_, id) in &r.inventory {
-                        self.check(context, record, id);
-                    }
-                }
-                is_deprecated(&r.mesh, &r.name)
-            }
-            TES3Object::Creature(r) => {
-                if last {
-                    for (_, id) in &r.inventory {
-                        self.check(context, record, id);
-                    }
-                }
-                is_deprecated(&r.mesh, &r.name)
-            }
+            TES3Object::Container(r) => is_deprecated(&r.mesh, &r.name),
+            TES3Object::Creature(r) => is_deprecated(&r.mesh, &r.name),
             TES3Object::Door(r) => is_deprecated(&r.mesh, &r.name),
             TES3Object::Faction(r) => is_deprecated("", &r.name),
             TES3Object::Ingredient(r) => is_deprecated(&r.mesh, &r.name),
@@ -90,9 +78,6 @@ impl ExtendedHandler for DeprecationValidator {
             TES3Object::MiscItem(r) => is_deprecated(&r.mesh, &r.name),
             TES3Object::Npc(r) => {
                 if last {
-                    for (_, id) in &r.inventory {
-                        self.check(context, record, id);
-                    }
                     self.check(context, record, &r.class);
                     self.check(context, record, &r.faction);
                 }
@@ -165,6 +150,16 @@ impl ExtendedHandler for DeprecationValidator {
         if let Some(soul) = &reference.soul {
             self.check(context, record, soul);
         }
+    }
+
+    fn on_inventory(
+        &mut self,
+        context: &Context,
+        record: &TES3Object,
+        entry: &(i32, FixedString<32>),
+        _: &str,
+    ) {
+        self.check(context, record, &entry.1);
     }
 
     fn on_info(
