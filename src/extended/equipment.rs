@@ -27,6 +27,7 @@ enum Rule {
     MaleImga,
     FemaleImga,
     Tsaesci,
+    Naga,
 }
 
 pub struct EquipmentValidator {
@@ -70,7 +71,9 @@ fn can_equip(slot: EquipmentType, rule: Rule) -> bool {
         EquipmentType::Feet => {
             rule != Rule::MaleImga && rule != Rule::FemaleImga && rule != Rule::Tsaesci
         }
-        EquipmentType::Head => rule != Rule::MaleImga,
+        EquipmentType::Head => {
+            rule != Rule::MaleImga && rule != Rule::Naga
+        }
         EquipmentType::Legs => rule != Rule::Tsaesci,
         _ => true,
     }
@@ -102,6 +105,8 @@ impl ExtendedHandler for EquipmentValidator {
                         }
                     } else if r.race.eq_ignore_ascii_case("T_Aka_Tsaesci") {
                         self.rule = Rule::Tsaesci;
+                    } else if r.race.eq_ignore_ascii_case("T_Arg_Naga") {
+                        self.rule = Rule::Naga;
                     }
                 }
             }
