@@ -80,6 +80,12 @@ Which makes the black squares stand out like a sore thumb if placed above the wa
 ### Contains an unlinked PrisonMarker
 This cell contains a `PrisonMarker` that doesn't link to an interior cell. `PrisonMarker`s need to link to interiors containing `stolen_goods` to prevent crashes.
 
+### Contains a trapped door or container
+This cell contains a scripted door or container that has been assigned a trap. The script prevents the trap from working.
+
+### Contains door or container unlocked with
+This cell contains a scripted door or container that has been assigned a key. The script prevents the key from working.
+
 ### Contains non-real position or rotation
 This reference's position or rotation is not a real number (NaN or Infinity) which breaks things.
 

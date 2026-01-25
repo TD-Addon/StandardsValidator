@@ -71,9 +71,7 @@ fn can_equip(slot: EquipmentType, rule: Rule) -> bool {
         EquipmentType::Feet => {
             rule != Rule::MaleImga && rule != Rule::FemaleImga && rule != Rule::Tsaesci
         }
-        EquipmentType::Head => {
-            rule != Rule::MaleImga && rule != Rule::Naga
-        }
+        EquipmentType::Head => rule != Rule::MaleImga && rule != Rule::Naga,
         EquipmentType::Legs => rule != Rule::Tsaesci,
         _ => true,
     }
