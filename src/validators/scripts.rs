@@ -73,11 +73,11 @@ impl ScriptInfo {
 
 impl Handler<'_> for ScriptValidator {
     fn on_record(&mut self, context: &Context, record: &TES3Object) {
-        if context.mode == Mode::Vanilla {
-            return;
-        }
         match record {
             TES3Object::Script(script) => {
+                if context.mode == Mode::Vanilla {
+                    return;
+                }
                 let text = &script.text;
                 let mut info = ScriptInfo::new(
                     self.npc.is_match(text),
@@ -103,7 +103,7 @@ impl Handler<'_> for ScriptValidator {
                 }
             }
             TES3Object::Npc(npc) => {
-                if !npc.is_dead() {
+                if !npc.is_dead() && context.mode != Mode::Vanilla {
                     if npc.script.is_empty() {
                         println!("Npc {} does not have a script", npc.id);
                     } else {
@@ -112,6 +112,9 @@ impl Handler<'_> for ScriptValidator {
                 }
             }
             TES3Object::Book(book) => {
+                if context.mode == Mode::Vanilla {
+                    return;
+                }
                 let id = book.id.to_ascii_lowercase();
                 let marker = if book.mesh.eq_ignore_ascii_case(NPC_MARKER) {
                     PositionMarkerType::NpcMarker
