@@ -1,9 +1,7 @@
 {
 	"rulesets": {
 		"Ashlander F": [
-			[{ "class": "Wise Woman" }],
-			[{ "class": "Wise Woman Service" }],
-			[{ "class": "Mabrigash" }],
+			[{ "class": ["Wise Woman", "Wise Woman Service", "Mabrigash"] }],
 			[{ "faction": "Ashlanders" }]
 		],
 		"Ashlander M": [
@@ -20,17 +18,44 @@
 			[{ "faction": "T_Mw_HouseIndoril" }]
 		],
 		"Temple": [
-			[{ "faction": "Temple" }],
-			[{ "faction": "T_Mw_HouseIndoril" }],
-			[{ "faction": "Redoran" }],
-			[{ "faction": "Hands of Almalexia" }],
+			[{ "faction": ["Temple", "T_Mw_HouseIndoril", "Redoran", "Hands of Almalexia"] }],
 			[
-				{ "class": "Pilgrim"},
-				{ "faction": { "not": ["Ashlanders", "Imperial Cult"] } }
+				{ "class": "Pilgrim" },
+				{ "faction": { "not": ["Ashlanders", "Imperial Cult"] } },
+				{ "mode": ["TR", "Vanilla"] }
 			],
 			[
-				{ "class": "Monk"},
-				{ "faction": { "not": ["Ashlanders", "Imperial Cult"] } }
+				{ "class": "Monk" },
+				{ "faction": { "not": ["Ashlanders", "Imperial Cult"] } },
+				{ "mode": ["TR", "Vanilla"] }
+			]
+		],
+		"Morag Tong": [
+			[{ "faction": "Morag Tong" }]
+		],
+		"Culturally Ashlander": [
+			[{ "class": ["Champion", "Wise Woman", "Wise Woman Service", "Mabrigash"] }],
+			[{ "faction": ["Ashlanders", "T_Mw_Clan_Baluath"] }]
+		],
+		"Culturally Hlaalu": [
+			[{ "faction": "Hlaalu" }],
+			[
+				{ "faction": { "not": ["Ashlanders", "Redoran", "Telvanni", "T_Mw_HouseIndoril", "T_Mw_HouseDres"] } },
+				{ "mode": ["TR", "Vanilla"] }
+			]
+		],
+		"Culturally Redoran": [
+			[{ "faction": "Redoran" }],
+			[
+				{ "faction": { "not": ["Ashlanders", "Hlaalu", "Telvanni", "T_Mw_HouseIndoril", "T_Mw_HouseDres"] } },
+				{ "mode": ["TR", "Vanilla"] }
+			]
+		],
+		"Culturally Telvanni": [
+			[{ "faction": "Telvanni" }],
+			[
+				{ "faction": { "not": ["Ashlanders", "Hlaalu", "Redoran", "T_Mw_HouseIndoril", "T_Mw_HouseDres"] } },
+				{ "mode": ["TR", "Vanilla"] }
 			]
 		]
 	},
@@ -367,5 +392,51 @@
 		{ "model": "T_B_Rga_UNI_HairIsodiPC", "rules": [
 			[{ "id": "PC_m1_Isodi" }]
 		] }
+	],
+	"items": [
+		{ "id": "common_pants_01_a", "ruleset": "Culturally Ashlander" },
+		{ "id": "common_pants_01_e", "ruleset": "Culturally Ashlander" },
+		{ "id": "common_pants_01_u", "ruleset": "Culturally Ashlander" },
+		{ "id": "common_pants_01_z", "ruleset": "Culturally Ashlander" },
+		{ "id": "common_robe_02_h", "ruleset": "Culturally Hlaalu" },
+		{ "id": "common_robe_02_hh", "ruleset": "Culturally Hlaalu" },
+		{ "id": "common_robe_02_r", "ruleset": "Culturally Redoran" },
+		{ "id": "common_robe_02_rr", "ruleset": "Culturally Redoran" },
+		{ "id": "common_robe_02_t", "ruleset": "Culturally Telvanni" },
+		{ "id": "common_robe_02_tt", "ruleset": "Culturally Telvanni" },
+		{ "id": "common_robe_03_a", "ruleset": "Temple" },
+		{ "id": "common_robe_03_b", "ruleset": "Morag Tong" },
+		{ "id": "common_shirt_01_a", "ruleset": "Culturally Ashlander" },
+		{ "id": "common_shirt_01_e", "ruleset": "Culturally Ashlander" },
+		{ "id": "common_shirt_01_u", "ruleset": "Culturally Ashlander" },
+		{ "id": "common_shirt_01_z", "ruleset": "Culturally Ashlander" },
+		{ "id": "common_shirt_02_h", "ruleset": "Culturally Hlaalu" },
+		{ "id": "common_shirt_02_hh", "ruleset": "Culturally Hlaalu" },
+		{ "id": "common_shirt_02_r", "ruleset": "Culturally Redoran" },
+		{ "id": "common_shirt_02_rr", "ruleset": "Culturally Redoran" },
+		{ "id": "common_shirt_02_t", "ruleset": "Culturally Telvanni" },
+		{ "id": "common_shirt_02_tt", "ruleset": "Culturally Telvanni" },
+		{ "id": "common_shirt_03_b", "ruleset": "Morag Tong" },
+		{ "id": "expensive_pants_01", "ruleset": "Culturally Ashlander" },
+		{ "id": "expensive_pants_01_a", "ruleset": "Culturally Ashlander" },
+		{ "id": "expensive_pants_01_e", "ruleset": "Culturally Ashlander", "rules": [
+			[{ "faction": "Hlaalu" }, { "class": "Guard" }]
+		] },
+		{ "id": "expensive_pants_01_u", "ruleset": "Culturally Ashlander" },
+		{ "id": "expensive_pants_01_z", "ruleset": "Culturally Ashlander" },
+		{ "id": "expensive_robe_01", "ruleset": "Culturally Ashlander" },
+		{ "id": "expensive_robe_02", "ruleset": "Temple" },
+		{ "id": "expensive_shirt_01", "ruleset": "Culturally Ashlander" },
+		{ "id": "expensive_shirt_01_a", "ruleset": "Culturally Ashlander" },
+		{ "id": "expensive_shirt_01_e", "ruleset": "Culturally Ashlander" },
+		{ "id": "expensive_shirt_01_u", "ruleset": "Culturally Ashlander" },
+		{ "id": "expensive_shirt_01_z", "ruleset": "Culturally Ashlander" },
+		{ "id": "expensive_skirt_01", "ruleset": "Culturally Ashlander" },
+		{ "id": "extravagant_robe_01_h", "ruleset": "Culturally Hlaalu" },
+		{ "id": "extravagant_robe_01_r", "ruleset": "Culturally Redoran" },
+		{ "id": "extravagant_robe_01_t", "ruleset": "Culturally Telvanni" },
+		{ "id": "extravagant_shirt_01_h", "ruleset": "Culturally Hlaalu" },
+		{ "id": "extravagant_shirt_01_r", "ruleset": "Culturally Redoran" },
+		{ "id": "extravagant_shirt_01_t", "ruleset": "Culturally Telvanni" }
 	]
 }

@@ -13,15 +13,15 @@ struct _HashMap<K: Eq + Hash, V>(HashMap<K, V>);
 
 #[derive(Deserialize)]
 struct NotRule {
-    not: Rule,
+    not: _Vec<String>,
 }
 
 #[derive(Deserialize)]
 #[serde(untagged)]
 enum Rule {
-    Array(_Vec<Rule>),
+    In(_Vec<String>),
     Equality(String),
-    Negation(Box<NotRule>),
+    NotIn(Box<NotRule>),
 }
 
 #[derive(Deserialize)]
@@ -30,6 +30,7 @@ enum FieldRule {
     Id(Rule),
     Class(Rule),
     Faction(Rule),
+    Mode(Rule),
 }
 
 #[derive(Deserialize)]
@@ -40,10 +41,18 @@ struct BodyPartDefinition {
 }
 
 #[derive(Deserialize)]
+struct ItemDefinition {
+    id: String,
+    ruleset: _Option<String>,
+    rules: _Option<_Vec<_Vec<FieldRule>>>,
+}
+
+#[derive(Deserialize)]
 struct BodyPartData {
     rulesets: _HashMap<String, _Vec<_Vec<FieldRule>>>,
     head: _Vec<BodyPartDefinition>,
     hair: _Vec<BodyPartDefinition>,
+    items: _Vec<ItemDefinition>,
 }
 
 impl<K, V> ToTokens for _HashMap<K, V>
@@ -64,13 +73,13 @@ where
 impl ToTokens for Rule {
     fn to_tokens(&self, tokens: &mut TokenStream) {
         match self {
-            Rule::Array(rules) => quote! {
-                Rule::Array(#rules)
+            Rule::In(rules) => quote! {
+                Rule::In(#rules)
             },
-            Rule::Negation(rule) => {
+            Rule::NotIn(rule) => {
                 let rule = &rule.not;
                 quote! {
-                    Rule::Negation(Box::new(#rule))
+                    Rule::NotIn(#rule)
                 }
             }
             Rule::Equality(id) => {
@@ -96,6 +105,9 @@ impl ToTokens for FieldRule {
             FieldRule::Id(rule) => quote! {
                 FieldRule::Id(#rule)
             },
+            FieldRule::Mode(rule) => quote! {
+                FieldRule::Mode(#rule)
+            },
         }
         .to_tokens(tokens)
     }
@@ -117,6 +129,22 @@ impl ToTokens for BodyPartDefinition {
     }
 }
 
+impl ToTokens for ItemDefinition {
+    fn to_tokens(&self, tokens: &mut TokenStream) {
+        let id = self.id.to_ascii_lowercase();
+        let ruleset = &self.ruleset;
+        let rules = &self.rules;
+        quote! {
+            (
+                #id,
+                #ruleset,
+                #rules,
+            )
+        }
+        .to_tokens(tokens)
+    }
+}
+
 pub fn generate() -> TokenStream {
     let data = serde_json::from_str(include_str!("../data/bodyparts.json")).unwrap();
 
@@ -124,6 +152,7 @@ pub fn generate() -> TokenStream {
         rulesets,
         head,
         hair,
+        items,
     } = data;
 
     quote! {
@@ -131,6 +160,7 @@ pub fn generate() -> TokenStream {
             #rulesets,
             #head,
             #hair,
+            #items,
         )
     }
     .into_token_stream()

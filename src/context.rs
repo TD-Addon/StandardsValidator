@@ -31,6 +31,16 @@ impl Mode {
     pub fn uses_td(&self) -> bool {
         *self == Mode::PT || *self == Mode::TR
     }
+
+    pub fn name(&self) -> &str {
+        match self {
+            Mode::PT => "PT",
+            Mode::TD => "TD",
+            Mode::TR => "TR",
+            Mode::Vanilla => "Vanilla",
+            _ => "",
+        }
+    }
 }
 
 pub struct Project {

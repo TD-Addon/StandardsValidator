@@ -128,6 +128,9 @@ This NPC should be using the asset designed for it.
 ### Is using head/hair
 This head or hair is inappropriate for use by this NPC; usually for cultural reasons.
 
+### Has item
+This item is tied to a specific faction to which this NPC does not belong.
+
 ### Reports crimes despite having >= 70 fight
 This NPC is likely to be hostile, but has an alarm of >= 100, meaning the player can get a bounty fighting them.
 

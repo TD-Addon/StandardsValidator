@@ -15,8 +15,9 @@ use tes3::esp::{BodypartId, FixedString, Npc, NpcFlags, TES3Object};
 pub struct NpcValidator {
     slave_bracers: i32,
     uniques: HashMap<&'static str, UniqueNpc>,
-    heads: HashMap<&'static str, AllRules>,
-    hairs: HashMap<&'static str, AllRules>,
+    heads: HashMap<&'static str, RulesPredicate>,
+    hairs: HashMap<&'static str, RulesPredicate>,
+    items: HashMap<&'static str, RulesPredicate>,
 }
 
 const BOUNTY_ALARM: i8 = 100;
@@ -56,7 +57,7 @@ impl Handler<'_> for NpcValidator {
     fn on_record(&mut self, context: &Context, record: &TES3Object) {
         self.slave_bracers = 0;
         if let TES3Object::Npc(npc) = record {
-            self.check_bodyparts(npc);
+            self.check_bodyparts(npc, &context.mode);
             if context.mode == Mode::PT && is_autocalc(npc) {
                 println!("Npc {} has auto calculated stats and spells", npc.id);
             }
@@ -82,34 +83,38 @@ impl Handler<'_> for NpcValidator {
         }
     }
 
-    fn on_inventory(&mut self, _: &Context, record: &TES3Object, entry: &(i32, FixedString<32>)) {
-        if self.slave_bracers > 1 {
-            return;
-        }
+    fn on_inventory(
+        &mut self,
+        context: &Context,
+        record: &TES3Object,
+        entry: &(i32, FixedString<32>),
+    ) {
         if let TES3Object::Npc(npc) = record {
-            if entry.1.eq_ignore_ascii_case("slave_bracer_left")
-                || entry.1.eq_ignore_ascii_case("slave_bracer_right")
+            if self.slave_bracers <= 1
+                && (entry.1.eq_ignore_ascii_case("slave_bracer_left")
+                    || entry.1.eq_ignore_ascii_case("slave_bracer_right"))
             {
                 self.slave_bracers += entry.0.abs();
                 if self.slave_bracers > 1 {
                     println!("Npc {} has multiple slave bracers", npc.id);
                 }
             }
+            self.check_item_rules(npc, entry.1.as_str(), &context.mode);
         }
     }
 }
 
 enum Rule {
-    Array(Vec<Rule>),
-    Negation(Box<Rule>),
+    In(Vec<&'static str>),
+    NotIn(Vec<&'static str>),
     Equality(&'static str),
 }
 
 impl Rule {
     fn test(&self, value: &str) -> bool {
         match self {
-            Rule::Array(rules) => rules.iter().all(|r| r.test(value)),
-            Rule::Negation(rule) => !rule.test(value),
+            Rule::In(values) => values.iter().any(|v| v.eq_ignore_ascii_case(value)),
+            Rule::NotIn(values) => values.iter().all(|v| !v.eq_ignore_ascii_case(value)),
             Rule::Equality(v) => v.eq_ignore_ascii_case(value),
         }
     }
@@ -119,18 +124,20 @@ enum FieldRule {
     Class(Rule),
     Faction(Rule),
     Id(Rule),
+    Mode(Rule),
 }
 
 trait Testable {
-    fn test(&self, npc: &Npc) -> bool;
+    fn test(&self, npc: &Npc, mode: &Mode) -> bool;
 }
 
 impl Testable for FieldRule {
-    fn test(&self, npc: &Npc) -> bool {
+    fn test(&self, npc: &Npc, mode: &Mode) -> bool {
         match self {
             FieldRule::Class(rule) => rule.test(&npc.class),
             FieldRule::Faction(rule) => rule.test(&npc.faction),
             FieldRule::Id(rule) => rule.test(&npc.id),
+            FieldRule::Mode(rule) => rule.test(mode.name()),
         }
     }
 }
@@ -140,17 +147,17 @@ struct FieldRules {
 }
 
 impl Testable for FieldRules {
-    fn test(&self, npc: &Npc) -> bool {
-        return !self.rules.iter().any(|r| !r.test(npc));
+    fn test(&self, npc: &Npc, mode: &Mode) -> bool {
+        return !self.rules.iter().any(|r| !r.test(npc, mode));
     }
 }
-struct AllRules {
+struct RulesPredicate {
     rules: Vec<Rc<dyn Testable>>,
 }
 
-impl Testable for AllRules {
-    fn test(&self, npc: &Npc) -> bool {
-        return !self.rules.iter().any(|r| !r.test(npc));
+impl Testable for RulesPredicate {
+    fn test(&self, npc: &Npc, mode: &Mode) -> bool {
+        return self.rules.iter().any(|r| r.test(npc, mode));
     }
 }
 
@@ -159,8 +166,8 @@ struct SomeRules {
 }
 
 impl Testable for SomeRules {
-    fn test(&self, npc: &Npc) -> bool {
-        return self.rules.iter().any(|r| r.test(npc));
+    fn test(&self, npc: &Npc, mode: &Mode) -> bool {
+        return self.rules.iter().any(|r| r.test(npc, mode));
     }
 }
 
@@ -172,8 +179,9 @@ struct UniqueNpc {
 
 struct RulesParser {
     uniques: HashMap<&'static str, UniqueNpc>,
-    heads: HashMap<&'static str, AllRules>,
-    hairs: HashMap<&'static str, AllRules>,
+    heads: HashMap<&'static str, RulesPredicate>,
+    hairs: HashMap<&'static str, RulesPredicate>,
+    items: HashMap<&'static str, RulesPredicate>,
     rulesets: HashMap<&'static str, Rc<SomeRules>>,
 }
 
@@ -183,6 +191,7 @@ impl RulesParser {
             uniques: HashMap::new(),
             heads: HashMap::new(),
             hairs: HashMap::new(),
+            items: HashMap::new(),
             rulesets: HashMap::new(),
         }
     }
@@ -228,7 +237,7 @@ impl RulesParser {
         part: BodypartId,
     ) -> Result<(), String> {
         for (model, ruleset, rules_opt) in definitions {
-            let mut predicate = AllRules { rules: Vec::new() };
+            let mut predicate = RulesPredicate { rules: Vec::new() };
             if let Some(rules) = rules_opt {
                 predicate
                     .rules
@@ -241,8 +250,10 @@ impl RulesParser {
             }
             if part == BodypartId::Hair {
                 self.hairs.insert(model, predicate);
-            } else {
+            } else if part == BodypartId::Head {
                 self.heads.insert(model, predicate);
+            } else {
+                self.items.insert(model, predicate);
             }
         }
         Ok(())
@@ -262,22 +273,24 @@ impl RulesParser {
 
 impl NpcValidator {
     pub fn new() -> Result<Self, String> {
-        let (rulesets, head, hair) = get_bodypart_data!();
+        let (rulesets, head, hair, items) = get_bodypart_data!();
         let mut parser = RulesParser::new();
         parser.parse_rulesets(rulesets)?;
         parser.parse_part(head, BodypartId::Head)?;
         parser.parse_part(hair, BodypartId::Hair)?;
+        parser.parse_part(items, BodypartId::Tail)?;
         Ok(Self {
             slave_bracers: 0,
             uniques: parser.uniques,
             heads: parser.heads,
             hairs: parser.hairs,
+            items: parser.items,
         })
     }
 
-    fn check_bodyparts(&self, npc: &Npc) {
-        self.check_part_rules(npc, &npc.hair, &self.hairs, "hair");
-        self.check_part_rules(npc, &npc.head, &self.heads, "head");
+    fn check_bodyparts(&self, npc: &Npc, mode: &Mode) {
+        self.check_part_rules(npc, &npc.hair, &self.hairs, "hair", mode);
+        self.check_part_rules(npc, &npc.head, &self.heads, "head", mode);
         if let Some(unique) = self.uniques.get(npc.id.to_ascii_lowercase().as_str()) {
             self.check_part(npc, &npc.hair, &unique.hair, "hair");
             self.check_part(npc, &npc.head, &unique.head, "head");
@@ -288,12 +301,13 @@ impl NpcValidator {
         &self,
         npc: &Npc,
         part_id: &str,
-        rules: &HashMap<&'static str, AllRules>,
+        rules: &HashMap<&'static str, RulesPredicate>,
         name: &str,
+        mode: &Mode,
     ) {
         let bodypart = part_id.to_lowercase();
         if let Some(rule) = rules.get(bodypart.as_str()) {
-            if !rule.test(npc) {
+            if !rule.test(npc, mode) {
                 println!("Npc {} is using {} {}", npc.id, name, part_id);
             }
         }
@@ -316,5 +330,14 @@ impl NpcValidator {
             }
         }
         set
+    }
+
+    fn check_item_rules(&self, npc: &Npc, item_id: &str, mode: &Mode) {
+        let item = item_id.to_lowercase();
+        if let Some(rule) = self.items.get(item.as_str()) {
+            if !rule.test(npc, mode) {
+                println!("Npc {} has item {}", npc.id, item_id);
+            }
+        }
     }
 }
