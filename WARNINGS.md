@@ -86,6 +86,9 @@ This cell contains a scripted door or container that has been assigned a trap. T
 ### Contains door or container unlocked with
 This cell contains a scripted door or container that has been assigned a key. The script prevents the key from working.
 
+### Contains contains a teleporting door
+This cell contains a scripted door that has a teleport destination. The script prevents the player from being teleported.
+
 ### Contains non-real position or rotation
 This reference's position or rotation is not a real number (NaN or Infinity) which breaks things.
 

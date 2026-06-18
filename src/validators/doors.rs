@@ -55,6 +55,13 @@ impl Handler<'_> for DoorValidator {
                     key
                 );
             }
+            if reference.destination.is_some() {
+                println!(
+                    "Cell {} contains a teleporting {}",
+                    record.editor_id(),
+                    reference.id
+                )
+            }
         }
     }
 }
