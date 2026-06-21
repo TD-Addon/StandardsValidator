@@ -34,7 +34,7 @@ fn check_racial_animations(npc: &Npc) {
             println!("Npc {} is not using animation {}", npc.id, TSAESCI);
         }
         return;
-    } else if npc.race.eq_ignore_ascii_case("T_Bm_Naga") {
+    } else if npc.race.eq_ignore_ascii_case("T_Bkm_Naga") {
         if !npc.mesh.eq_ignore_ascii_case(NAGA) {
             println!("Npc {} is not using animation {}", npc.id, NAGA);
         }
