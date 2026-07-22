@@ -18,7 +18,7 @@
 			[{ "faction": ["T_Mw_HouseIndoril", "T_Mw_Ordinators"] }]
 		],
 		"Temple": [
-			[{ "faction": ["Temple", "T_Mw_HouseIndoril", "Redoran", "Hands of Almalexia"] }],
+			[{ "faction": ["Temple", "T_Mw_HouseIndoril", "Redoran", "Hands of Almalexia", "T_Mw_Ordinators"] }],
 			[
 				{ "class": "Pilgrim" },
 				{ "faction": { "not": ["Ashlanders", "Imperial Cult"] } },
@@ -28,7 +28,8 @@
 				{ "class": "Monk" },
 				{ "faction": { "not": ["Ashlanders", "Imperial Cult"] } },
 				{ "mode": ["TR", "Vanilla"] }
-			]
+			],
+			[{ "class": "Ordinator" }]
 		],
 		"Morag Tong": [
 			[{ "faction": "Morag Tong" }]
