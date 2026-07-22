@@ -15,7 +15,7 @@
 			[{ "faction": "Hlaalu" }]
 		],
 		"Indoril": [
-			[{ "faction": "T_Mw_HouseIndoril" }]
+			[{ "faction": ["T_Mw_HouseIndoril", "T_Mw_Ordinators"] }]
 		],
 		"Temple": [
 			[{ "faction": ["Temple", "T_Mw_HouseIndoril", "Redoran", "Hands of Almalexia"] }],

@@ -7,7 +7,7 @@ use super::Context;
 use crate::{
     context::Mode,
     handlers::Handler,
-    util::{is_autocalc, is_dead, update_or_insert},
+    util::{ci_starts_with, is_autocalc, is_dead, update_or_insert},
 };
 use codegen::get_bodypart_data;
 use tes3::esp::{BodypartId, FixedString, Npc, NpcFlags, TES3Object};
@@ -53,6 +53,37 @@ fn check_racial_animations(npc: &Npc) {
     }
 }
 
+fn is_special_ordinator(npc: &Npc) -> bool {
+    for (_, item) in &npc.inventory {
+        if item.0.eq_ignore_ascii_case("Indoril_Almalexia_Cuirass")
+            || item.0.eq_ignore_ascii_case("Indoril_Almalexia_helmet")
+            || item.0.eq_ignore_ascii_case("Indoril_MH_Guard_Cuirass")
+            || item.0.eq_ignore_ascii_case("Indoril_MH_Guard_helmet")
+            || item.0.eq_ignore_ascii_case("T_De_Necrom_Cuirass_01")
+            || item.0.eq_ignore_ascii_case("T_De_Necrom_Cuirass_02")
+            || item.0.eq_ignore_ascii_case("T_De_Necrom_Helm_01")
+        {
+            return true;
+        }
+    }
+    false
+}
+
+fn is_ordinator(npc: &Npc) -> bool {
+    if npc.class.eq_ignore_ascii_case("Ordinator") {
+        return true;
+    } else if npc.faction.eq_ignore_ascii_case("Temple") {
+        for (_, item) in &npc.inventory {
+            if item.0.eq_ignore_ascii_case("indoril cuirass")
+                || item.0.eq_ignore_ascii_case("indoril helmet")
+            {
+                return true;
+            }
+        }
+    }
+    false
+}
+
 impl Handler<'_> for NpcValidator {
     fn on_record(&mut self, context: &Context, record: &TES3Object) {
         self.slave_bracers = 0;
@@ -77,6 +108,19 @@ impl Handler<'_> for NpcValidator {
                 }
                 if npc.ai_packages.is_empty() {
                     println!("Npc {} does not have any AI packages", npc.id);
+                }
+                if npc.faction.eq_ignore_ascii_case("T_Mw_Ordinators") {
+                    if ci_starts_with(&npc.id, "TR_m0_") || is_special_ordinator(npc) {
+                        println!(
+                            "Npc {} should not belong to faction {}",
+                            npc.id, npc.faction
+                        );
+                    }
+                } else if context.mode == Mode::TR
+                    && !npc.name.contains("Ordinator")
+                    && is_ordinator(npc)
+                {
+                    println!("Npc {} should belong to faction T_Mw_Ordinators", npc.id);
                 }
             }
             check_racial_animations(npc);

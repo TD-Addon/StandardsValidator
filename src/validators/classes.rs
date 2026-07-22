@@ -20,6 +20,11 @@ impl Handler<'_> for ClassValidator {
                         &npc.id, &npc.class, replacement
                     );
                 }
+                if npc.class.eq_ignore_ascii_case("guard")
+                    && npc.faction.eq_ignore_ascii_case("T_Mw_Ordinators")
+                {
+                    println!("Npc {} should belong to faction Temple", &npc.id);
+                }
             }
         }
     }
