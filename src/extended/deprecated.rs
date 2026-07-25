@@ -88,7 +88,7 @@ impl ExtendedHandler for DeprecationValidator {
             TES3Object::Static(r) => is_deprecated(&r.mesh, ""),
             TES3Object::Weapon(r) => is_deprecated(&r.mesh, &r.name),
             TES3Object::LeveledCreature(r) => {
-                if last {
+                if last && !self.is_deprecated(context, &record.editor_id_ascii_lowercase()) {
                     for (id, _) in &r.creatures {
                         self.check(context, record, id);
                     }
@@ -96,7 +96,7 @@ impl ExtendedHandler for DeprecationValidator {
                 return;
             }
             TES3Object::LeveledItem(r) => {
-                if last {
+                if last && !self.is_deprecated(context, &record.editor_id_ascii_lowercase()) {
                     for (id, _) in &r.items {
                         self.check(context, record, id);
                     }
@@ -159,7 +159,9 @@ impl ExtendedHandler for DeprecationValidator {
         entry: &(i32, FixedString<32>),
         _: &str,
     ) {
-        self.check(context, record, &entry.1);
+        if !self.is_deprecated(context, &record.editor_id_ascii_lowercase()) {
+            self.check(context, record, &entry.1);
+        }
     }
 
     fn on_info(
