@@ -22,7 +22,7 @@ pub struct NpcValidator {
 
 const BOUNTY_ALARM: i8 = 100;
 const HOSTILE: i8 = 70;
-const KHAJIIT_ANIMATIONS: [&str; 2] = ["t_els_ohmes-raht", "t_els_suthay"];
+const KHAJIIT_ANIMATIONS: [&str; 3] = ["t_els_ohmes-raht", "t_els_suthay", "t_els_tojay"];
 const KHAJIIT_F: &str = "epos_kha_upr_anim_f.nif";
 const KHAJIIT_M: &str = "epos_kha_upr_anim_m.nif";
 const TSAESCI: &str = "pi_tsa_base_anim.nif";

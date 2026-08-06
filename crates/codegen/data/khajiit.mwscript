@@ -11,6 +11,8 @@ elseif ( GetRace "T_Els_Ohmes-raht" )
 	set T_Local_Khajiit to 1
 elseif ( GetRace "T_Els_Suthay" )
 	set T_Local_Khajiit to 1
+elseif ( GetRace "T_Els_Tojay" )
+	set T_Local_Khajiit to 1
 elseif ( GetRace "Khajiit" )
 	set T_Local_Khajiit to 1
 endif
