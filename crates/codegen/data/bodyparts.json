@@ -59,7 +59,7 @@
 				{ "mode": ["TR", "Vanilla"] }
 			]
 		],
-		"Imperialized Dunmer": [
+		"Imperialized": [
 			[{ "faction": {
 				"not": [
 					"Ashlanders", "Temple", "T_Mw_HouseDres", "T_Mw_HouseIndoril",
@@ -269,8 +269,8 @@
 		{ "model": "T_B_De_HairFemTR_33", "ruleset": "Dres" },
 		{ "model": "T_B_De_HairFemTR_34", "ruleset": "Indoril" },
 		{ "model": "T_B_De_HairFemTR_44", "ruleset": "Temple" },
-		{ "model": "T_B_De_HairImpMaleTR_01", "ruleset": "Imperialized Dunmer" },
-		{ "model": "T_B_De_HairImpMaleTR_02", "ruleset": "Imperialized Dunmer" },
+		{ "model": "T_B_De_HairImpMaleTR_01", "ruleset": "Imperialized" },
+		{ "model": "T_B_De_HairImpMaleTR_02", "ruleset": "Imperialized" },
 		{ "model": "T_B_De_HairMaleTR_08", "ruleset": "Dres" },
 		{ "model": "T_B_De_HairMaleTR_09", "ruleset": "Indoril" },
 		{ "model": "T_B_De_HairMaleTR_31", "rules": [
@@ -361,6 +361,7 @@
 		] },
 		{ "id": "expensive_pants_01_u", "ruleset": "Culturally Ashlander" },
 		{ "id": "expensive_pants_01_z", "ruleset": "Culturally Ashlander" },
+		{ "id": "Expensive_pants_Mournhold", "ruleset": "Imperialized" },
 		{ "id": "expensive_robe_01", "ruleset": "Culturally Ashlander" },
 		{ "id": "expensive_robe_02", "ruleset": "Temple" },
 		{ "id": "expensive_shirt_01", "ruleset": "Culturally Ashlander" },
@@ -368,7 +369,10 @@
 		{ "id": "expensive_shirt_01_e", "ruleset": "Culturally Ashlander" },
 		{ "id": "expensive_shirt_01_u", "ruleset": "Culturally Ashlander" },
 		{ "id": "expensive_shirt_01_z", "ruleset": "Culturally Ashlander" },
+		{ "id": "Expensive_shirt_Mournhold", "ruleset": "Imperialized" },
+		{ "id": "Expensive_shoes_Mournhold", "ruleset": "Imperialized" },
 		{ "id": "expensive_skirt_01", "ruleset": "Culturally Ashlander" },
+		{ "id": "expensive_skirt_Mournhold", "ruleset": "Imperialized" },
 		{ "id": "extravagant_robe_01_h", "ruleset": "Culturally Hlaalu" },
 		{ "id": "extravagant_robe_01_r", "ruleset": "Culturally Redoran" },
 		{ "id": "extravagant_robe_01_t", "ruleset": "Culturally Telvanni" },
