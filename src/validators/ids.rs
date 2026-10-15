@@ -44,11 +44,34 @@ fn is_vampire_head(part: &Bodypart) -> bool {
 
 fn check_id(context: &Context, record: &TES3Object) {
     let id = record.editor_id();
+    let start_trimmed = id.trim_start();
+    if start_trimmed.len() != id.len() {
+        println!(
+            "{} {} has leading whitespace in its ID",
+            record.type_name(),
+            id,
+        );
+    }
+    let end_trimmed = start_trimmed.trim_end();
+    if end_trimmed.len() != start_trimmed.len() {
+        println!(
+            "{} {} has trailing whitespace in its ID",
+            record.type_name(),
+            id,
+        );
+    }
     let matching = context.projects.iter().find(|p| p.matches(&id));
     match matching {
         Some(project) => {
             if context.mode != Mode::TD && project.prefix == "T_" {
                 println!("{} {} has a {} ID", record.type_name(), id, project.name);
+            }
+            if project.prefix == "T_" && end_trimmed.chars().any(|c| c.is_whitespace()) {
+                println!(
+                    "{} {} has an ID containing whitespace",
+                    record.type_name(),
+                    id
+                );
             }
         }
         None => {
