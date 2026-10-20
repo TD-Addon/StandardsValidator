@@ -45,6 +45,20 @@ fn get_water_height(cell: &Cell) -> Option<f32> {
     None
 }
 
+fn get_ref_count(reference: &Reference) -> Option<u32> {
+    if reference.object_count.is_some() {
+        reference.object_count
+    } else if reference.owner.is_some()
+        || reference.owner_faction.is_some()
+        || reference.owner_global.is_some()
+        || reference.owner_faction_rank.is_some()
+    {
+        Some(1)
+    } else {
+        None
+    }
+}
+
 impl Handler<'_> for CellValidator {
     fn on_record(&mut self, context: &Context, record: &TES3Object) {
         match record {
@@ -130,6 +144,32 @@ impl Handler<'_> for CellValidator {
     ) {
         if reference.deleted.unwrap_or(false) {
             return;
+        }
+        if let Some(count) = get_ref_count(reference) {
+            let valid = if id == "gold_001" {
+                count >= 1 && count < 5
+            } else if id == "gold_005" {
+                count >= 5 && count < 10
+            } else if id == "gold_010" {
+                count >= 10 && count < 25
+            } else if id == "gold_025" {
+                count >= 25 && count < 100
+            } else if id == "gold_100" {
+                count >= 100
+            } else {
+                true
+            };
+            if !valid {
+                println!(
+                    "Cell {} contains reference {} with count {} at [{}, {}, {}]",
+                    record.editor_id(),
+                    reference.id,
+                    count,
+                    reference.translation[0],
+                    reference.translation[1],
+                    reference.translation[2]
+                );
+            }
         }
         let invalid_coords = reference.translation.iter().any(|coord| !coord.is_finite())
             || reference.rotation.iter().any(|coord| !coord.is_finite());

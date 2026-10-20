@@ -14,6 +14,12 @@ This ID does not match the [guidelines](https://wiki.project-tamriel.com/wiki/Mo
 ### Has a Tamriel Data ID
 Either this is a dirty edit, or someone did not follow the guidelines.
 
+### Has leading/trailing whitespace in its ID
+Probably because it was pasted from somewhere.
+
+### Has an ID containing whitespace
+This ID does not match Tamriel Data's ID guidelines.
+
 ### Is auto calculated
 This spell is auto calculated which means that any auto calculated NPC can have it. Including vanilla NPCs.
 
@@ -91,6 +97,9 @@ This cell contains a scripted door that has a teleport destination. The script p
 
 ### Contains non-real position or rotation
 This reference's position or rotation is not a real number (NaN or Infinity) which breaks things.
+
+### Contains reference with count N
+This stack of gold has a stack size that does not match its appearance. (E.g. 1 instead of 100 for Gold_100.)
 
 ## Supply chests
 
