@@ -6,6 +6,7 @@ use codegen::get_project_data;
 #[derive(Clone, PartialEq)]
 pub enum Mode {
     None,
+    PI,
     PT,
     TD,
     TR,
@@ -18,6 +19,7 @@ where
 {
     fn from(value: T) -> Self {
         match value.as_ref().to_ascii_uppercase().as_str() {
+            "PI" => Mode::PI,
             "PT" => Mode::PT,
             "TD" => Mode::TD,
             "TR" => Mode::TR,
@@ -32,8 +34,13 @@ impl Mode {
         *self == Mode::PT || *self == Mode::TR
     }
 
+    pub fn is_morrowind(&self) -> bool {
+        *self == Mode::TR || *self == Mode::Vanilla
+    }
+
     pub fn name(&self) -> &str {
         match self {
+            Mode::PI => "PI",
             Mode::PT => "PT",
             Mode::TD => "TD",
             Mode::TR => "TR",

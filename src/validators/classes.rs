@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 
 use super::Context;
-use crate::{context::Mode, handlers::Handler};
+use crate::handlers::Handler;
 use codegen::get_class_data;
 use tes3::esp::{Dialogue, DialogueInfo, FilterType, TES3Object};
 
@@ -63,10 +63,11 @@ impl ClassValidator {
     }
 
     fn get_replacement(&self, id: &str, context: &Context) -> Option<&&'static str> {
-        if context.mode == Mode::PT {
+        if context.mode.uses_td() {
+            if context.mode.is_morrowind() {
+                return self.tr_classes.get(id.to_ascii_lowercase().as_str());
+            }
             return self.classes.get(id.to_ascii_lowercase().as_str());
-        } else if context.mode == Mode::TR {
-            return self.tr_classes.get(id.to_ascii_lowercase().as_str());
         }
         None
     }

@@ -10,7 +10,7 @@ The validator is a command line tool. Run with `--help` for up to date informati
 1. Open your command line of choice (i.e. CMD, PowerShell, Bash, etc.)
 2. Run the validator:<br />
 `StandardsValidator.exe [mode] path/to/file.esm`<br />
-Where [mode] is one of PT/TD/TR/Vanilla depending on which specific validation rules you need.
+Where [mode] is one of PI/PT/TD/TR/Vanilla depending on which specific validation rules you need.
 3. Determine if any of the reported issues need to be fixed and fix them
 
 # Extended Validator

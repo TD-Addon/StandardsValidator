@@ -76,7 +76,7 @@ fn main() -> Result<(), Box<dyn Error>> {
                 .help("Replaces all uses of landscape textures with the original id with the new one"),
             Arg::new("mode")
                 .required(true)
-                .value_parser(["PT", "TD", "TR", "Vanilla"])
+                .value_parser(["PI", "PT", "TD", "TR", "Vanilla"])
                 .ignore_case(true),
             Arg::new("path")
                 .num_args(1..)

@@ -89,7 +89,7 @@ impl Handler<'_> for NpcValidator {
         self.slave_bracers = 0;
         if let TES3Object::Npc(npc) = record {
             self.check_bodyparts(npc, &context.mode);
-            if context.mode == Mode::PT && is_autocalc(npc) {
+            if !context.mode.is_morrowind() && is_autocalc(npc) {
                 println!("Npc {} has auto calculated stats and spells", npc.id);
             }
             if !is_dead(record) {
