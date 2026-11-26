@@ -5,5 +5,5 @@
 	{ "name": "Project Cyrodiil", "prefix": "PC_", "local": "PC_Map" },
 	{ "name": "Skyrim: Home of the Nords", "prefix": "Sky_", "local": "Sky_Hold" },
 	{ "name": "Tamriel Rebuilt", "prefix": "TR_", "local": "TR_Map" },
-	{ "name": "Padomaic Isles", "prefix": "PI_", "local": "PI_Archipelago" }
+	{ "name": "Padomaic Isles", "prefix": "PI_", "local": "PI_Map" }
 ]
